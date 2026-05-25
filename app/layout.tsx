@@ -16,6 +16,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'EliteGrid — TypeScript Data Grid Built for Developer Experience',
   description: 'EliteGrid is a high-performance TypeScript data grid with a grouped config API, React & Vue adapters, full WCAG 2.1 AA accessibility, and documentation so clear you won\'t need AI to integrate it.',
+  verification: {
+    google: 'xjTUOGQZsureR3PLnu4OQ0a_c9K-7A7li4cVv-7RGpM',
+  },
+  manifest: '/site.webmanifest',
   icons: {
     icon: [
       { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
@@ -26,7 +30,6 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
-  manifest: '/site.webmanifest',
 }
 
 export default function RootLayout({
