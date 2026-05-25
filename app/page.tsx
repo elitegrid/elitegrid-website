@@ -3,24 +3,54 @@ import WaitlistForm from '@/components/WaitlistForm'
 
 export const metadata: Metadata = {
   title: 'EliteGrid — TypeScript Data Grid Built for Developer Experience',
-  description: 'High-performance TypeScript data grid with grouped config API, full accessibility, React & Vue adapters, and documentation so clear you won\'t need AI to integrate it.',
-  keywords: ['typescript', 'data grid', 'react', 'vue', 'javascript', 'datagrid', 'table', 'accessible'],
+  description: 'EliteGrid is a high-performance TypeScript data grid with a grouped config API, React & Vue adapters, full WCAG 2.1 AA accessibility, and documentation so clear you won\'t need AI to integrate it.',
+  keywords: [
+    'typescript data grid',
+    'react data grid',
+    'vue data grid',
+    'javascript data grid',
+    'ag grid alternative',
+    'tanstack table alternative',
+    'accessible data grid',
+    'data table react',
+    'react table typescript',
+    'data grid typescript',
+    'open source data grid',
+    'elitegrid',
+  ],
   authors: [{ name: 'EliteGrid', url: 'https://elitegrid.dev' }],
+  creator: 'EliteGrid',
+  publisher: 'EliteGrid',
+  alternates: {
+    canonical: 'https://elitegrid.dev',
+  },
   openGraph: {
     title: 'EliteGrid — TypeScript Data Grid Built for Developer Experience',
-    description: 'High-performance TypeScript data grid with grouped config API, React & Vue adapters, full WCAG 2.1 AA accessibility.',
+    description: 'High-performance TypeScript data grid with grouped config API, React & Vue adapters, full WCAG 2.1 AA accessibility — and docs so clear you won\'t need AI to integrate it.',
     url: 'https://elitegrid.dev',
     siteName: 'EliteGrid',
     type: 'website',
+    locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'EliteGrid — TypeScript Data Grid Built for Developer Experience',
-    description: 'High-performance TypeScript data grid with grouped config API, React & Vue adapters.',
+    description: 'High-performance TypeScript data grid with grouped config API, React & Vue adapters, full WCAG 2.1 AA accessibility.',
     site: '@elitegridhq',
     creator: '@elitegridhq',
   },
   metadataBase: new URL('https://elitegrid.dev'),
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 }
 
 const devFeatures = [
@@ -102,7 +132,7 @@ export default function Home() {
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-none mb-6 max-w-4xl">
-            The data grid<br />
+            The TypeScript data grid<br />
             <span className="text-[#e8ff47]">developers</span> deserve
           </h1>
 

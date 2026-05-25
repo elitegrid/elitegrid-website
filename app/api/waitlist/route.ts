@@ -50,12 +50,12 @@ export async function POST(req: NextRequest) {
             As a waitlist member you'll get:
           </p>
           <ul style="color: #a1a1aa; line-height: 2; margin-bottom: 32px; padding-left: 20px;">
-            <li>Early access before public launch</li>
-            <li>Launch discount on Pro license</li>
+            <li>Early sandbox access to try EliteGrid before public launch</li>
+            <li>Behind-the-scenes dev updates as we build</li>
             <li>Direct line to the founders</li>
           </ul>
           <p style="color: #71717a; font-size: 13px;">
-            — Shahil & Team, EliteGrid<br/>
+            — The EliteGrid Team<br/>
             <a href="https://elitegrid.dev" style="color: #e8ff47;">elitegrid.dev</a>
           </p>
         </div>
