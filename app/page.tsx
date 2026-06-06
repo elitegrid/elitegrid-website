@@ -115,9 +115,15 @@ export default function Home() {
           </div>
           <span className="font-bold text-lg tracking-tight">EliteGrid</span>
         </div>
-        <span className="font-mono text-xs text-[#e8ff47] bg-[#e8ff47]/10 border border-[#e8ff47]/25 px-3 py-1 rounded-full">
-          v0.1 · coming soon
-        </span>
+        <div className="flex items-center gap-4">
+          <a href="/playground"
+            className="font-mono text-xs font-semibold text-[#a1a1aa] hover:text-[#e8ff47] transition-colors flex items-center gap-1">
+            Playground <span>↗</span>
+          </a>
+          <span className="font-mono text-xs text-[#e8ff47] bg-[#e8ff47]/10 border border-[#e8ff47]/25 px-3 py-1 rounded-full">
+            v0.1 · coming soon
+          </span>
+        </div>
       </nav>
 
       {/* HERO */}
@@ -143,8 +149,19 @@ export default function Home() {
           <WaitlistForm />
 
           <p className="font-mono text-xs text-[#52525b] mt-4">
-            Get notified when our sandbox is ready and EliteGrid launches.
+            Get notified when EliteGrid launches publicly.
           </p>
+
+          <div className="flex items-center gap-3 mt-3">
+            <div className="h-px w-12 bg-white/8" />
+            <span className="font-mono text-xs text-[#3f3f46]">or</span>
+            <div className="h-px w-12 bg-white/8" />
+          </div>
+
+          <a href="/playground"
+            className="mt-3 inline-flex items-center gap-2 font-mono text-sm font-semibold px-6 py-3 rounded-xl border border-[#e8ff47]/30 bg-[#e8ff47]/5 text-[#e8ff47] hover:bg-[#e8ff47]/10 hover:border-[#e8ff47]/50 transition-all">
+            Try the Playground — no install needed →
+          </a>
 
           {/* Stats */}
           <div className="flex gap-10 mt-16 flex-wrap justify-center">
@@ -163,8 +180,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FOR DEVELOPERS */}
+      {/* PLAYGROUND CALLOUT */}
       <section className="border-t border-white/8 bg-[#111113]">
+        <div className="max-w-5xl mx-auto px-6 py-14 flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="flex-1">
+            <div className="font-mono text-xs text-[#e8ff47] tracking-widest uppercase mb-3">Live Playground</div>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+              See it in action.<br />Right now.
+            </h2>
+            <p className="text-[#a1a1aa] text-base leading-relaxed max-w-md">
+              Write real EliteGrid code and watch it render instantly — virtual scroll, inline editing, CSV export and more. Switch between React and Vue. No install, no setup, no signup.
+            </p>
+            <div className="flex flex-wrap gap-3 mt-6">
+              {['Virtual Scroll · 10K rows', 'Real API data', 'Inline editing', 'CSV Export'].map(f => (
+                <span key={f} className="font-mono text-xs px-3 py-1.5 rounded-lg border border-white/8 bg-white/[0.03] text-[#71717a]">
+                  {f}
+                </span>
+              ))}
+            </div>
+          </div>
+          <a href="/playground"
+            className="flex-shrink-0 group flex flex-col items-center justify-center gap-3 w-full md:w-64 h-40 rounded-2xl border border-[#e8ff47]/25 bg-[#e8ff47]/5 hover:bg-[#e8ff47]/10 hover:border-[#e8ff47]/50 transition-all cursor-pointer text-center px-6">
+            <div className="w-12 h-12 rounded-xl bg-[#e8ff47]/10 border border-[#e8ff47]/25 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              ▶
+            </div>
+            <span className="font-mono text-sm font-bold text-[#e8ff47]">Open Playground →</span>
+            <span className="font-mono text-xs text-[#52525b]">React & Vue · live preview</span>
+          </a>
+        </div>
+      </section>
+
+      {/* FOR DEVELOPERS */}
+      <section className="border-t border-white/8 bg-[#0d0d0f]">
         <div className="max-w-5xl mx-auto px-6 py-24">
           <div className="font-mono text-xs text-[#e8ff47] tracking-widest uppercase mb-4">For Developers</div>
           <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
@@ -442,12 +489,16 @@ export default function App() {
           <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
             Be first.<br />Build better.
           </h2>
-          <p className="text-[#a1a1aa] text-lg mb-10">
-            Join the waitlist — get notified when our React & Vue sandbox is ready and when EliteGrid launches.
+          <p className="text-[#a1a1aa] text-lg mb-6">
+            Join the waitlist and be first to know when EliteGrid launches publicly on npm.
           </p>
+          <a href="/playground"
+            className="inline-flex items-center gap-2 font-mono text-sm font-semibold px-6 py-3 rounded-xl border border-[#e8ff47]/30 bg-[#e8ff47]/5 text-[#e8ff47] hover:bg-[#e8ff47]/10 transition-all mb-8">
+            Try the Playground first →
+          </a>
           <WaitlistForm />
           <p className="font-mono text-xs text-[#52525b] mt-4">
-            No spam. We'll only email you when the sandbox is ready and at launch.
+            No spam. One email at launch.
           </p>
         </div>
       </section>
