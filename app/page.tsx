@@ -116,6 +116,10 @@ export default function Home() {
           <span className="font-bold text-lg tracking-tight">EliteGrid</span>
         </div>
         <div className="flex items-center gap-4">
+          <a href="/docs"
+            className="font-mono text-xs font-semibold text-[#a1a1aa] hover:text-[#e8ff47] transition-colors">
+            Docs
+          </a>
           <a href="/playground"
             className="font-mono text-xs font-semibold text-[#a1a1aa] hover:text-[#e8ff47] transition-colors flex items-center gap-1">
             Playground <span>↗</span>
@@ -508,6 +512,7 @@ export default function App() {
         <span className="font-mono text-xs text-[#52525b]">© 2026 EliteGrid. Built with ♥ in India.</span>
         <div className="flex gap-6">
           {[
+            { label: 'Docs', href: '/docs' },
             { label: 'GitHub', href: 'https://github.com/elitegrid' },
             { label: 'Twitter', href: 'https://x.com/elitegridhq' },
             { label: 'npm', href: 'https://npmjs.com/package/@elitegrid/core' },
