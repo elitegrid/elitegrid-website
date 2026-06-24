@@ -1,12 +1,9 @@
-// Runtime access to the baked documentation content.
-// The site renders from lib/docs-content.ts (generated & committed), so the
-// *-manual/ source folders are optional at build/run time — delete them freely.
-// To refresh content after editing a manual: npm run docs:build
-import { manuals } from './docs-content'
-import type { DocPage, Manual, TocItem } from './docs-content'
+import rawManuals from './docs-content.json'
+import type { DocPage, Manual, TocItem } from './docs-types'
 
-export { manuals }
 export type { DocPage, Manual, TocItem }
+
+export const manuals = rawManuals as Manual[]
 
 /** Lightweight list of frameworks for tabs / static params. */
 export const frameworks = manuals.map((m) => ({
