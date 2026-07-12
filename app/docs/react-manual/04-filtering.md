@@ -227,6 +227,59 @@ If the built-in `contains`/`equals` operators aren't precise enough for a comput
 
 ---
 
+## Live example
+
+A text filter, a number filter, and a date filter on three different columns — click a header's funnel icon to open its filter. All three combine with AND, so narrowing one column narrows the visible rows for the others too.
+
+```tsx
+import { createGrid, Grid } from '@elitegrid/react'
+import '@elitegrid/react/styles.css'
+
+interface Book {
+  id: number
+  title: string
+  author: string
+  price: number
+  published: string
+}
+
+const books: Book[] = [
+  { id: 1, title: 'The Pragmatic Programmer', author: 'Hunt & Thomas', price: 44.99, published: '1999-10-30' },
+  { id: 2, title: 'Clean Code', author: 'Robert Martin', price: 39.99, published: '2008-08-01' },
+  { id: 3, title: 'Refactoring', author: 'Martin Fowler', price: 54.99, published: '1999-07-08' },
+  { id: 4, title: 'Design Patterns', author: 'Gang of Four', price: 59.99, published: '1994-10-21' },
+  { id: 5, title: 'The Mythical Man-Month', author: 'Fred Brooks', price: 34.99, published: '1975-01-01' },
+  { id: 6, title: 'Domain-Driven Design', author: 'Eric Evans', price: 49.99, published: '2003-08-30' },
+  { id: 7, title: 'Effective Java', author: 'Joshua Bloch', price: 54.99, published: '2001-05-08' },
+  { id: 8, title: "You Don't Know JS", author: 'Kyle Simpson', price: 29.99, published: '2014-12-27' },
+  { id: 9, title: 'Working Effectively with Legacy Code', author: 'Michael Feathers', price: 47.99, published: '2004-09-22' },
+  { id: 10, title: 'Continuous Delivery', author: 'Humble & Farley', price: 52.99, published: '2010-08-06' },
+]
+
+const grid = createGrid<Book>({
+  columns: [
+    { field: 'title', header: 'Title', size: { flex: 2 }, filter: { type: 'text' } },
+    { field: 'author', header: 'Author', size: { flex: 1.5 }, filter: { type: 'text' } },
+    { field: 'price', header: 'Price', filter: { type: 'number' } },
+    { field: 'published', header: 'Published', filter: { type: 'date' } },
+  ],
+  data: books,
+  filtering: { enabled: true },
+})
+
+export default function App() {
+  return (
+    <div style={{ height: 440 }}>
+      <Grid grid={grid} />
+    </div>
+  )
+}
+```
+
+[[LIVE_DEMO:react:0]]
+
+---
+
 ## Common filtering mistakes
 
 | Symptom | Cause | Fix |

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import WaitlistForm from '@/components/WaitlistForm'
 import GridDemo from '@/components/GridDemo'
 import Nav from '@/components/landing/Nav'
 import Reveal from '@/components/landing/Reveal'
 import AnimatedStat from '@/components/landing/AnimatedStat'
+import InstallCommand, { InstallButton } from '@/components/landing/InstallCommand'
 
 export const metadata: Metadata = {
   title: 'EliteGrid — TypeScript Data Grid Built for Developer Experience',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     'data table react',
     'react table typescript',
     'data grid typescript',
-    'open source data grid',
+    'free typescript data grid',
     'elitegrid',
   ],
   authors: [{ name: 'EliteGrid', url: 'https://elitegrid.dev' }],
@@ -64,15 +64,15 @@ const btnPrimary =
 const btnGhost =
   'inline-flex items-center gap-2 bg-transparent text-[#18181b] dark:text-[#edf0fa] font-medium rounded-[9px] border border-black/[0.13] dark:border-white/[0.11] transition-all hover:bg-black/[0.025] dark:hover:bg-white/[0.025] hover:-translate-y-px'
 const badgeLabel =
-  'block text-[14px] font-bold tracking-[0.09em] uppercase text-[#5b21b6] dark:text-[#7c3aed] mb-3.5'
+  'block text-[11px] font-bold tracking-[0.09em] uppercase text-[#5b21b6] dark:text-[#7c3aed] mb-3.5'
 const cardBase =
   'bg-black/[0.025] dark:bg-white/[0.025] border border-black/[0.07] dark:border-white/[0.065] transition-[border-color,background] duration-200'
 const cardHover =
   'hover:border-[rgba(91,33,182,0.28)] hover:bg-[rgba(91,33,182,0.035)]'
 const icV =
-  'font-code text-[15px] text-[#7c3aed] bg-[rgba(91,33,182,0.1)] px-1.5 py-0.5 rounded'
+  'font-code text-[11.5px] text-[#7c3aed] bg-[rgba(91,33,182,0.1)] px-1.5 py-0.5 rounded'
 const icD =
-  'font-code text-[15px] text-[#a3a3a3] dark:text-[#374151] bg-black/[0.025] dark:bg-white/[0.025] border border-black/[0.09] dark:border-white/[0.07] px-1.5 py-0.5 rounded'
+  'font-code text-[11.5px] text-[#a3a3a3] dark:text-[#374151] bg-black/[0.025] dark:bg-white/[0.025] border border-black/[0.09] dark:border-white/[0.07] px-1.5 py-0.5 rounded'
 const sep =
   'h-px bg-gradient-to-r from-transparent via-black/[0.08] dark:via-white/[0.07] to-transparent'
 
@@ -175,7 +175,7 @@ const roadmap = [
     status: 'shipped', dot: 'bg-[#16a34a]', label: 'Shipped', labelColor: 'text-[#16a34a]',
     bg: 'bg-[rgba(22,163,74,0.05)] border border-[rgba(22,163,74,0.16)]',
     title: 'Core Engine',
-    desc: 'Microkernel architecture with 13 plugins. DataSource, RowModel, ColumnModel, Filter, Sort, Pagination, Viewport, Selection, Edit & more. 662 passing tests.',
+    desc: 'Microkernel architecture with 13 plugins. DataSource, RowModel, ColumnModel, Filter, Sort, Pagination, Viewport, Selection, Edit & more. 1,000 passing tests.',
   },
   {
     status: 'shipped', dot: 'bg-[#16a34a]', label: 'Shipped', labelColor: 'text-[#16a34a]',
@@ -184,26 +184,38 @@ const roadmap = [
     desc: 'Namespaced configuration with full TypeScript inference. Config mistakes caught at authoring time, not at runtime.',
   },
   {
-    status: 'building', dot: 'bg-[#d97706]', label: 'Building Now', labelColor: 'text-[#d97706]',
-    bg: 'bg-[rgba(217,119,6,0.05)] border border-[rgba(217,119,6,0.22)] relative overflow-hidden before:content-[""] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[#d97706] before:to-transparent',
+    status: 'shipped', dot: 'bg-[#16a34a]', label: 'Shipped', labelColor: 'text-[#16a34a]',
+    bg: 'bg-[rgba(22,163,74,0.05)] border border-[rgba(22,163,74,0.16)]',
     title: 'React, Vue & JS Adapters',
-    desc: 'First-class React & Vue adapters with hooks. Vanilla JS adapter for framework-free usage. Full WCAG 2.1 AA out of the box.',
+    desc: (
+      <>
+        First-class React &amp; Vue adapters with hooks. Vanilla JS adapter for framework-free usage. Live on npm — <span className={icV}>@elitegrid/react</span>, <span className={icV}>@elitegrid/vue</span>, <span className={icV}>@elitegrid/vanilla</span>.
+      </>
+    ),
   },
   {
-    status: 'building', dot: 'bg-[#d97706]', label: 'Building Now', labelColor: 'text-[#d97706]',
-    bg: 'bg-[rgba(217,119,6,0.05)] border border-[rgba(217,119,6,0.22)] relative overflow-hidden before:content-[""] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[#d97706] before:to-transparent',
-    title: 'Sandbox & Docs',
-    desc: 'Interactive StackBlitz sandboxes. Docs written so a junior developer can integrate without AI. Clear, honest, trustworthy.',
+    status: 'shipped', dot: 'bg-[#16a34a]', label: 'Shipped', labelColor: 'text-[#16a34a]',
+    bg: 'bg-[rgba(22,163,74,0.05)] border border-[rgba(22,163,74,0.16)]',
+    title: 'Documentation',
+    desc: 'Full React, Vue & vanilla JS manuals — 16 chapters each, written so a junior developer can integrate without AI. Interactive StackBlitz sandboxes coming next.',
+  },
+  {
+    status: 'shipped', dot: 'bg-[#16a34a]', label: 'Shipped', labelColor: 'text-[#16a34a]',
+    bg: 'bg-[rgba(22,163,74,0.05)] border border-[rgba(22,163,74,0.16)]',
+    title: 'Public Launch',
+    desc: 'ProductHunt launch and public announcement — done. All three adapters are live on npm and installable today.',
   },
   {
     status: 'next', dot: 'bg-[#7c3aed]', label: 'Up Next', labelColor: 'text-[#7c3aed]',
     bg: 'bg-[rgba(91,33,182,0.04)] border border-[rgba(91,33,182,0.18)]',
-    title: 'Public Launch',
-    desc: (
-      <>
-        Community version on npm. ProductHunt launch. <span className={icV}>npm install @elitegrid/core</span>
-      </>
-    ),
+    title: 'Custom Cell Rendering',
+    desc: 'A real cell-renderer API — full component control per cell, not just formatter strings. Unlocks avatars, badges, and rich content without CSS workarounds.',
+  },
+  {
+    status: 'next', dot: 'bg-[#7c3aed]', label: 'Up Next', labelColor: 'text-[#7c3aed]',
+    bg: 'bg-[rgba(91,33,182,0.04)] border border-[rgba(91,33,182,0.18)]',
+    title: 'Angular & Svelte Adapters',
+    desc: 'Two more first-class adapters on the same core engine — same grouped config API, zero dependencies, full accessibility. No architecture changes required.',
   },
   {
     status: 'planned', dot: 'bg-[#a3a3a3] dark:bg-[#374151]', label: 'Planned', labelColor: 'text-[#a3a3a3] dark:text-[#374151]',
@@ -266,29 +278,24 @@ export default function Home() {
             {/* Left col */}
             <div>
               <div className="mb-7">
-                <span className="inline-flex items-center gap-1.5 text-[15px] font-medium text-[#d97706] bg-[rgba(217,119,6,0.09)] border border-[rgba(217,119,6,0.2)] px-3 py-1.5 rounded-full">
+                <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[#d97706] bg-[rgba(217,119,6,0.09)] border border-[rgba(217,119,6,0.2)] px-3 py-[5px] rounded-full">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#d97706] motion-safe:animate-[landing-pulse-dot_2s_infinite]" />
-                  v0.1 · Active Development
+                  v0.1 · Live on npm
                 </span>
               </div>
 
-              <h1 className="font-heading font-extrabold text-[clamp(60px,8vw,104px)] leading-[1.0] tracking-[-0.04em] mb-6">
+              <h1 className="font-heading font-extrabold text-[clamp(52px,7vw,88px)] leading-[1.0] tracking-[-0.04em] mb-6">
                 The TypeScript<br />data grid<br />
                 <span className="landing-g-text">developers<br />deserve.</span>
               </h1>
 
-              <p className="text-[clamp(17px,2vw,22px)] text-[#525252] dark:text-[#7a8399] max-w-[480px] leading-[1.7] mb-9">
+              <p className="text-[clamp(15px,1.7vw,18px)] text-[#525252] dark:text-[#7a8399] max-w-[480px] leading-[1.7] mb-9">
                 Grouped config API, full WCAG 2.1 AA, React &amp; Vue adapters — and docs so clear you won&apos;t need AI to integrate it.
               </p>
 
               <div className="flex gap-3 flex-wrap">
-                <a href="#waitlist" className={`${btnPrimary} text-[18px] px-[26px] py-[15px]`}>
-                  Join Waitlist
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M2.5 7h9M7 3l4.5 4L7 11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </a>
-                <Link href="/playground" className={`${btnGhost} text-[18px] px-[26px] py-[15px]`}>
+                <InstallButton className={`${btnPrimary} text-[15px] px-[26px] py-[13px]`} />
+                <Link href="/playground" className={`${btnGhost} text-[15px] px-[26px] py-[13px]`}>
                   Try Playground
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2 2h8v8M2 10l8-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -299,20 +306,20 @@ export default function Home() {
               {/* Stats grid */}
               <div className="grid grid-cols-2 lg:grid-cols-4 border border-black/[0.09] dark:border-white/[0.07] rounded-xl overflow-hidden mt-12">
                 <div className="p-5 px-[22px] border-r border-b lg:border-b-0 border-black/[0.09] dark:border-white/[0.07]">
-                  <AnimatedStat target={662} className="font-heading font-extrabold text-[42px] leading-none tracking-[-0.03em]" />
-                  <div className="text-[12.5px] text-[#a3a3a3] dark:text-[#374151] mt-1.5 font-medium">passing tests</div>
+                  <AnimatedStat target={1000} className="font-heading font-extrabold text-[34px] leading-none tracking-[-0.03em]" />
+                  <div className="text-[11.5px] text-[#a3a3a3] dark:text-[#374151] mt-[5px] font-medium">passing tests</div>
                 </div>
                 <div className="p-5 px-[22px] border-b lg:border-b-0 lg:border-r border-black/[0.09] dark:border-white/[0.07]">
-                  <AnimatedStat target={13} className="font-heading font-extrabold text-[42px] leading-none tracking-[-0.03em]" />
-                  <div className="text-[12.5px] text-[#a3a3a3] dark:text-[#374151] mt-1.5 font-medium">core plugins</div>
+                  <AnimatedStat target={13} className="font-heading font-extrabold text-[34px] leading-none tracking-[-0.03em]" />
+                  <div className="text-[11.5px] text-[#a3a3a3] dark:text-[#374151] mt-[5px] font-medium">core plugins</div>
                 </div>
                 <div className="p-5 px-[22px] border-r border-black/[0.09] dark:border-white/[0.07]">
-                  <div className="font-heading font-extrabold text-[42px] leading-none tracking-[-0.03em] text-[#7c3aed]">0</div>
-                  <div className="text-[12.5px] text-[#a3a3a3] dark:text-[#374151] mt-1.5 font-medium">dependencies</div>
+                  <div className="font-heading font-extrabold text-[34px] leading-none tracking-[-0.03em] text-[#7c3aed]">0</div>
+                  <div className="text-[11.5px] text-[#a3a3a3] dark:text-[#374151] mt-[5px] font-medium">dependencies</div>
                 </div>
                 <div className="p-5 px-[22px]">
-                  <div className="font-heading font-extrabold text-[42px] leading-none tracking-[-0.03em]">100%</div>
-                  <div className="text-[12.5px] text-[#a3a3a3] dark:text-[#374151] mt-1.5 font-medium">TypeScript</div>
+                  <div className="font-heading font-extrabold text-[34px] leading-none tracking-[-0.03em]">100%</div>
+                  <div className="text-[11.5px] text-[#a3a3a3] dark:text-[#374151] mt-[5px] font-medium">TypeScript</div>
                 </div>
               </div>
             </div>
@@ -326,12 +333,12 @@ export default function Home() {
                     <span className="w-[13px] h-[13px] rounded-full bg-[#ffbd2e]" />
                     <span className="w-[13px] h-[13px] rounded-full bg-[#28c840]" />
                   </div>
-                  <span className="font-code text-[14px] text-[#374151] ml-1.5">App.tsx</span>
-                  <span className="ml-auto text-[13px] font-bold tracking-[0.06em] uppercase text-[#7c3aed] bg-[rgba(124,58,237,0.15)] border border-[rgba(124,58,237,0.25)] px-2 py-0.5 rounded">
+                  <span className="font-code text-[11px] text-[#374151] ml-1.5">App.tsx</span>
+                  <span className="ml-auto text-[10px] font-bold tracking-[0.06em] uppercase text-[#7c3aed] bg-[rgba(124,58,237,0.15)] border border-[rgba(124,58,237,0.25)] px-2 py-0.5 rounded">
                     TSX
                   </span>
                 </div>
-                <pre className="p-6 font-code text-[15px] leading-[1.8] overflow-x-auto text-[#e2e8f0]">
+                <pre className="p-6 font-code text-[12px] leading-[1.8] overflow-x-auto text-[#e2e8f0]">
                   <code>
                     <span className="text-[#c084fc]">import</span>{' '}
                     <span className="text-[#64748b]">{'{ '}</span>
@@ -431,12 +438,12 @@ export default function Home() {
           <div className="flex justify-between items-end mb-12 flex-wrap gap-4">
             <div>
               <span className={badgeLabel}>Live Demo</span>
-              <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,60px)] tracking-[-0.03em] leading-[1.05]">
+              <h2 className="font-heading font-extrabold text-[clamp(28px,4vw,52px)] tracking-[-0.03em] leading-[1.05]">
                 See it in action.
               </h2>
             </div>
-            <p className="text-[19px] text-[#525252] dark:text-[#7a8399] max-w-[380px] leading-[1.7]">
-              Click headers to sort. Filter, select rows, and export — this is exactly what your users will experience.
+            <p className="text-[16px] text-[#525252] dark:text-[#7a8399] max-w-[380px] leading-[1.7]">
+              Click headers to sort. Type to filter. Click rows to select. This is exactly what your users will experience.
             </p>
           </div>
         </Reveal>
@@ -453,11 +460,11 @@ export default function Home() {
           <div className="flex justify-between items-end mb-14 flex-wrap gap-4">
             <div>
               <span className={badgeLabel}>For Developers</span>
-              <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,60px)] tracking-[-0.03em] leading-[1.05]">
+              <h2 className="font-heading font-extrabold text-[clamp(28px,4vw,52px)] tracking-[-0.03em] leading-[1.05]">
                 Built different,<br />by design.
               </h2>
             </div>
-            <p className="text-[19px] text-[#525252] dark:text-[#7a8399] max-w-[360px] leading-[1.7]">
+            <p className="text-[16px] text-[#525252] dark:text-[#7a8399] max-w-[360px] leading-[1.7]">
               Most grids were built for feature lists. EliteGrid was built for the developer first.
             </p>
           </div>
@@ -471,15 +478,15 @@ export default function Home() {
                 i === devFeatures.length - 1 ? 'border-b' : '',
               ].join(' ')}
             >
-              <span className="font-code text-[14px] text-[#a3a3a3] dark:text-[#374151] min-w-6 shrink-0 pt-1 tracking-[0.04em] transition-colors duration-[250ms] group-hover:text-[#7c3aed]">
+              <span className="font-code text-[11px] text-[#a3a3a3] dark:text-[#374151] min-w-6 shrink-0 pt-1 tracking-[0.04em] transition-colors duration-[250ms] group-hover:text-[#7c3aed]">
                 {f.num}
               </span>
-              <div className="w-[42px] h-[42px] bg-[rgba(91,33,182,0.1)] border border-[rgba(91,33,182,0.18)] rounded-[9px] flex items-center justify-center shrink-0 mt-px text-[#7c3aed]">
+              <div className="w-[38px] h-[38px] bg-[rgba(91,33,182,0.1)] border border-[rgba(91,33,182,0.18)] rounded-[9px] flex items-center justify-center shrink-0 mt-px text-[#7c3aed]">
                 {f.icon}
               </div>
               <div className="flex-1">
-                <h3 className="font-heading font-bold text-[23px] tracking-[-0.01em] mb-1.5">{f.title}</h3>
-                <p className="text-[18px] text-[#525252] dark:text-[#7a8399] leading-[1.65]">{f.desc}</p>
+                <h3 className="font-heading font-bold text-[19px] tracking-[-0.01em] mb-[7px]">{f.title}</h3>
+                <p className="text-[15px] text-[#525252] dark:text-[#7a8399] leading-[1.65]">{f.desc}</p>
               </div>
             </div>
           </Reveal>
@@ -494,11 +501,11 @@ export default function Home() {
           <div className="flex justify-between items-end mb-14 flex-wrap gap-4">
             <div>
               <span className={badgeLabel}>For End Users</span>
-              <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,60px)] tracking-[-0.03em] leading-[1.05]">
+              <h2 className="font-heading font-extrabold text-[clamp(28px,4vw,52px)] tracking-[-0.03em] leading-[1.05]">
                 30+ features,<br />zero setup.
               </h2>
             </div>
-            <p className="text-[19px] text-[#525252] dark:text-[#7a8399] max-w-[320px] leading-[1.7]">
+            <p className="text-[16px] text-[#525252] dark:text-[#7a8399] max-w-[320px] leading-[1.7]">
               Every feature ships in the box. No plugins to hunt for.
             </p>
           </div>
@@ -506,12 +513,12 @@ export default function Home() {
         <Reveal>
           <div className="grid grid-cols-1 min-[580px]:grid-cols-2 min-[900px]:grid-cols-3 gap-3">
             {userFeatures.map(f => (
-              <div key={f.title} className={`${cardBase} ${cardHover} rounded-[13px] px-5 py-[20px]`}>
+              <div key={f.title} className={`${cardBase} ${cardHover} rounded-[11px] px-5 py-[18px]`}>
                 <div className="flex items-center gap-2.5 mb-2">
-                  <span className="text-[20px]">{f.icon}</span>
-                  <span className="font-heading font-bold text-[18px]">{f.title}</span>
+                  <span className="text-[16px]">{f.icon}</span>
+                  <span className="font-heading font-bold text-[15px]">{f.title}</span>
                 </div>
-                <p className="text-[16px] text-[#a3a3a3] dark:text-[#374151] leading-[1.6]">{f.desc}</p>
+                <p className="text-[13px] text-[#a3a3a3] dark:text-[#374151] leading-[1.6]">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -526,25 +533,25 @@ export default function Home() {
           <div className="flex justify-between items-end mb-14 flex-wrap gap-4">
             <div>
               <span className={badgeLabel}>Roadmap</span>
-              <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,60px)] tracking-[-0.03em] leading-[1.05]">
+              <h2 className="font-heading font-extrabold text-[clamp(28px,4vw,52px)] tracking-[-0.03em] leading-[1.05]">
                 Where we are.<br />Where we&apos;re going.
               </h2>
             </div>
-            <p className="text-[19px] text-[#525252] dark:text-[#7a8399] max-w-[300px] leading-[1.7]">
+            <p className="text-[16px] text-[#525252] dark:text-[#7a8399] max-w-[300px] leading-[1.7]">
               No hype. Actively evolving, here is the honest state of the project.
             </p>
           </div>
         </Reveal>
         <div className="grid grid-cols-1 min-[900px]:grid-cols-2 gap-3">
           {roadmap.map((r, i) => (
-            <Reveal key={r.title} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
-              <div className={`${r.bg} rounded-[16px] p-6`}>
+            <Reveal key={r.title} delay={((i % 4) + 1) as 1 | 2 | 3 | 4} className="h-full">
+              <div className={`${r.bg} rounded-[14px] p-[26px] h-full`}>
                 <div className="flex items-center gap-2 mb-3.5">
                   <span className={`w-2 h-2 rounded-full shrink-0 ${r.dot} ${r.status === 'building' ? 'motion-safe:animate-[landing-pulse-dot_1.8s_infinite]' : ''}`} />
-                  <span className={`text-[14px] font-bold tracking-[0.09em] uppercase ${r.labelColor}`}>{r.label}</span>
+                  <span className={`text-[11px] font-bold tracking-[0.09em] uppercase ${r.labelColor}`}>{r.label}</span>
                 </div>
-                <h3 className="font-heading font-bold text-[21px] mb-2">{r.title}</h3>
-                <p className="text-[17px] text-[#525252] dark:text-[#7a8399] leading-[1.65]">{r.desc}</p>
+                <h3 className="font-heading font-bold text-[17px] mb-2">{r.title}</h3>
+                <p className="text-[14px] text-[#525252] dark:text-[#7a8399] leading-[1.65]">{r.desc}</p>
               </div>
             </Reveal>
           ))}
@@ -559,16 +566,16 @@ export default function Home() {
           <div className="grid grid-cols-1 min-[900px]:grid-cols-2 gap-10 min-[900px]:gap-16 items-center">
             <div>
               <span className={badgeLabel}>Accessibility</span>
-              <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,56px)] tracking-[-0.03em] leading-[1.05] mb-5">
+              <h2 className="font-heading font-extrabold text-[clamp(28px,4vw,48px)] tracking-[-0.03em] leading-[1.05] mb-5">
                 Accessible<br />by default.
               </h2>
-              <p className="text-[19px] text-[#525252] dark:text-[#7a8399] leading-[1.7] mb-7">
+              <p className="text-[16px] text-[#525252] dark:text-[#7a8399] leading-[1.7] mb-7">
                 Full WCAG 2.1 AA compliance ships as part of the default experience — zero configuration required.
               </p>
               <div className="flex flex-col gap-2.5">
                 {a11yChecks.map(item => (
-                  <div key={item} className="flex items-center gap-2.5 text-[17px] text-[#525252] dark:text-[#7a8399]">
-                    <div className="w-[20px] h-[20px] rounded-full bg-[rgba(22,163,74,0.15)] border border-[rgba(22,163,74,0.3)] flex items-center justify-center shrink-0">
+                  <div key={item} className="flex items-center gap-2.5 text-[14px] text-[#525252] dark:text-[#7a8399]">
+                    <div className="w-[18px] h-[18px] rounded-full bg-[rgba(22,163,74,0.15)] border border-[rgba(22,163,74,0.3)] flex items-center justify-center shrink-0">
                       <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
                         <path d="M1.5 4.5l2 2L7 2" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -580,9 +587,9 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               {a11yStats.map(s => (
-                <div key={s.label} className={`${s.bg} border rounded-[16px] p-7 text-center`}>
-                  <div className={`font-heading font-extrabold text-[42px] leading-none mb-1.5 ${s.color}`}>{s.value}</div>
-                  <div className="text-[15px] text-[#a3a3a3] dark:text-[#374151] font-medium">{s.label}</div>
+                <div key={s.label} className={`${s.bg} border rounded-[14px] p-7 text-center`}>
+                  <div className={`font-heading font-extrabold text-[34px] leading-none mb-1.5 ${s.color}`}>{s.value}</div>
+                  <div className="text-[12px] text-[#a3a3a3] dark:text-[#374151] font-medium">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -604,25 +611,22 @@ export default function Home() {
                     <path d="M5 6h6M5 9.5h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
                 </div>
-                <span className="font-heading text-[16px] font-bold text-[#7c3aed] tracking-[0.05em] uppercase">
+                <span className="font-heading text-[13px] font-bold text-[#7c3aed] tracking-[0.05em] uppercase">
                   Documentation
                 </span>
-                <span className="text-[13px] font-bold tracking-[0.06em] uppercase text-[#7c3aed] bg-[rgba(91,33,182,0.1)] border border-[rgba(91,33,182,0.2)] px-1.5 py-0.5 rounded">
-                  Coming Soon
-                </span>
               </div>
-              <h2 className="font-heading font-extrabold text-[clamp(26px,4vw,44px)] tracking-[-0.025em] mb-3 leading-[1.1]">
+              <h2 className="font-heading font-extrabold text-[clamp(22px,3vw,36px)] tracking-[-0.025em] mb-3 leading-[1.1]">
                 Docs so clear, you won&apos;t<br />need AI to integrate it.
               </h2>
-              <p className="text-[#525252] dark:text-[#7a8399] text-[19px] leading-[1.7] max-w-[440px]">
+              <p className="text-[#525252] dark:text-[#7a8399] text-[15px] leading-[1.7] max-w-[440px]">
                 Comprehensive guides, interactive examples, complete API reference. Written for the developer who ships on day one.
               </p>
             </div>
             <div className="flex flex-col gap-2.5">
-              <a href="#waitlist" className={`${btnPrimary} text-[17px] px-[22px] py-[13px]`}>
-                Get notified when docs launch →
-              </a>
-              <Link href="/playground" className={`${btnGhost} text-[17px] px-[22px] py-[13px] text-center justify-center`}>
+              <Link href="/docs" className={`${btnPrimary} text-[14px] px-[22px] py-[13px] text-center justify-center`}>
+                Browse the Docs →
+              </Link>
+              <Link href="/playground" className={`${btnGhost} text-[14px] px-[22px] py-[13px] text-center justify-center`}>
                 Try the Playground first
               </Link>
             </div>
@@ -642,19 +646,19 @@ export default function Home() {
         />
         <div className="relative z-10 max-w-[560px] mx-auto">
           <Reveal>
-            <span className="block text-[14px] font-bold tracking-[0.09em] uppercase text-[#7c3aed] mb-5">
-              Early Access
+            <span className="block text-[11px] font-bold tracking-[0.09em] uppercase text-[#7c3aed] mb-5">
+              Now Available
             </span>
-            <h2 className="font-heading font-extrabold text-[clamp(44px,7vw,78px)] tracking-[-0.04em] text-[#edf0fa] mb-5 leading-[1.0]">
-              Be first.<br />Build better.
+            <h2 className="font-heading font-extrabold text-[clamp(36px,6vw,68px)] tracking-[-0.04em] text-[#edf0fa] mb-5 leading-[1.0]">
+              Stop waiting.<br />Start building.
             </h2>
-            <p className="text-[#7a8399] text-[20px] leading-[1.7] mb-12">
-              Join the waitlist. One email when EliteGrid launches publicly on npm. No spam.
+            <p className="text-[#7a8399] text-[17px] leading-[1.7] mb-12">
+              All three adapters are live on npm — React, Vue, and vanilla JS. Free to use, zero dependencies.
             </p>
-            <WaitlistForm />
+            <InstallCommand />
             <Link
               href="/playground"
-              className="mt-9 text-[17px] text-[#7c3aed] no-underline inline-flex items-center gap-1.5"
+              className="mt-9 text-[14px] text-[#7c3aed] no-underline inline-flex items-center gap-1.5"
             >
               Try the Playground first
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -677,14 +681,14 @@ export default function Home() {
                 <circle cx="35" cy="11" r="2.5" fill="#c4b5fd" />
               </svg>
             </div>
-            <span className="font-heading font-bold text-[17px]">EliteGrid</span>
-            <span className="text-[15px] text-[#a3a3a3] dark:text-[#374151]">© 2026 · Built with ♥ in India</span>
+            <span className="font-heading font-bold text-[14px]">EliteGrid</span>
+            <span className="text-[12px] text-[#a3a3a3] dark:text-[#374151]">© 2026 · Built with ♥ in India</span>
           </div>
           <div className="flex items-center gap-6">
             {[
               { label: 'GitHub', href: 'https://github.com/elitegrid' },
               { label: 'Twitter', href: 'https://x.com/elitegridhq' },
-              { label: 'npm', href: 'https://npmjs.com/package/@elitegrid/core' },
+              { label: 'npm', href: 'https://npmjs.com/package/@elitegrid/react' },
               { label: 'Contact', href: 'mailto:hello@elitegrid.dev' },
             ].map(l => (
               <a
@@ -692,7 +696,7 @@ export default function Home() {
                 href={l.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[16px] text-[#a3a3a3] dark:text-[#374151] hover:text-[#525252] dark:hover:text-[#7a8399] transition-colors"
+                className="text-[13px] text-[#a3a3a3] dark:text-[#374151] hover:text-[#525252] dark:hover:text-[#7a8399] transition-colors"
               >
                 {l.label}
               </a>

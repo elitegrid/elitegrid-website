@@ -237,6 +237,72 @@ Set `appearance: { theme: 'light' }` (or leave the default) in `createGrid` so t
 
 ---
 
+## Live example
+
+The theme toggle from above, live: a button flips a `data-theme` ref, which re-cascades the `--eg-*` variables scoped to `appearance.className: 'my-grid'` — no grid re-creation. Written as `defineComponent` + `h()`, per the note in [Chapter 01](/docs/vue/getting-started#try-it-live).
+
+```ts
+import { defineComponent, h, ref } from 'vue'
+import { createGrid, Grid } from '@elitegrid/vue'
+
+interface Employee {
+  id: number
+  name: string
+  department: string
+  role: string
+}
+
+const employees: Employee[] = [
+  { id: 1, name: 'Ada Lovelace', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 2, name: 'Alan Turing', department: 'Research', role: 'Principal Scientist' },
+  { id: 3, name: 'Grace Hopper', department: 'Engineering', role: 'Eng Manager' },
+  { id: 4, name: 'Margaret Hamilton', department: 'Engineering', role: 'Tech Lead' },
+  { id: 5, name: 'Katherine Johnson', department: 'Research', role: 'Senior Analyst' },
+  { id: 6, name: 'Linus Torvalds', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 7, name: 'Tim Berners-Lee', department: 'Research', role: 'Principal Scientist' },
+  { id: 8, name: 'Barbara Liskov', department: 'Engineering', role: 'Eng Manager' },
+  { id: 9, name: 'Dennis Ritchie', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 10, name: 'Radia Perlman', department: 'Research', role: 'Senior Analyst' },
+]
+
+const grid = createGrid<Employee>({
+  columns: [
+    { field: 'name', header: 'Name', size: { flex: 2 } },
+    { field: 'department', header: 'Department', size: { flex: 1.5 } },
+    { field: 'role', header: 'Role', size: { flex: 1.5 } },
+  ],
+  data: employees,
+  appearance: { className: 'my-grid' },
+})
+
+const THEME_CSS = `
+  .my-grid { --eg-header-bg: #f9fafb; --eg-row-bg: #ffffff; --eg-cell-text: #111827; --eg-border: #e5e7eb; --eg-accent: #6d28d9; }
+  [data-theme='dark'] .my-grid { --eg-header-bg: #1a1a2a; --eg-row-bg: #0f0f1a; --eg-cell-text: #e2e8f0; --eg-border: #2d2d4d; --eg-accent: #a78bfa; }
+`
+
+export default defineComponent({
+  setup() {
+    const theme = ref<'light' | 'dark'>('light')
+
+    return () =>
+      h('div', { style: 'height:440px;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box' }, [
+        h('style', {}, THEME_CSS),
+        h('div', { style: 'display:flex;gap:8px;flex-shrink:0' }, [
+          h('button', {
+            onClick: () => { theme.value = theme.value === 'light' ? 'dark' : 'light' },
+            style: 'padding:7px 16px;border-radius:7px;border:none;cursor:pointer;font-size:0.8rem;font-weight:600;font-family:system-ui;background:#7c3aed;color:#ffffff',
+          }, `Switch to ${theme.value === 'light' ? 'dark' : 'light'} theme`),
+        ]),
+        h('div', { 'data-theme': theme.value, style: 'flex:1;min-height:0' }, [h(Grid, { grid })]),
+      ])
+  },
+})
+```
+
+[[LIVE_DEMO:vue:0]]
+
+---
+
 ## Common appearance mistakes
 
 | Symptom | Cause | Fix |

@@ -61,7 +61,7 @@ const grid = createGrid<Employee>({
 The announcement text is fully customizable through `AnnouncementMessages`. Each entry is a function that returns the spoken string, so you can localize and include dynamic values (the row number, the column name, a result count).
 
 ```ts
-import type { AnnouncementMessages } from '@elitegrid/core'
+import type { AnnouncementMessages } from '@elitegrid/vanilla'
 
 const french: AnnouncementMessages = {
   focusCell: (row, header) => `Ligne ${row + 1}, colonne ${header}`,
@@ -95,7 +95,7 @@ You can switch languages at runtime by calling `updateMessages` again with a dif
 If you want to mirror announcements somewhere (e.g. a visible "activity log"), subscribe to the `ANNOUNCE` event on the grid's event bus:
 
 ```ts
-import { GridEvent } from '@elitegrid/core'
+import { GridEvent } from '@elitegrid/vanilla'
 
 const off = grid.kernel.eventBus.on(GridEvent.ANNOUNCE, (payload) => {
   console.log(`[${payload.priority}] ${payload.message}`)

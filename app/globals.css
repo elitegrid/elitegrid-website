@@ -40,7 +40,7 @@ body {
 .docs-prose {
   color: #525252;
   font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 20px;
+  font-size: 15px;
   line-height: 1.75;
 }
 .dark .docs-prose {
@@ -68,11 +68,11 @@ body {
 }
 
 .docs-prose h2 {
-  font-size: 33px;
+  font-size: 22px;
   line-height: 1.25;
-  margin-top: 3.25rem;
-  margin-bottom: 1.25rem;
-  padding-top: 2rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-top: 1.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 .dark .docs-prose h2 {
@@ -86,15 +86,15 @@ body {
 }
 
 .docs-prose h3 {
-  font-size: 24px;
-  margin-top: 2.5rem;
-  margin-bottom: 0.85rem;
+  font-size: 16px;
+  margin-top: 2rem;
+  margin-bottom: 0.7rem;
 }
 
 .docs-prose h4 {
-  font-size: 21.5px;
-  margin-top: 2rem;
-  margin-bottom: 0.6rem;
+  font-size: 15px;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Anchor link affordance on hover */
@@ -195,8 +195,8 @@ body {
 .docs-prose blockquote p {
   margin: 0.55rem 0;
   color: #52525b;
-  font-size: 18.5px;
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.65;
 }
 .dark .docs-prose blockquote p {
   color: #a3aec2;
@@ -241,7 +241,7 @@ body {
 
 .docs-cb-lang {
   font-family: var(--font-code), 'JetBrains Mono', monospace;
-  font-size: 12.5px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -257,7 +257,7 @@ body {
   align-items: center;
   gap: 5px;
   font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 14.5px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.3);
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -277,9 +277,9 @@ body {
 
 .docs-prose pre {
   margin: 0;
-  padding: 1.35rem 1.5rem;
+  padding: 1.1rem 1.25rem;
   overflow-x: auto;
-  font-size: 1.05rem;
+  font-size: 13px;
   line-height: 1.75;
   background: transparent !important;
 }
@@ -300,7 +300,7 @@ body {
   overflow-x: auto;
   border-collapse: collapse;
   margin: 1.75rem 0;
-  font-size: 17.5px;
+  font-size: 14px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 10px;
 }
@@ -331,7 +331,7 @@ body {
   background: rgba(91, 33, 182, 0.045);
   color: #18181b;
   font-family: var(--font-code), monospace;
-  font-size: 13.5px;
+  font-size: 11px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-weight: 700;
@@ -368,6 +368,137 @@ body {
   .docs-cb-copy {
     transition: none;
   }
+  .docs-live-demo-dot {
+    animation: none;
+  }
+}
+
+/* Live examples — embedded, auto-running grid sandboxes (DocsLiveDemo) ----- */
+.docs-live-demo {
+  margin: 1.75rem 0;
+}
+
+.docs-live-demo-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+.dark .docs-live-demo-card {
+  border-color: rgba(255, 255, 255, 0.07);
+  background: #0e0e17;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
+}
+
+.docs-live-demo-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+.dark .docs-live-demo-toolbar {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom-color: rgba(255, 255, 255, 0.07);
+}
+
+.docs-live-demo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body), 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.1);
+  border: 1px solid rgba(22, 163, 74, 0.25);
+  padding: 3px 9px;
+  border-radius: 100px;
+}
+.dark .docs-live-demo-badge {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.25);
+}
+
+.docs-live-demo-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: docs-live-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes docs-live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+
+.docs-live-demo-framework {
+  font-family: var(--font-code), 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #a3a3a3;
+}
+.dark .docs-live-demo-framework {
+  color: #374151;
+}
+
+.docs-live-demo-reset {
+  margin-left: auto;
+  font-family: var(--font-body), 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: #525252;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.docs-live-demo-reset:hover {
+  color: #7c3aed;
+  border-color: rgba(91, 33, 182, 0.3);
+}
+.dark .docs-live-demo-reset {
+  color: #7a8399;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.dark .docs-live-demo-reset:hover {
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+.docs-live-demo-frame-wrap {
+  position: relative;
+  height: 460px;
+}
+
+.docs-live-demo-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.docs-live-demo-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body), 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #a3a3a3;
+  background: #ffffff;
+  pointer-events: none;
+}
+.dark .docs-live-demo-loading {
+  color: #374151;
+  background: #0e0e17;
 }
 
 /* ==========================================================================
@@ -389,4 +520,34 @@ body {
 @keyframes landing-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(7px); }
+}
+
+/* ==========================================================================
+   Playground — IDE-style tool chrome, theme-aware (light-first / dark twin).
+   Only the outer chrome (topbar, tabs, panes, footer) themes — the Monaco
+   editor and the 3 preview-app iframes stay always-dark by design, matching
+   the site's "code/preview surfaces stay dark" convention used elsewhere
+   (hero code block, docs code blocks, waitlist section).
+   ========================================================================== */
+:root {
+  --pg-bg:           #f5f4ef;
+  --pg-bg-raised:    #ffffff;
+  --pg-fg-rgb:       0, 0, 0;
+  --pg-text-1:       #18181b;
+  --pg-text-2:       #52525b;
+  --pg-text-3:       #71717a;
+  --pg-text-4:       #a1a1aa;
+  --pg-text-5:       #d4d4d8;
+  --pg-accent:       #5b21b6;
+}
+.dark {
+  --pg-bg:           #09090b;
+  --pg-bg-raised:    #0a0a0c;
+  --pg-fg-rgb:       255, 255, 255;
+  --pg-text-1:       #e4e4e7;
+  --pg-text-2:       #71717a;
+  --pg-text-3:       #52525b;
+  --pg-text-4:       #3f3f46;
+  --pg-text-5:       #27272a;
+  --pg-accent:       #7c3aed;
 }

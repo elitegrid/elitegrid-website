@@ -119,7 +119,7 @@ api.getSelectedIds()       // → Set<string> (just the IDs)
 ## Example — a bulk delete button
 
 ```ts
-import { buildGridAPI } from '@elitegrid/core'
+import { buildGridAPI } from '@elitegrid/vanilla'
 
 const api = buildGridAPI(grid)
 const deleteBtn = document.querySelector<HTMLButtonElement>('#delete-selected')!
@@ -178,6 +178,82 @@ const grid = createGrid<User>({
   },
 })
 ```
+
+---
+
+## Live example
+
+Checkbox multi-select with a live "N selected" readout, using the `grid.kernel.store.subscribe('selection', …)` pattern introduced above.
+
+```ts
+import { createGrid, mount, type GridAPI } from '@elitegrid/vanilla'
+import '@elitegrid/vanilla/styles.css'
+
+interface Employee {
+  id: number
+  name: string
+  department: string
+  role: string
+}
+
+const employees: Employee[] = [
+  { id: 1, name: 'Ada Lovelace', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 2, name: 'Alan Turing', department: 'Research', role: 'Principal Scientist' },
+  { id: 3, name: 'Grace Hopper', department: 'Engineering', role: 'Eng Manager' },
+  { id: 4, name: 'Margaret Hamilton', department: 'Engineering', role: 'Tech Lead' },
+  { id: 5, name: 'Katherine Johnson', department: 'Research', role: 'Senior Analyst' },
+  { id: 6, name: 'Linus Torvalds', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 7, name: 'Tim Berners-Lee', department: 'Research', role: 'Principal Scientist' },
+  { id: 8, name: 'Barbara Liskov', department: 'Engineering', role: 'Eng Manager' },
+  { id: 9, name: 'Dennis Ritchie', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 10, name: 'Radia Perlman', department: 'Research', role: 'Senior Analyst' },
+]
+
+let api: GridAPI<Employee> | null = null
+
+const grid = createGrid<Employee>({
+  columns: [
+    { field: 'name', header: 'Name', size: { flex: 2 } },
+    { field: 'department', header: 'Department', size: { flex: 1.5 } },
+    { field: 'role', header: 'Role', size: { flex: 1.5 } },
+  ],
+  data: employees,
+  selection: { mode: 'multiple' },
+  events: { onReady: (a) => { api = a } },
+})
+
+const container = document.getElementById('grid-container')!
+container.style.cssText = 'height:440px;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box'
+
+const toolbar = document.createElement('div')
+toolbar.style.cssText = 'display:flex;align-items:center;gap:12px;flex-shrink:0'
+
+const clearBtn = document.createElement('button')
+clearBtn.textContent = 'Clear selection'
+clearBtn.style.cssText = 'padding:7px 16px;border-radius:7px;border:none;cursor:pointer;' +
+  'font-size:0.8rem;font-weight:600;font-family:system-ui;background:#7c3aed;color:#ffffff'
+clearBtn.onclick = () => api?.deselectAll()
+toolbar.appendChild(clearBtn)
+
+const badge = document.createElement('span')
+badge.style.cssText = 'font-size:0.8rem;color:#a1a1aa;font-family:system-ui'
+toolbar.appendChild(badge)
+container.appendChild(toolbar)
+
+function render(state: { count: number }) {
+  badge.textContent = `${state.count} selected`
+}
+render(grid.kernel.store.read('selection'))
+grid.kernel.store.subscribe('selection', render)
+
+const gridEl = document.createElement('div')
+gridEl.style.cssText = 'flex:1;min-height:0'
+container.appendChild(gridEl)
+
+mount(grid, gridEl)
+```
+
+[[LIVE_DEMO:vanilla:0]]
 
 ---
 

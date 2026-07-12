@@ -222,6 +222,83 @@ Set `appearance: { theme: 'light' }` (or leave the default) in `createGrid` so t
 
 ---
 
+## Live example
+
+The theme toggle from above, live: a button flips `data-theme` on the grid's wrapper element, which re-cascades the `--eg-*` variables scoped to `.my-grid` — no grid re-creation.
+
+```ts
+import { createGrid, mount } from '@elitegrid/vanilla'
+import '@elitegrid/vanilla/styles.css'
+
+interface Employee {
+  id: number
+  name: string
+  department: string
+  role: string
+}
+
+const employees: Employee[] = [
+  { id: 1, name: 'Ada Lovelace', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 2, name: 'Alan Turing', department: 'Research', role: 'Principal Scientist' },
+  { id: 3, name: 'Grace Hopper', department: 'Engineering', role: 'Eng Manager' },
+  { id: 4, name: 'Margaret Hamilton', department: 'Engineering', role: 'Tech Lead' },
+  { id: 5, name: 'Katherine Johnson', department: 'Research', role: 'Senior Analyst' },
+  { id: 6, name: 'Linus Torvalds', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 7, name: 'Tim Berners-Lee', department: 'Research', role: 'Principal Scientist' },
+  { id: 8, name: 'Barbara Liskov', department: 'Engineering', role: 'Eng Manager' },
+  { id: 9, name: 'Dennis Ritchie', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 10, name: 'Radia Perlman', department: 'Research', role: 'Senior Analyst' },
+]
+
+const grid = createGrid<Employee>({
+  columns: [
+    { field: 'name', header: 'Name', size: { flex: 2 } },
+    { field: 'department', header: 'Department', size: { flex: 1.5 } },
+    { field: 'role', header: 'Role', size: { flex: 1.5 } },
+  ],
+  data: employees,
+  appearance: { className: 'my-grid' },
+})
+
+const style = document.createElement('style')
+style.textContent = `
+  .my-grid { --eg-header-bg: #f9fafb; --eg-row-bg: #ffffff; --eg-cell-text: #111827; --eg-border: #e5e7eb; --eg-accent: #6d28d9; }
+  .my-grid[data-theme='dark'] { --eg-header-bg: #1a1a2a; --eg-row-bg: #0f0f1a; --eg-cell-text: #e2e8f0; --eg-border: #2d2d4d; --eg-accent: #a78bfa; }
+`
+document.head.appendChild(style)
+
+const container = document.getElementById('grid-container')!
+container.style.cssText = 'height:440px;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box'
+
+const toolbar = document.createElement('div')
+toolbar.style.cssText = 'display:flex;gap:8px;flex-shrink:0'
+
+const gridWrapper = document.createElement('div')
+gridWrapper.className = 'my-grid'
+gridWrapper.dataset.theme = 'light'
+gridWrapper.style.cssText = 'flex:1;min-height:0'
+
+const toggleBtn = document.createElement('button')
+toggleBtn.textContent = 'Switch to dark theme'
+toggleBtn.style.cssText = 'padding:7px 16px;border-radius:7px;border:none;cursor:pointer;' +
+  'font-size:0.8rem;font-weight:600;font-family:system-ui;background:#7c3aed;color:#ffffff'
+toggleBtn.onclick = () => {
+  const next = gridWrapper.dataset.theme === 'dark' ? 'light' : 'dark'
+  gridWrapper.dataset.theme = next
+  toggleBtn.textContent = `Switch to ${next === 'dark' ? 'light' : 'dark'} theme`
+}
+toolbar.appendChild(toggleBtn)
+
+container.appendChild(toolbar)
+container.appendChild(gridWrapper)
+
+mount(grid, gridWrapper)
+```
+
+[[LIVE_DEMO:vanilla:0]]
+
+---
+
 ## Common appearance mistakes
 
 | Symptom | Cause | Fix |

@@ -37,13 +37,6 @@ function SidebarBody({
 
   return (
     <>
-      <div className="px-4 pb-4">
-        <div className="mx-1 flex items-center justify-between bg-black/[0.025] dark:bg-white/[0.025] border border-black/[0.08] dark:border-white/[0.07] rounded-lg px-3.5 py-2.5">
-          <span className="text-[13px] text-[#a3a3a3] dark:text-[#374151]">Version</span>
-          <span className="font-code text-[13px] font-semibold text-[#7c3aed]">v0.1.0-beta</span>
-        </div>
-      </div>
-
       <div className="px-4 pb-4 flex gap-2">
         {frameworks.map((f) => {
           const active = f.framework === framework
@@ -52,7 +45,7 @@ function SidebarBody({
               key={f.framework}
               href={`/docs/${f.framework}`}
               className={[
-                'flex-1 text-center font-code text-[13px] font-semibold px-2 py-2 rounded-md border transition-all',
+                'flex-1 text-center font-code text-[12px] font-semibold px-2 py-2 rounded-md border transition-all',
                 active
                   ? 'bg-[#5b21b6] dark:bg-[#7c3aed] text-white border-transparent'
                   : 'border-black/[0.08] dark:border-white/[0.07] text-[#525252] dark:text-[#7a8399] hover:text-[#18181b] dark:hover:text-[#edf0fa] hover:border-[rgba(91,33,182,0.25)]',
@@ -67,7 +60,7 @@ function SidebarBody({
       <Link
         href={base}
         className={[
-          'flex items-center gap-2.5 px-5 py-2.5 text-[16.5px] transition-colors border-l-2 mb-2',
+          'flex items-center gap-2.5 px-5 py-[6px] text-[13.5px] transition-colors border-l-2 mb-2',
           isActive(base)
             ? 'text-[#7c3aed] bg-[rgba(91,33,182,0.06)] border-[#7c3aed] font-semibold'
             : 'text-[#525252] dark:text-[#7a8399] border-transparent hover:text-[#18181b] dark:hover:text-[#edf0fa] hover:bg-black/[0.025] dark:hover:bg-white/[0.025]',
@@ -85,7 +78,7 @@ function SidebarBody({
           <div key={group.label} className="mb-2 mt-2">
             <button
               onClick={() => setCollapsed((c) => ({ ...c, [group.label]: !c[group.label] }))}
-              className="w-full flex items-center justify-between px-5 py-2.5 text-[12px] font-bold tracking-[0.07em] uppercase text-[#a3a3a3] dark:text-[#374151] hover:text-[#525252] dark:hover:text-[#7a8399] transition-colors"
+              className="w-full flex items-center justify-between px-5 py-2.5 text-[11px] font-bold tracking-[0.07em] uppercase text-[#a3a3a3] dark:text-[#374151] hover:text-[#525252] dark:hover:text-[#7a8399] transition-colors"
             >
               {group.label}
               <span className={`text-[8px] opacity-50 transition-transform ${isCollapsed ? '-rotate-90' : ''}`}>▼</span>
@@ -100,7 +93,7 @@ function SidebarBody({
                       key={c.slug}
                       href={href}
                       className={[
-                        'flex items-center gap-2.5 px-5 py-2.5 text-[16.5px] leading-snug transition-colors border-l-2',
+                        'flex items-center gap-2.5 px-5 py-[6px] text-[13.5px] leading-snug transition-colors border-l-2',
                         active
                           ? 'text-[#7c3aed] bg-[rgba(91,33,182,0.06)] border-[#7c3aed] font-semibold'
                           : 'text-[#525252] dark:text-[#7a8399] border-transparent hover:text-[#18181b] dark:hover:text-[#edf0fa] hover:bg-black/[0.025] dark:hover:bg-white/[0.025]',

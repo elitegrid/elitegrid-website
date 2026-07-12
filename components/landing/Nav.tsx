@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import ThemeToggle from './ThemeToggle'
 
 const navLinkClass =
-  'text-[17px] font-medium text-[#525252] dark:text-[#7a8399] hover:text-[#18181b] dark:hover:text-[#edf0fa] transition-colors inline-flex items-center gap-1.5'
+  'text-[14px] font-medium text-[#525252] dark:text-[#7a8399] hover:text-[#18181b] dark:hover:text-[#edf0fa] transition-colors inline-flex items-center gap-1.5'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -35,7 +35,7 @@ export default function Nav() {
             <circle cx="35" cy="11" r="2.5" fill="#c4b5fd" />
           </svg>
         </div>
-        <span className="font-heading font-bold text-[21px] tracking-[-0.02em] text-[#18181b] dark:text-[#edf0fa]">
+        <span className="font-heading font-bold text-[17px] tracking-[-0.02em] text-[#18181b] dark:text-[#edf0fa]">
           EliteGrid
         </span>
       </a>
@@ -43,9 +43,6 @@ export default function Nav() {
       <div className="hidden min-[900px]:flex items-center gap-8">
         <Link href="/docs" className={navLinkClass}>
           Docs
-          <span className="text-[13px] font-bold tracking-[0.06em] uppercase text-[#7c3aed] bg-[rgba(91,33,182,0.1)] border border-[rgba(91,33,182,0.2)] px-1.5 py-0.5 rounded">
-            Soon
-          </span>
         </Link>
         <Link href="/playground" className={navLinkClass}>
           Playground
@@ -73,9 +70,9 @@ export default function Nav() {
         <ThemeToggle />
         <a
           href="#waitlist"
-          className="shrink-0 inline-flex items-center gap-2 bg-[#5b21b6] dark:bg-[#7c3aed] text-white text-[16px] font-semibold px-5 py-2 rounded-[9px] transition-all hover:bg-[#4c1d95] dark:hover:bg-[#6d28d9] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(91,33,182,0.35)]"
+          className="shrink-0 inline-flex items-center gap-2 bg-[#5b21b6] dark:bg-[#7c3aed] text-white text-[13px] font-semibold px-5 py-[9px] rounded-[9px] transition-all hover:bg-[#4c1d95] dark:hover:bg-[#6d28d9] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(91,33,182,0.35)]"
         >
-          Join Waitlist
+          Get Started
         </a>
       </div>
     </nav>

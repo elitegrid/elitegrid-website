@@ -212,6 +212,87 @@ const grid = createGrid<User>({
 
 ---
 
+## Live example
+
+Multi-column sort (hold **Shift** and click a second header) plus the custom `priority` comparator from earlier in this chapter, so `high → medium → low` sorts correctly instead of alphabetically. The button demonstrates the Grid API's `clearSort()`.
+
+```ts
+import { createGrid, mount, type GridAPI } from '@elitegrid/vanilla'
+import '@elitegrid/vanilla/styles.css'
+
+interface Task {
+  id: number
+  title: string
+  priority: 'high' | 'medium' | 'low'
+  assignee: string
+  dueInDays: number
+}
+
+const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 }
+
+const tasks: Task[] = [
+  { id: 1, title: 'Fix login bug', priority: 'high', assignee: 'Ada', dueInDays: 1 },
+  { id: 2, title: 'Write release notes', priority: 'low', assignee: 'Alan', dueInDays: 5 },
+  { id: 3, title: 'Review PR #482', priority: 'medium', assignee: 'Grace', dueInDays: 2 },
+  { id: 4, title: 'Update dependencies', priority: 'low', assignee: 'Ada', dueInDays: 7 },
+  { id: 5, title: 'Investigate slow query', priority: 'high', assignee: 'Grace', dueInDays: 1 },
+  { id: 6, title: 'Design onboarding flow', priority: 'medium', assignee: 'Alan', dueInDays: 4 },
+  { id: 7, title: 'Add dark mode toggle', priority: 'low', assignee: 'Grace', dueInDays: 10 },
+  { id: 8, title: 'Patch security vulnerability', priority: 'high', assignee: 'Alan', dueInDays: 1 },
+  { id: 9, title: 'Refactor auth module', priority: 'medium', assignee: 'Ada', dueInDays: 6 },
+  { id: 10, title: 'Write onboarding docs', priority: 'low', assignee: 'Grace', dueInDays: 8 },
+]
+
+let api: GridAPI<Task> | null = null
+
+const grid = createGrid<Task>({
+  columns: [
+    { field: 'title', header: 'Task', size: { flex: 2 } },
+    {
+      field: 'priority',
+      header: 'Priority',
+      sort: {
+        comparator: (a, b) =>
+          PRIORITY_ORDER[a as keyof typeof PRIORITY_ORDER] -
+          PRIORITY_ORDER[b as keyof typeof PRIORITY_ORDER],
+      },
+    },
+    { field: 'assignee', header: 'Assignee' },
+    { field: 'dueInDays', header: 'Due (days)' },
+  ],
+  data: tasks,
+  sorting: { multiSort: true },
+  events: { onReady: (a) => { api = a } },
+})
+
+function makeBtn(label: string, onClick: () => void) {
+  const btn = document.createElement('button')
+  btn.textContent = label
+  btn.style.cssText = 'padding:7px 16px;border-radius:7px;border:none;cursor:pointer;' +
+    'font-size:0.8rem;font-weight:600;font-family:system-ui;background:#7c3aed;color:#ffffff'
+  btn.onclick = onClick
+  return btn
+}
+
+const container = document.getElementById('grid-container')!
+container.style.cssText = 'height:440px;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box'
+
+const toolbar = document.createElement('div')
+toolbar.style.cssText = 'display:flex;gap:8px;flex-shrink:0'
+toolbar.appendChild(makeBtn('Reset sort', () => api?.clearSort()))
+container.appendChild(toolbar)
+
+const gridEl = document.createElement('div')
+gridEl.style.cssText = 'flex:1;min-height:0'
+container.appendChild(gridEl)
+
+mount(grid, gridEl)
+```
+
+[[LIVE_DEMO:vanilla:0]]
+
+---
+
 ## Common sorting mistakes
 
 | Symptom | Cause | Fix |

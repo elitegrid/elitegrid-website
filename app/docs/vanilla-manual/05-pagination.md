@@ -192,6 +192,51 @@ nextBtn.addEventListener('click', () => grid.plugins.pagination.nextPage())
 
 ---
 
+## Live example
+
+42 rows with a custom `pageSize` and `pageSizeOptions` — use the page-size dropdown and prev/next controls at the bottom of the grid.
+
+```ts
+import { createGrid, mount } from '@elitegrid/vanilla'
+import '@elitegrid/vanilla/styles.css'
+
+interface Contact {
+  id: number
+  name: string
+  company: string
+  city: string
+}
+
+const COMPANIES = ['Acme Corp', 'Globex', 'Initech', 'Umbrella', 'Stark Industries', 'Wayne Enterprises']
+const CITIES = ['Austin', 'Denver', 'Seattle', 'Chicago', 'Miami', 'Boston']
+const NAMES = ['Ada', 'Alan', 'Grace', 'Linus', 'Margaret', 'Dennis', 'Barbara', 'Ken']
+
+const contacts: Contact[] = Array.from({ length: 42 }, (_, i) => ({
+  id: i + 1,
+  name: `${NAMES[i % NAMES.length]} ${String.fromCharCode(65 + (i % 26))}.`,
+  company: COMPANIES[i % COMPANIES.length],
+  city: CITIES[i % CITIES.length],
+}))
+
+const grid = createGrid<Contact>({
+  columns: [
+    { field: 'name', header: 'Name', size: { flex: 1.5 } },
+    { field: 'company', header: 'Company', size: { flex: 1.5 } },
+    { field: 'city', header: 'City' },
+  ],
+  data: contacts,
+  pagination: { enabled: true, pageSize: 10, pageSizeOptions: [5, 10, 20] },
+})
+
+const container = document.getElementById('grid-container')!
+container.style.cssText = 'height:440px'
+mount(grid, container)
+```
+
+[[LIVE_DEMO:vanilla:0]]
+
+---
+
 ## Common pagination mistakes
 
 | Symptom | Cause | Fix |

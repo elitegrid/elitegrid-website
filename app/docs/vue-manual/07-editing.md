@@ -226,4 +226,67 @@ api.getEditingCell()              // → { rowId, columnId, rowIndex, columnInde
 
 ---
 
+## Live example
+
+Double-click a cell to edit it. `salary` has a `validator` that rejects negative numbers; `department` uses a `dropdown` editor instead of free text. Written as `defineComponent` + `h()`, per the note in [Chapter 01](/docs/vue/getting-started#try-it-live).
+
+```ts
+import { defineComponent, h } from 'vue'
+import { createGrid, Grid } from '@elitegrid/vue'
+
+interface Employee {
+  id: number
+  name: string
+  department: string
+  salary: number
+}
+
+const employees: Employee[] = [
+  { id: 1, name: 'Ada Lovelace', department: 'Engineering', salary: 120000 },
+  { id: 2, name: 'Alan Turing', department: 'Research', salary: 135000 },
+  { id: 3, name: 'Grace Hopper', department: 'Engineering', salary: 128000 },
+  { id: 4, name: 'Margaret Hamilton', department: 'Engineering', salary: 131000 },
+  { id: 5, name: 'Katherine Johnson', department: 'Research', salary: 118000 },
+  { id: 6, name: 'Linus Torvalds', department: 'Engineering', salary: 142000 },
+  { id: 7, name: 'Tim Berners-Lee', department: 'Research', salary: 125000 },
+  { id: 8, name: 'Barbara Liskov', department: 'Engineering', salary: 133000 },
+  { id: 9, name: 'Dennis Ritchie', department: 'Engineering', salary: 129000 },
+  { id: 10, name: 'Radia Perlman', department: 'Research', salary: 121000 },
+]
+
+const grid = createGrid<Employee>({
+  columns: [
+    { field: 'name', header: 'Name', size: { flex: 1.5 }, edit: { enabled: true, type: 'text' } },
+    {
+      field: 'department',
+      header: 'Department',
+      size: { flex: 1.5 },
+      edit: { enabled: true, type: 'dropdown', options: ['Engineering', 'Research', 'Product', 'Design'] },
+    },
+    {
+      field: 'salary',
+      header: 'Salary',
+      display: { formatter: (v) => `$${Number(v).toLocaleString()}` },
+      edit: {
+        enabled: true,
+        type: 'number',
+        validator: (value) => (Number(value) < 0 ? 'Salary cannot be negative' : null),
+      },
+    },
+  ],
+  data: employees,
+  editing: { enabled: true, trigger: 'doubleClick', confirmOnEnter: true, cancelOnEscape: true, moveOnTab: true },
+})
+
+export default defineComponent({
+  setup() {
+    return () => h('div', { style: 'height:440px' }, [h(Grid, { grid })])
+  },
+})
+```
+
+[[LIVE_DEMO:vue:0]]
+
+---
+
 Next: [08 · Formatting Cell Values](/docs/vue/formatting-values)

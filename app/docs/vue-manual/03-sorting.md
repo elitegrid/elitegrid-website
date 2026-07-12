@@ -212,6 +212,79 @@ const grid = createGrid<User>({
 
 ---
 
+## Live example
+
+Multi-column sort (hold **Shift** and click a second header) plus the custom `priority` comparator from earlier in this chapter, so `high → medium → low` sorts correctly instead of alphabetically. The button demonstrates the Grid API's `clearSort()`. Written as `defineComponent` + `h()` — the sandbox running this page can't compile a `.vue` SFC — but every grid concept is identical to `<script setup>`.
+
+```ts
+import { defineComponent, h } from 'vue'
+import { createGrid, Grid, type GridAPI } from '@elitegrid/vue'
+
+interface Task {
+  id: number
+  title: string
+  priority: 'high' | 'medium' | 'low'
+  assignee: string
+  dueInDays: number
+}
+
+const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 }
+
+const tasks: Task[] = [
+  { id: 1, title: 'Fix login bug', priority: 'high', assignee: 'Ada', dueInDays: 1 },
+  { id: 2, title: 'Write release notes', priority: 'low', assignee: 'Alan', dueInDays: 5 },
+  { id: 3, title: 'Review PR #482', priority: 'medium', assignee: 'Grace', dueInDays: 2 },
+  { id: 4, title: 'Update dependencies', priority: 'low', assignee: 'Ada', dueInDays: 7 },
+  { id: 5, title: 'Investigate slow query', priority: 'high', assignee: 'Grace', dueInDays: 1 },
+  { id: 6, title: 'Design onboarding flow', priority: 'medium', assignee: 'Alan', dueInDays: 4 },
+  { id: 7, title: 'Add dark mode toggle', priority: 'low', assignee: 'Grace', dueInDays: 10 },
+  { id: 8, title: 'Patch security vulnerability', priority: 'high', assignee: 'Alan', dueInDays: 1 },
+  { id: 9, title: 'Refactor auth module', priority: 'medium', assignee: 'Ada', dueInDays: 6 },
+  { id: 10, title: 'Write onboarding docs', priority: 'low', assignee: 'Grace', dueInDays: 8 },
+]
+
+let api: GridAPI<Task> | null = null
+
+const grid = createGrid<Task>({
+  columns: [
+    { field: 'title', header: 'Task', size: { flex: 2 } },
+    {
+      field: 'priority',
+      header: 'Priority',
+      sort: {
+        comparator: (a, b) =>
+          PRIORITY_ORDER[a as keyof typeof PRIORITY_ORDER] -
+          PRIORITY_ORDER[b as keyof typeof PRIORITY_ORDER],
+      },
+    },
+    { field: 'assignee', header: 'Assignee' },
+    { field: 'dueInDays', header: 'Due (days)' },
+  ],
+  data: tasks,
+  sorting: { multiSort: true },
+  events: { onReady: (a) => { api = a } },
+})
+
+export default defineComponent({
+  setup() {
+    return () =>
+      h('div', { style: 'height:440px;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box' }, [
+        h('div', { style: 'display:flex;gap:8px;flex-shrink:0' }, [
+          h('button', {
+            onClick: () => api?.clearSort(),
+            style: 'padding:7px 16px;border-radius:7px;border:none;cursor:pointer;font-size:0.8rem;font-weight:600;font-family:system-ui;background:#7c3aed;color:#ffffff',
+          }, 'Reset sort'),
+        ]),
+        h('div', { style: 'flex:1;min-height:0' }, [h(Grid, { grid })]),
+      ])
+  },
+})
+```
+
+[[LIVE_DEMO:vue:0]]
+
+---
+
 ## Common sorting mistakes
 
 | Symptom | Cause | Fix |

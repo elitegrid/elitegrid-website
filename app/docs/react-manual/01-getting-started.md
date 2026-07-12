@@ -151,6 +151,8 @@ export default function App() {
 }
 ```
 
+[[LIVE_DEMO:react:0]]
+
 Run it and you already have: click-to-sort headers, a filter funnel on each column, resizable columns, and keyboard arrow-key navigation. 🎉
 
 ---

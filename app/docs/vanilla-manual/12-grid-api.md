@@ -22,7 +22,7 @@ Vanilla JS gives you two equally valid ways to get an API object for a `grid`, b
 `buildGridAPI(grid)` is a plain function: pass it the `GridInstance` from `createGrid()`, get an API object back, synchronously, any time — even before you've called `mount()`.
 
 ```ts
-import { createGrid, buildGridAPI, mount } from '@elitegrid/core'
+import { createGrid, buildGridAPI, mount } from '@elitegrid/vanilla'
 
 const grid = createGrid<User>({ columns, data })
 const api = buildGridAPI(grid)

@@ -6,9 +6,9 @@ A plain-English dictionary of every term used in this manual. Skim it once, then
 
 ## EliteGrid concepts
 
-**Core (`@elitegrid/core`)** The framework-agnostic package this manual documents — the same engine that the React and Vue adapters wrap internally. It has no dependency on React, Vue, or any framework; it talks directly to the DOM.
+**Core (`@elitegrid/core`)** The framework-agnostic engine every adapter — `@elitegrid/react`, `@elitegrid/vue`, and `@elitegrid/vanilla` — wraps internally. It has no dependency on React, Vue, or any framework and talks directly to the DOM, but you never install or import it yourself; even this manual documents `@elitegrid/vanilla`, not core directly (see **Adapter**, next).
 
-**Adapter** A framework-specific package (`@elitegrid/react`, `@elitegrid/vue`) that wraps the core engine documented here so the grid feels native to that framework, adding things like a `<Grid>` component and hooks/composables. This manual doesn't need one.
+**Adapter** A package that wraps the framework-agnostic core engine and exposes it in the shape natural to a given environment: `@elitegrid/react` adds a `<Grid>` component and hooks, `@elitegrid/vue` adds a `<Grid>` component and composables, and **`@elitegrid/vanilla`** — the one this manual documents — adds `createGrid()`/`mount()` for plain DOM usage. Every environment gets one; "no framework" doesn't mean "no adapter."
 
 **Core engine / kernel** The "brain" that holds your data and runs sorting, filtering, pagination, selection, and editing. `createGrid()` builds one. `mount()` draws it on screen. Also called the **engine** or **kernel**, and reachable at `grid.kernel`.
 
@@ -152,7 +152,7 @@ A plain-English dictionary of every term used in this manual. Skim it once, then
 
 **`DOMContentLoaded`** A browser event that fires once the initial HTML has been parsed, before images/styles finish loading. Useful for deferring a `mount()` call until a container element is guaranteed to exist.
 
-**Bundler** A build tool (Vite, webpack, esbuild, …) that combines your JavaScript files and `npm` dependencies into files a browser can load efficiently. Optional — `@elitegrid/core` also ships a browser-ready build for use without one.
+**Bundler** A build tool (Vite, webpack, esbuild, …) that combines your JavaScript files and `npm` dependencies into files a browser can load efficiently. Optional — `@elitegrid/vanilla` also ships a browser-ready build for use without one.
 
 **Namespace (store)** One named slice of `grid.kernel.store`'s state — `selection`, `paginated`, `sorted`, and so on — each independently readable and subscribable. (See [Chapter 12](/docs/vanilla/grid-api#the-data-store-advanced).)
 

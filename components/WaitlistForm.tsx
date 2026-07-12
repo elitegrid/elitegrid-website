@@ -53,18 +53,18 @@ export default function WaitlistForm() {
           onKeyDown={e => e.key === 'Enter' && handleSubmit()}
           placeholder="your@email.com"
           disabled={status === 'loading' || status === 'success'}
-          className="flex-1 min-w-0 bg-white/[0.07] border border-white/[0.12] rounded-[9px] px-[18px] py-3 text-[18px] font-body text-[#edf0fa] placeholder:text-white/20 outline-none focus:border-[rgba(124,58,237,0.55)] transition-colors disabled:opacity-50"
+          className="flex-1 min-w-0 bg-white/[0.07] border border-white/[0.12] rounded-[9px] px-[18px] py-3 text-[15px] font-body text-[#edf0fa] placeholder:text-white/20 outline-none focus:border-[rgba(124,58,237,0.55)] transition-colors disabled:opacity-50"
         />
         <button
           onClick={handleSubmit}
           disabled={status === 'loading' || status === 'success'}
-          className="shrink-0 inline-flex items-center gap-2 bg-[#7c3aed] text-white text-[17px] font-semibold px-6 py-3 rounded-[9px] transition-all hover:bg-[#6d28d9] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(91,33,182,0.35)] disabled:opacity-50 disabled:hover:translate-y-0 whitespace-nowrap"
+          className="shrink-0 inline-flex items-center gap-2 bg-[#7c3aed] text-white text-[14px] font-semibold px-6 py-3 rounded-[9px] transition-all hover:bg-[#6d28d9] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(91,33,182,0.35)] disabled:opacity-50 disabled:hover:translate-y-0 whitespace-nowrap"
         >
           {status === 'loading' ? 'Joining…' : status === 'success' ? '✓ Joined!' : 'Join Waitlist'}
         </button>
       </div>
 
-      <p className="text-[16px] text-[#374151] mt-3.5 mb-0">
+      <p className="text-[13px] text-[#374151] mt-3.5 mb-0">
         {message ? (
           <span
             className={

@@ -91,7 +91,7 @@ export default function ReportModal({ onClose }: Props) {
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
           }}>
             <div style={{ fontSize: '2rem' }}>✓</div>
-            <p style={{ margin: 0, color: '#e8ff47', fontFamily: 'monospace', fontWeight: 700 }}>
+            <p style={{ margin: 0, color: '#7c3aed', fontFamily: 'monospace', fontWeight: 700 }}>
               Thanks for the feedback!
             </p>
             <p style={{ margin: 0, color: '#52525b', fontFamily: 'monospace', fontSize: '0.8rem' }}>
@@ -101,8 +101,8 @@ export default function ReportModal({ onClose }: Props) {
               onClick={onClose}
               style={{
                 marginTop: 8, padding: '8px 24px', borderRadius: 8,
-                background: 'rgba(232,255,71,0.1)', border: '1px solid rgba(232,255,71,0.2)',
-                color: '#e8ff47', fontFamily: 'monospace', fontSize: '0.82rem',
+                background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)',
+                color: '#7c3aed', fontFamily: 'monospace', fontSize: '0.82rem',
                 fontWeight: 600, cursor: 'pointer',
               }}
             >
@@ -119,9 +119,9 @@ export default function ReportModal({ onClose }: Props) {
                   onClick={() => setType(t)}
                   style={{
                     flex: 1, padding: '7px 4px', borderRadius: 8,
-                    border: type === t ? '1px solid rgba(232,255,71,0.4)' : '1px solid rgba(255,255,255,0.07)',
-                    background: type === t ? 'rgba(232,255,71,0.08)' : 'transparent',
-                    color: type === t ? '#e8ff47' : '#52525b',
+                    border: type === t ? '1px solid rgba(124,58,237,0.4)' : '1px solid rgba(255,255,255,0.07)',
+                    background: type === t ? 'rgba(124,58,237,0.08)' : 'transparent',
+                    color: type === t ? '#7c3aed' : '#52525b',
                     fontFamily: 'monospace', fontSize: '0.72rem', fontWeight: 600,
                     cursor: 'pointer', transition: 'all 0.15s',
                   }}
@@ -188,8 +188,8 @@ export default function ReportModal({ onClose }: Props) {
                 disabled={status === 'loading'}
                 style={{
                   padding: '9px 24px', borderRadius: 8, border: 'none',
-                  background: status === 'loading' ? 'rgba(232,255,71,0.5)' : '#e8ff47',
-                  color: '#09090b', fontFamily: 'monospace', fontSize: '0.82rem',
+                  background: status === 'loading' ? 'rgba(124,58,237,0.5)' : '#7c3aed',
+                  color: '#ffffff', fontFamily: 'monospace', fontSize: '0.82rem',
                   fontWeight: 700, cursor: status === 'loading' ? 'not-allowed' : 'pointer',
                   transition: 'all 0.15s',
                 }}

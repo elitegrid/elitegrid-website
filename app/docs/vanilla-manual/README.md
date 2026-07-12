@@ -1,10 +1,10 @@
 # Vanilla JS Manual
 
-> A friendly, step-by-step guide to using **`@elitegrid/core`** with no framework at all. Written so a junior developer can read it top-to-bottom and ship a working data grid in a plain HTML page or any bundler-based project — no prior experience with the library required.
+> A friendly, step-by-step guide to using **`@elitegrid/vanilla`** with no framework at all. Written so a junior developer can read it top-to-bottom and ship a working data grid in a plain HTML page or any bundler-based project — no prior experience with the library required.
 
 EliteGrid is a fast, fully-typed data table that works anywhere JavaScript runs. You describe your columns and data once, `mount()` the grid into a container element, and you get sorting, filtering, pagination, row selection, inline editing, CSV export, keyboard navigation, and screen-reader support — all out of the box, with zero framework dependency.
 
-> **Already using React or Vue?** Skip this manual and read the [React Manual](/docs/react) or [Vue Manual](/docs/vue) instead — those adapters wrap the same engine documented here with a `<Grid>` component and framework-native hooks/composables. This manual is for everyone else: plain HTML pages, Svelte, Angular, jQuery-era codebases, or anywhere you'd rather talk to the DOM directly.
+> **Already using React or Vue?** Skip this manual and read the [React Manual](/docs/react) or [Vue Manual](/docs/vue) instead — `@elitegrid/react` and `@elitegrid/vue` wrap the same underlying engine as `@elitegrid/vanilla`, just with a `<Grid>` component and framework-native hooks/composables instead of `mount()`. This manual is for everyone else: plain HTML pages, Svelte, Angular, jQuery-era codebases, or anywhere you'd rather talk to the DOM directly.
 
 ---
 
@@ -43,13 +43,13 @@ There is also an [`examples/`](/docs/vanilla/getting-started) folder with a comp
 <!doctype html>
 <html>
   <head>
-    <link rel="stylesheet" href="node_modules/@elitegrid/core/dist/styles.css" />
+    <link rel="stylesheet" href="node_modules/@elitegrid/vanilla/dist/styles.css" />
   </head>
   <body>
     <div id="grid-container" style="height: 400px"></div>
 
     <script type="module">
-      import { createGrid, mount } from '@elitegrid/core'
+      import { createGrid, mount } from '@elitegrid/vanilla'
 
       // 1. Define your data
       const users = [
@@ -87,7 +87,7 @@ These three ideas explain almost everything in this library.
 `createGrid()` creates the "engine" that holds your data and runs all the logic — sorting, filtering, pagination, selection, editing. It is a **plain function that returns a plain object**. It doesn't touch the DOM and has no idea what a component or a re-render is, because in vanilla JS there is no framework re-running your code — you just call it once, wherever your script starts.
 
 ```ts
-import { createGrid } from '@elitegrid/core'
+import { createGrid } from '@elitegrid/vanilla'
 
 const grid = createGrid({ columns, data })
 ```
@@ -99,7 +99,7 @@ const grid = createGrid({ columns, data })
 `mount()` is the vanilla equivalent of React's `<Grid grid={grid} />` or Vue's `<Grid :grid="grid" />` — it's the one function that actually draws the header, rows, scrollbars, and pagination bar. **The container needs a height** (the grid fills whatever space it's given), and `mount()` needs the container to already exist in the DOM.
 
 ```ts
-import { mount } from '@elitegrid/core'
+import { mount } from '@elitegrid/vanilla'
 
 const container = document.getElementById('grid-container')
 const dispose = mount(grid, container)
@@ -113,7 +113,7 @@ When you need to do something programmatically — select a row, change the page
 
 ```ts
 // Option A — build it directly, any time after createGrid()
-import { buildGridAPI } from '@elitegrid/core'
+import { buildGridAPI } from '@elitegrid/vanilla'
 const api = buildGridAPI(grid)
 
 // Option B — receive it once the grid has finished its first render
@@ -138,13 +138,13 @@ See [Chapter 12](/docs/vanilla/grid-api) for the full list, and for when to reac
 - You must import the stylesheet once in your page:
 
   ```ts
-  import '@elitegrid/core/styles.css'
+  import '@elitegrid/vanilla/styles.css'
   ```
 
   or, without a bundler, link it directly:
 
   ```html
-  <link rel="stylesheet" href="/node_modules/@elitegrid/core/dist/styles.css" />
+  <link rel="stylesheet" href="/node_modules/@elitegrid/vanilla/dist/styles.css" />
   ```
 
 ---

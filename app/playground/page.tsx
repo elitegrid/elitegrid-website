@@ -3,6 +3,11 @@
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
 import Editor, { loader } from '@monaco-editor/react'
+import {
+  buildReactIframeSrcDoc,
+  buildVueIframeSrcDoc,
+  buildVanillaIframeSrcDoc,
+} from '@/lib/playgroundSrcDoc'
 
 // Pre-warm Monaco workers as soon as this module is imported (browser only).
 // Next.js evaluates modules on the server too, so the typeof guard is required.
@@ -197,8 +202,8 @@ const NAMES     = ['Alice','Bob','Carol','David','Eva','Frank','Grace','Henry',
 
 const grid = createGrid({
   columns: [
-    { field: 'id',       header: 'ID',         size: { width: 70 } },
-    { field: 'name',     header: 'Name',       size: { flex: 2, minWidth: 140 },
+    { field: 'id',       header: 'ID',         size: { width: 90 } },
+    { field: 'name',     header: 'Name',       size: { flex: 1, minWidth: 140 },
       filter: { type: 'text' } },
     { field: 'dept',     header: 'Department', size: { flex: 1, minWidth: 120 },
       filter: { type: 'text' } },
@@ -207,7 +212,7 @@ const grid = createGrid({
       display: { formatter: v => '$' + Number(v).toLocaleString() } },
     { field: 'location', header: 'Location',   size: { flex: 1, minWidth: 110 },
       filter: { type: 'text' } },
-    { field: 'status',   header: 'Status',     size: { width: 90 },
+    { field: 'status',   header: 'Status',     size: { width: 110 },
       display: { formatter: v => v ? 'Active' : 'Inactive' } },
   ],
   data: Array.from({ length: 10000 }, (_, i) => ({
@@ -238,8 +243,8 @@ export default function App() {
 
 const grid = createGrid({
   columns: [
-    { field: 'id',      header: 'ID',      size: { width: 60 } },
-    { field: 'name',    header: 'Name',    size: { flex: 2, minWidth: 140 },
+    { field: 'id',      header: 'ID',      size: { width: 80 } },
+    { field: 'name',    header: 'Name',    size: { flex: 1, minWidth: 140 },
       filter: { type: 'text' } },
     { field: 'email',   header: 'Email',   size: { flex: 2, minWidth: 160 },
       filter: { type: 'text' } },
@@ -283,7 +288,7 @@ export default function App() {
 
 const grid = createGrid({
   columns: [
-    { field: 'name',   header: 'Name',       size: { flex: 2 },
+    { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 },
       edit: { enabled: true, type: 'text',
               validator: v => (!v || !String(v).trim()) ? 'Name is required' : null } },
     { field: 'dept',   header: 'Department', size: { flex: 1 },
@@ -343,8 +348,8 @@ let api: any = null
 
 const grid = createGrid({
   columns: [
-    { field: 'id',     header: 'ID',         size: { width: 60 } },
-    { field: 'name',   header: 'Name',       size: { flex: 2 }, filter: { type: 'text' } },
+    { field: 'id',     header: 'ID',         size: { width: 80 } },
+    { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 }, filter: { type: 'text' } },
     { field: 'role',   header: 'Role',       size: { flex: 1 }, filter: { type: 'text' } },
     { field: 'salary', header: 'Salary',     size: { flex: 1 }, filter: { type: 'number' },
       display: {
@@ -410,8 +415,8 @@ const NAMES     = ['Alice','Bob','Carol','David','Eva','Frank','Grace','Henry',
 
 const grid = createGrid({
   columns: [
-    { field: 'id',       header: 'ID',         size: { width: 70 } },
-    { field: 'name',     header: 'Name',       size: { flex: 2, minWidth: 140 },
+    { field: 'id',       header: 'ID',         size: { width: 90 } },
+    { field: 'name',     header: 'Name',       size: { flex: 1, minWidth: 140 },
       filter: { type: 'text' } },
     { field: 'dept',     header: 'Department', size: { flex: 1, minWidth: 120 },
       filter: { type: 'text' } },
@@ -420,7 +425,7 @@ const grid = createGrid({
       display: { formatter: (v) => '$' + Number(v).toLocaleString() } },
     { field: 'location', header: 'Location',   size: { flex: 1, minWidth: 110 },
       filter: { type: 'text' } },
-    { field: 'status',   header: 'Status',     size: { width: 90 },
+    { field: 'status',   header: 'Status',     size: { width: 110 },
       display: { formatter: (v) => (v ? 'Active' : 'Inactive') } },
   ],
   data: Array.from({ length: 10000 }, (_, i) => ({
@@ -454,8 +459,8 @@ import { createGrid, Grid } from '@elitegrid/vue'
 
 const grid = createGrid({
   columns: [
-    { field: 'id',      header: 'ID',      size: { width: 60 } },
-    { field: 'name',    header: 'Name',    size: { flex: 2, minWidth: 140 },
+    { field: 'id',      header: 'ID',      size: { width: 80 } },
+    { field: 'name',    header: 'Name',    size: { flex: 1, minWidth: 140 },
       filter: { type: 'text' } },
     { field: 'email',   header: 'Email',   size: { flex: 2, minWidth: 160 },
       filter: { type: 'text' } },
@@ -502,7 +507,7 @@ import { createGrid, Grid } from '@elitegrid/vue'
 
 const grid = createGrid({
   columns: [
-    { field: 'name',   header: 'Name',       size: { flex: 2 },
+    { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 },
       edit: { enabled: true, type: 'text',
               validator: (v) => (!v || !String(v).trim()) ? 'Name is required' : null } },
     { field: 'dept',   header: 'Department', size: { flex: 1 },
@@ -564,8 +569,8 @@ let api: any = null
 
 const grid = createGrid({
   columns: [
-    { field: 'id',     header: 'ID',         size: { width: 60 } },
-    { field: 'name',   header: 'Name',       size: { flex: 2 }, filter: { type: 'text' } },
+    { field: 'id',     header: 'ID',         size: { width: 80 } },
+    { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 }, filter: { type: 'text' } },
     { field: 'role',   header: 'Role',       size: { flex: 1 }, filter: { type: 'text' } },
     { field: 'salary', header: 'Salary',     size: { flex: 1 }, filter: { type: 'number' },
       display: {
@@ -625,7 +630,7 @@ const VANILLA_EXAMPLES: Record<ExampleKey, ExampleDef> = {
     badge: '10K rows',
     desc: 'Identical config, zero framework — 10,000 rows, same 60fps performance',
     filename: 'performance.ts',
-    code: `import { createGrid, mount } from '@elitegrid/core'
+    code: `import { createGrid, mount } from '@elitegrid/vanilla'
 
 const DEPTS     = ['Engineering','Design','Marketing','HR','Sales','Finance']
 const LOCATIONS = ['New York','London','Berlin','Tokyo','Sydney','Toronto']
@@ -634,8 +639,8 @@ const NAMES     = ['Alice','Bob','Carol','David','Eva','Frank','Grace','Henry',
 
 const grid = createGrid({
   columns: [
-    { field: 'id',       header: 'ID',         size: { width: 70 } },
-    { field: 'name',     header: 'Name',       size: { flex: 2, minWidth: 140 },
+    { field: 'id',       header: 'ID',         size: { width: 90 } },
+    { field: 'name',     header: 'Name',       size: { flex: 1, minWidth: 140 },
       filter: { type: 'text' } },
     { field: 'dept',     header: 'Department', size: { flex: 1, minWidth: 120 },
       filter: { type: 'text' } },
@@ -644,7 +649,7 @@ const grid = createGrid({
       display: { formatter: v => '$' + Number(v).toLocaleString() } },
     { field: 'location', header: 'Location',   size: { flex: 1, minWidth: 110 },
       filter: { type: 'text' } },
-    { field: 'status',   header: 'Status',     size: { width: 90 },
+    { field: 'status',   header: 'Status',     size: { width: 110 },
       display: { formatter: v => v ? 'Active' : 'Inactive' } },
   ],
   data: Array.from({ length: 10000 }, (_, i) => ({
@@ -670,12 +675,12 @@ mount(grid, document.getElementById('grid-container'))`,
     badge: 'Live fetch',
     desc: 'Fetch from a real API — sort, filter and paginate live data, zero framework glue',
     filename: 'real-api.ts',
-    code: `import { createGrid, mount } from '@elitegrid/core'
+    code: `import { createGrid, mount } from '@elitegrid/vanilla'
 
 const grid = createGrid({
   columns: [
-    { field: 'id',      header: 'ID',      size: { width: 60 } },
-    { field: 'name',    header: 'Name',    size: { flex: 2, minWidth: 140 },
+    { field: 'id',      header: 'ID',      size: { width: 80 } },
+    { field: 'name',    header: 'Name',    size: { flex: 1, minWidth: 140 },
       filter: { type: 'text' } },
     { field: 'email',   header: 'Email',   size: { flex: 2, minWidth: 160 },
       filter: { type: 'text' } },
@@ -713,11 +718,11 @@ mount(grid, document.getElementById('grid-container'))`,
     badge: 'Validated',
     desc: 'Double-click any cell to edit — type-safe validators, dropdowns, Tab/Enter nav',
     filename: 'editable.ts',
-    code: `import { createGrid, mount } from '@elitegrid/core'
+    code: `import { createGrid, mount } from '@elitegrid/vanilla'
 
 const grid = createGrid({
   columns: [
-    { field: 'name',   header: 'Name',       size: { flex: 2 },
+    { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 },
       edit: { enabled: true, type: 'text',
               validator: v => (!v || !String(v).trim()) ? 'Name is required' : null } },
     { field: 'dept',   header: 'Department', size: { flex: 1 },
@@ -776,14 +781,14 @@ mount(grid, gridEl)`,
     badge: 'Multi-scope',
     desc: 'Export all, filtered, or selected rows — with separate export formatters',
     filename: 'export.ts',
-    code: `import { createGrid, mount } from '@elitegrid/core'
+    code: `import { createGrid, mount } from '@elitegrid/vanilla'
 
 let api: any = null
 
 const grid = createGrid({
   columns: [
-    { field: 'id',     header: 'ID',         size: { width: 60 } },
-    { field: 'name',   header: 'Name',       size: { flex: 2 }, filter: { type: 'text' } },
+    { field: 'id',     header: 'ID',         size: { width: 80 } },
+    { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 }, filter: { type: 'text' } },
     { field: 'role',   header: 'Role',       size: { flex: 1 }, filter: { type: 'text' } },
     { field: 'salary', header: 'Salary',     size: { flex: 1 }, filter: { type: 'number' },
       display: {
@@ -836,348 +841,6 @@ container.appendChild(gridEl)
 
 mount(grid, gridEl)`,
   },
-}
-
-// ── Shared iframe CSS (used in both React and Vue sandboxes) ─────────────────
-const IFRAME_CSS = `
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body, #root { height: 100%; }
-  body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: #09090b;
-    color: #e4e4e7;
-  }
-  :root, body {
-    --eg-primary: #7c3aed; --eg-primary-text: #ffffff;
-    --eg-primary-light: rgba(124,58,237,0.08); --eg-primary-hover: #6d28d9;
-    --eg-error: #f87171; --eg-error-text: #09090b;
-    --eg-error-bg: rgba(248,113,113,0.08); --eg-surface: #111113;
-    --eg-overlay-bg: rgba(9,9,11,0.97); --eg-header-bg: #0d0d0f;
-    --eg-header-text: #52525b; --eg-header-border: 1px solid rgba(255,255,255,0.06);
-    --eg-header-active-bg: #18181b; --eg-row-bg: #09090b;
-    --eg-row-striped-bg: #0f0f11; --eg-row-border: 1px solid rgba(255,255,255,0.04);
-    --eg-row-hover-bg: rgba(124,58,237,0.045);
-    --eg-row-selected-bg: rgba(124,58,237,0.08);
-    --eg-row-selected-border: 1px solid rgba(124,58,237,0.22);
-    --eg-row-selected-outline: transparent; --eg-cell-text: #d4d4d8;
-    --eg-cell-border: 1px solid rgba(255,255,255,0.04); --eg-text: #e4e4e7;
-    --eg-muted-text: #52525b; --eg-border: rgba(255,255,255,0.07);
-    --eg-border-hover: rgba(124,58,237,0.28); --eg-sort-active-color: #7c3aed;
-    --eg-sort-icon-color: #3f3f46; --eg-btn-bg: rgba(124,58,237,0.08);
-    --eg-btn-text: #7c3aed; --eg-skeleton-base: #18181b;
-    --eg-skeleton-highlight: #27272a; --eg-empty-icon-bg: #18181b;
-  }
-  .yg-header { font-size:.6875rem!important; font-weight:600!important;
-    letter-spacing:.09em!important; text-transform:uppercase!important; color:#3f3f46!important; }
-  .yg-header-cell--sortable:hover { background:#18181b!important; }
-  .yg-header-cell--sorted { color:#7c3aed!important; }
-  .yg-row { transition:background .1s ease; font-size:.875rem!important; }
-  .yg-cell { font-size:.875rem!important; color:#d4d4d8!important;
-    font-family:'Inter',system-ui,sans-serif!important; letter-spacing:-.01em; }
-  .yg-pagination { font-size:.8125rem!important;
-    border-top:1px solid rgba(255,255,255,.05)!important;
-    background:#0a0a0c!important; padding:0 16px!important; color:#3f3f46!important; }
-  .yg-row[aria-selected="true"] { background:rgba(124,58,237,.07)!important; }
-  .yg-cell:focus { outline:2px solid rgba(124,58,237,.3)!important; outline-offset:-2px; }
-  .yg-sort-indicator { opacity:.25; transition:opacity .15s; }
-  .yg-header-cell--sorted .yg-sort-indicator { opacity:1!important; color:#7c3aed!important; }
-  .yg-header-cell--filtered svg { color:#7c3aed!important; }
-  .yg-resize-handle:hover>div { background:rgba(124,58,237,.3)!important; }
-  input[type="checkbox"] { accent-color:#7c3aed; width:14px!important; height:14px!important; cursor:pointer; }
-  .yg-pagination select {
-    appearance: none; -webkit-appearance: none;
-    height: 28px !important; padding: 0 26px 0 10px !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-    border-radius: 6px !important;
-    background-color: rgba(255,255,255,0.05) !important;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237c3aed' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 8px center !important;
-    color: #a1a1aa !important;
-    font-size: 0.8rem !important;
-    font-family: inherit !important;
-    cursor: pointer !important;
-    outline: none !important;
-    transition: border-color 0.15s, background-color 0.15s;
-  }
-  .yg-pagination select:hover {
-    border-color: rgba(124,58,237,0.3) !important;
-    background-color: rgba(124,58,237,0.06) !important;
-    color: #7c3aed !important;
-  }
-  .yg-pagination select:focus {
-    border-color: rgba(124,58,237,0.4) !important;
-    box-shadow: 0 0 0 2px rgba(124,58,237,0.1) !important;
-  }
-  .yg-pagination select option { background: #18181b; color: #e4e4e7; }
-  ::-webkit-scrollbar { width:4px; height:4px; }
-  ::-webkit-scrollbar-track { background:transparent; }
-  ::-webkit-scrollbar-thumb { background:rgba(124,58,237,.15); border-radius:999px; }
-  ::-webkit-scrollbar-thumb:hover { background:rgba(124,58,237,.35); }
-  ::-webkit-scrollbar-corner { background:transparent; }
-`
-
-const ROOT_STYLE = `height:100%;display:flex;flex-direction:column;
-  --eg-primary:#7c3aed; --eg-primary-text:#ffffff; --eg-primary-light:rgba(124,58,237,0.08);
-  --eg-primary-hover:#6d28d9; --eg-error:#f87171; --eg-error-text:#09090b;
-  --eg-error-bg:rgba(248,113,113,0.08); --eg-surface:#111113;
-  --eg-overlay-bg:rgba(9,9,11,0.97); --eg-header-bg:#0d0d0f; --eg-header-text:#52525b;
-  --eg-header-border:1px solid rgba(255,255,255,0.06); --eg-header-active-bg:#18181b;
-  --eg-row-bg:#09090b; --eg-row-striped-bg:#0f0f11;
-  --eg-row-border:1px solid rgba(255,255,255,0.04);
-  --eg-row-hover-bg:rgba(124,58,237,0.045); --eg-row-selected-bg:rgba(124,58,237,0.08);
-  --eg-row-selected-border:1px solid rgba(124,58,237,0.22);
-  --eg-row-selected-outline:transparent; --eg-cell-text:#d4d4d8;
-  --eg-cell-border:1px solid rgba(255,255,255,0.04); --eg-text:#e4e4e7;
-  --eg-muted-text:#52525b; --eg-border:rgba(255,255,255,0.07);
-  --eg-border-hover:rgba(124,58,237,0.28); --eg-sort-active-color:#7c3aed;
-  --eg-sort-icon-color:#3f3f46; --eg-btn-bg:rgba(124,58,237,0.08); --eg-btn-text:#7c3aed;
-  --eg-skeleton-base:#18181b; --eg-skeleton-highlight:#27272a; --eg-empty-icon-bg:#18181b;`
-
-// ── React playground iframe ───────────────────────────────────────────────────
-function buildReactIframeSrcDoc(origin: string): string {
-  return `<!DOCTYPE html>
-<html lang="en"><head>
-  <meta charset="UTF-8"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <style>${IFRAME_CSS}</style>
-  <script type="importmap">{
-    "imports":{
-      "react":"https://esm.sh/react@18.3.1",
-      "react-dom":"https://esm.sh/react-dom@18.3.1",
-      "react-dom/client":"https://esm.sh/react-dom@18.3.1/client",
-      "react/jsx-runtime":"https://esm.sh/react@18.3.1/jsx-runtime",
-      "@elitegrid/core":"${origin}/cdn/core.js",
-      "@elitegrid/react":"${origin}/cdn/react.js"
-    }
-  }</script>
-  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
-</head>
-<body>
-  <div id="root" style="${ROOT_STYLE}"></div>
-  <script type="module">
-    import React          from 'react'
-    import ReactDOM       from 'react-dom'
-    import{createRoot}    from 'react-dom/client'
-    import*as ReactAll    from 'react'
-    import*as EliteReact  from '@elitegrid/react'
-    import*as EliteCore   from '@elitegrid/core'
-
-    const require=mod=>{
-      const m={'react':ReactAll,'react-dom':ReactDOM,'react-dom/client':{createRoot},
-               '@elitegrid/react':EliteReact,'@elitegrid/core':EliteCore}
-      if(m[mod])return m[mod]
-      throw new Error('Module not available: '+mod)
-    }
-    const rootEl=document.getElementById('root')
-    let reactRoot=null
-
-    function showError(msg){
-      if(reactRoot){try{reactRoot.unmount()}catch(_){}reactRoot=null}
-      rootEl.innerHTML='<div style="padding:24px;font-family:monospace;font-size:12.5px;'+
-        'color:#f87171;background:rgba(248,113,113,0.06);border-left:2px solid rgba(248,113,113,0.5);'+
-        'white-space:pre-wrap;overflow:auto;height:100%;box-sizing:border-box;line-height:1.6;">'+
-        msg.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>'
-    }
-
-    function runCode(raw){
-      const Babel=window.Babel
-      if(!Babel){showError('Babel not ready yet.');return}
-      let t
-      try{t=Babel.transform(raw,{presets:[['react',{runtime:'classic'}],
-        ['typescript',{allExtensions:true,isTSX:true}],
-        ['env',{targets:{esmodules:true},modules:'commonjs'}]],filename:'app.tsx'}).code}
-      catch(e){showError('Syntax error:\\n\\n'+e.message);return}
-      const w='"use strict";\\nvar exports={__esModule:true};\\nvar module={exports:exports};\\n'+
-        t+'\\nreturn exports["default"]||module.exports["default"]||module.exports;'
-      let App
-      try{App=(new Function('require','React',w))(require,ReactAll)}
-      catch(e){showError('Runtime error:\\n\\n'+e.message);return}
-      if(typeof App!=='function'){showError('Export a default React component.');return}
-      try{
-        if(reactRoot){reactRoot.unmount();reactRoot=null}
-        rootEl.innerHTML=''
-        reactRoot=createRoot(rootEl)
-        reactRoot.render(React.createElement(App))
-      }catch(e){showError('Render error:\\n\\n'+e.message)}
-    }
-
-    window.addEventListener('message',e=>{if(e.data?.type==='RUN_CODE')runCode(e.data.code)})
-    window.parent.postMessage({type:'IFRAME_READY'},'*')
-  </script>
-</body></html>`
-}
-
-// ── Vue playground iframe ─────────────────────────────────────────────────────
-function buildVueIframeSrcDoc(origin: string): string {
-  return `<!DOCTYPE html>
-<html lang="en"><head>
-  <meta charset="UTF-8"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <style>${IFRAME_CSS}</style>
-  <script type="importmap">{
-    "imports":{
-      "vue":"https://esm.sh/vue@3.4.33",
-      "@elitegrid/core":"${origin}/cdn/core.js",
-      "@elitegrid/vue":"${origin}/cdn/vue.js"
-    }
-  }</script>
-  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
-</head>
-<body>
-  <div id="root" style="${ROOT_STYLE}"></div>
-  <script type="module">
-    import*as VueAll    from 'vue'
-    import*as EliteVue  from '@elitegrid/vue'
-    import*as EliteCore from '@elitegrid/core'
-
-    const require=mod=>{
-      const m={'vue':VueAll,'@elitegrid/vue':EliteVue,'@elitegrid/core':EliteCore}
-      if(m[mod])return m[mod]
-      throw new Error('Module not available: '+mod)
-    }
-    const rootEl=document.getElementById('root')
-    let vueApp=null
-
-    function showError(msg){
-      if(vueApp){try{vueApp.unmount()}catch(_){}vueApp=null}
-      rootEl.innerHTML='<div style="padding:24px;font-family:monospace;font-size:12.5px;'+
-        'color:#f87171;background:rgba(248,113,113,0.06);border-left:2px solid rgba(248,113,113,0.5);'+
-        'white-space:pre-wrap;overflow:auto;height:100%;box-sizing:border-box;line-height:1.6;">'+
-        msg.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>'
-    }
-
-    function runCode(raw){
-      const Babel=window.Babel
-      if(!Babel){showError('Babel not ready yet.');return}
-      let t
-      try{t=Babel.transform(raw,{presets:[
-        ['typescript',{allExtensions:true}],
-        ['env',{targets:{esmodules:true},modules:'commonjs'}]
-      ],filename:'app.ts'}).code}
-      catch(e){showError('Syntax error:\\n\\n'+e.message);return}
-      const w='"use strict";\\nvar exports={__esModule:true};\\nvar module={exports:exports};\\n'+
-        t+'\\nreturn exports["default"]||module.exports["default"]||module.exports;'
-      let comp
-      try{comp=(new Function('require',w))(require)}
-      catch(e){showError('Runtime error:\\n\\n'+e.message);return}
-      if(!comp){showError('Export a default Vue component.\\n\\nExample:\\n  export default defineComponent({\\n    setup() { return () => h(Grid, { grid }) }\\n  })');return}
-      if(vueApp){try{vueApp.unmount()}catch(_){}vueApp=null}
-      rootEl.innerHTML=''
-      try{
-        vueApp=VueAll.createApp(comp)
-        vueApp.mount(rootEl)
-      }catch(e){showError('Mount error:\\n\\n'+e.message)}
-    }
-
-    window.addEventListener('message',e=>{if(e.data?.type==='RUN_CODE')runCode(e.data.code)})
-    window.parent.postMessage({type:'IFRAME_READY'},'*')
-  </script>
-</body></html>`
-}
-
-// ── Vanilla JS playground iframe ──────────────────────────────────────────────
-// @elitegrid/core's browser build only ships the framework-agnostic kernel and
-// plugins — createGrid() and a DOM mount() actually live in the React adapter.
-// We re-export both under the '@elitegrid/core' name here so the vanilla
-// example code the user edits never has to mention React — the sandbox is the
-// only thing that knows a <Grid> component is doing the painting underneath.
-function buildVanillaIframeSrcDoc(origin: string): string {
-  return `<!DOCTYPE html>
-<html lang="en"><head>
-  <meta charset="UTF-8"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <style>${IFRAME_CSS}</style>
-  <script type="importmap">{
-    "imports":{
-      "react":"https://esm.sh/react@18.3.1",
-      "react-dom":"https://esm.sh/react-dom@18.3.1",
-      "react-dom/client":"https://esm.sh/react-dom@18.3.1/client",
-      "react/jsx-runtime":"https://esm.sh/react@18.3.1/jsx-runtime",
-      "@elitegrid/core":"${origin}/cdn/core.js",
-      "@elitegrid/react":"${origin}/cdn/react.js"
-    }
-  }</script>
-  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
-</head>
-<body>
-  <div id="grid-container" style="${ROOT_STYLE}"></div>
-  <script type="module">
-    import React          from 'react'
-    import{createRoot}    from 'react-dom/client'
-    import*as EliteReact  from '@elitegrid/react'
-    import*as EliteCore   from '@elitegrid/core'
-
-    // currentMountEl tracks the actual DOM node the live root was created on.
-    // Vanilla example code is free to do raw container.innerHTML='' between
-    // runs (see editable/export examples) — that detaches this wrapper from
-    // the document without going through React, which desyncs the fiber tree
-    // and makes unmount() try to removeChild a node that's already gone. Only
-    // unmount() while the wrapper is still actually attached; otherwise React
-    // has nothing left to clean up and calling it just throws.
-    let currentRoot=null
-    let currentMountEl=null
-    function mount(grid,container){
-      if(!container)throw new Error('mount() requires a container element')
-      if(currentRoot){
-        if(currentMountEl&&currentMountEl.isConnected){try{currentRoot.unmount()}catch(_){}}
-        currentRoot=null
-        currentMountEl=null
-      }
-      container.innerHTML=''
-      const wrapper=document.createElement('div')
-      wrapper.style.cssText='height:100%'
-      container.appendChild(wrapper)
-      currentRoot=createRoot(wrapper)
-      currentMountEl=wrapper
-      currentRoot.render(React.createElement(EliteReact.Grid,{grid,style:{height:'100%'}}))
-      return ()=>{
-        if(currentRoot&&currentMountEl&&currentMountEl.isConnected){try{currentRoot.unmount()}catch(_){}}
-        currentRoot=null
-        currentMountEl=null
-      }
-    }
-    const CoreShim=Object.assign({},EliteCore,{createGrid:EliteReact.createGrid,mount})
-
-    const require=mod=>{
-      const m={'@elitegrid/core':CoreShim}
-      if(m[mod])return m[mod]
-      throw new Error('Module not available: '+mod+' — the vanilla sandbox only provides "@elitegrid/core"')
-    }
-    const rootEl=document.getElementById('grid-container')
-
-    function showError(msg){
-      if(currentRoot){try{currentRoot.unmount()}catch(_){}currentRoot=null}
-      rootEl.innerHTML='<div style="padding:24px;font-family:monospace;font-size:12.5px;'+
-        'color:#f87171;background:rgba(248,113,113,0.06);border-left:2px solid rgba(248,113,113,0.5);'+
-        'white-space:pre-wrap;overflow:auto;height:100%;box-sizing:border-box;line-height:1.6;">'+
-        msg.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>'
-    }
-
-    function runCode(raw){
-      const Babel=window.Babel
-      if(!Babel){showError('Babel not ready yet.');return}
-      let t
-      try{t=Babel.transform(raw,{presets:[
-        ['typescript',{allExtensions:true}],
-        ['env',{targets:{esmodules:true},modules:'commonjs'}]
-      ],filename:'app.ts'}).code}
-      catch(e){showError('Syntax error:\\n\\n'+e.message);return}
-      const w='"use strict";\\nvar exports={__esModule:true};\\nvar module={exports:exports};\\n'+t
-      try{(new Function('require',w))(require)}
-      catch(e){showError('Runtime error:\\n\\n'+e.message);return}
-    }
-
-    window.addEventListener('message',e=>{if(e.data?.type==='RUN_CODE')runCode(e.data.code)})
-    window.parent.postMessage({type:'IFRAME_READY'},'*')
-  </script>
-</body></html>`
 }
 
 // ── Monaco loading placeholder (dark-themed, no jarring white flash) ─────────
@@ -1272,6 +935,7 @@ export function PlaygroundPage() {
   const [mobileTab, setMobileTab] = useState<'preview' | 'code'>('preview')
   const [isMobile, setIsMobile] = useState(false)
   const [srcDoc, setSrcDoc] = useState(LOADING_DOC)
+  const [isDark, setIsDark] = useState(false)
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -1279,6 +943,24 @@ export function PlaygroundPage() {
   const handleCodeChangeRef = useRef<(v: string) => void>(() => {})
   const { editorHeight, onMouseDown } = useDragResize()
   const { copied, copy } = useCopy()
+
+  // ── Follow the site-wide theme toggle (chrome + Monaco only — the
+  // preview iframes stay always-dark by design, same as the hero code
+  // block and docs code blocks) ──
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'))
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
+
+  const toggleTheme = useCallback(() => {
+    const next = !document.documentElement.classList.contains('dark')
+    document.documentElement.classList.toggle('dark', next)
+    try { localStorage.setItem('eg-theme', next ? 'dark' : 'light') } catch {}
+  }, [])
 
   // ── Global style injection ──
   useEffect(() => {
@@ -1337,10 +1019,17 @@ export function PlaygroundPage() {
     setTimeout(() => setRunning(false), 1500)
   }, [])
 
+  // ── Theme sync — the preview iframe is a separate document, so it needs
+  // its own SET_THEME message rather than just inheriting the .dark class ──
+  const sendTheme = useCallback((dark: boolean) => {
+    iframeRef.current?.contentWindow?.postMessage({ type: 'SET_THEME', theme: dark ? 'dark' : 'light' }, '*')
+  }, [])
+
   useEffect(() => {
     const handler = (e: MessageEvent) => {
       if (e.data?.type === 'IFRAME_READY') {
         setIframeReady(true)
+        sendTheme(isDark)
         const toRun = pendingCodeRef.current ?? code
         pendingCodeRef.current = null
         setTimeout(() => sendCode(toRun), 600)
@@ -1348,7 +1037,13 @@ export function PlaygroundPage() {
     }
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
-  }, [sendCode, code])
+  }, [sendCode, code, sendTheme, isDark])
+
+  // Re-sync the currently-mounted iframe immediately when the user toggles
+  // theme (not just on the next framework switch/reload).
+  useEffect(() => {
+    if (iframeReady) sendTheme(isDark)
+  }, [isDark, iframeReady, sendTheme])
 
   const runCode = useCallback((codeToRun: string) => {
     if (!iframeReady) { pendingCodeRef.current = codeToRun; return }
@@ -1480,8 +1175,8 @@ export function PlaygroundPage() {
       'file:///node_modules/@elitegrid/vue/index.d.ts'
     )
     ts.addExtraLib(
-      "declare module '@elitegrid/core' {\n" + ELITEGRID_TYPES + '\n}',
-      'file:///node_modules/@elitegrid/core/index.d.ts'
+      "declare module '@elitegrid/vanilla' {\n" + ELITEGRID_TYPES + '\n}',
+      'file:///node_modules/@elitegrid/vanilla/index.d.ts'
     )
   }, [])
 
@@ -1542,6 +1237,33 @@ export function PlaygroundPage() {
           </Link>
           <span style={s.divider}>/</span>
           <span style={s.pageTitle}>Playground</span>
+
+          <div style={s.leftActions}>
+            <button
+              style={s.miniIconBtn}
+              onClick={toggleTheme}
+              title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+              aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}>
+              {isDark ? (
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                  <path d="M14 9.3A6 6 0 116.7 2a4.7 4.7 0 007.3 7.3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M8 1v1.5M8 13.5V15M15 8h-1.5M2.5 8H1M12.7 3.3l-1 1M4.3 11.7l-1 1M12.7 12.7l-1-1M4.3 4.3l-1-1"
+                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              )}
+            </button>
+
+            <Link href="/docs" style={s.miniIconBtn} title="Documentation" aria-label="Documentation">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M5 6h6M5 9.5h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </Link>
+          </div>
         </div>
 
         <div style={s.fwTabs}>
@@ -1638,7 +1360,7 @@ export function PlaygroundPage() {
                 key={`mobile-${framework}`}
                 defaultLanguage="typescript"
                 value={code}
-                theme="vs-dark"
+                theme={isDark ? 'vs-dark' : 'vs'}
                 loading={MONACO_LOADING}
                 onChange={(v) => handleCodeChange(v)}
                 options={{ ...monacoOptions, fontSize: 12, lineHeight: 20 }}
@@ -1670,7 +1392,7 @@ export function PlaygroundPage() {
                 key={`desktop-${framework}`}
                 defaultLanguage="typescript"
                 value={code}
-                theme="vs-dark"
+                theme={isDark ? 'vs-dark' : 'vs'}
                 loading={MONACO_LOADING}
                 onMount={handleEditorMount}
                 beforeMount={handleEditorBeforeMount}
@@ -1730,10 +1452,10 @@ export function PlaygroundPage() {
       {/* ── Footer ──────────────────────────────────────────────── */}
       <div style={s.footer}>
         <span style={s.footerLeft}>
-          Import <code style={s.inlineCode}>@elitegrid/{isVanilla ? 'core' : framework}</code> — no install needed in playground.
+          Import <code style={s.inlineCode}>@elitegrid/{framework}</code> — no install needed in playground.
         </span>
         <a href="https://elitegrid.dev#waitlist" style={s.footerLink}>
-          Join waitlist for v1 →
+          Get started with npm install →
         </a>
       </div>
     </div>
@@ -1744,16 +1466,24 @@ export function PlaygroundPage() {
 const s: Record<string, React.CSSProperties> = {
   root: {
     height: '100dvh', display: 'flex', flexDirection: 'column',
-    background: '#09090b', color: '#e4e4e7',
+    background: 'var(--pg-bg)', color: 'var(--pg-text-1)',
     fontFamily: 'system-ui, -apple-system, sans-serif', overflow: 'hidden',
   },
   topbar: {
-    height: 52, background: '#0a0a0c',
-    borderBottom: '1px solid rgba(255,255,255,0.06)',
+    height: 52, background: 'var(--pg-bg-raised)',
+    borderBottom: '1px solid rgba(var(--pg-fg-rgb),0.06)',
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     padding: '0 16px', flexShrink: 0, gap: 12,
   },
   topbarLeft: { display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, position: 'relative' },
+  leftActions: { display: 'flex', alignItems: 'center', gap: 6, marginLeft: 4 },
+  miniIconBtn: {
+    width: 26, height: 26, borderRadius: 6,
+    border: '1px solid rgba(var(--pg-fg-rgb),0.07)',
+    background: 'rgba(var(--pg-fg-rgb),0.04)', color: 'var(--pg-text-3)',
+    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    transition: 'all 0.15s', flexShrink: 0, textDecoration: 'none',
+  },
   logoLink: {
     display: 'flex', alignItems: 'center', gap: 10,
     textDecoration: 'none', color: 'inherit', cursor: 'pointer',
@@ -1761,26 +1491,26 @@ const s: Record<string, React.CSSProperties> = {
   logoIcon: {
     width: 26, height: 26, borderRadius: 7, flexShrink: 0,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    background: 'linear-gradient(to bottom right, #7c3aed, #a855f7)',
+    background: 'linear-gradient(to bottom right, var(--pg-accent), #a855f7)',
     boxShadow: '0 0 14px rgba(124,58,237,0.3)',
   },
   logoText: {
     fontFamily: 'var(--font-bricolage), "Bricolage Grotesque", sans-serif',
-    fontSize: '1.0625rem', fontWeight: 700, color: '#edf0fa', letterSpacing: '-0.02em',
+    fontSize: '1.0625rem', fontWeight: 700, color: 'var(--pg-text-1)', letterSpacing: '-0.02em',
   },
-  divider: { color: 'rgba(255,255,255,0.1)', margin: '0 2px' },
-  pageTitle: { fontSize: '0.8125rem', color: '#3f3f46', fontWeight: 400 },
+  divider: { color: 'rgba(var(--pg-fg-rgb),0.1)', margin: '0 2px' },
+  pageTitle: { fontSize: '0.8125rem', color: 'var(--pg-text-4)', fontWeight: 400 },
   topbarRight: { display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 },
 
   fwTabs: {
     display: 'flex', gap: 2,
-    background: 'rgba(255,255,255,0.03)', borderRadius: 10, padding: 3,
-    border: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
+    background: 'rgba(var(--pg-fg-rgb),0.03)', borderRadius: 10, padding: 3,
+    border: '1px solid rgba(var(--pg-fg-rgb),0.06)', flexShrink: 0,
   },
   fwTab: {
     display: 'flex', alignItems: 'center', gap: 6,
     fontSize: '0.8rem', fontWeight: 600, padding: '5px 13px', borderRadius: 8,
-    border: 'none', background: 'transparent', color: '#52525b',
+    border: 'none', background: 'transparent', color: 'var(--pg-text-3)',
     cursor: 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em',
   },
   fwTabReactActive: {
@@ -1796,41 +1526,41 @@ const s: Record<string, React.CSSProperties> = {
     boxShadow: '0 0 0 1px rgba(247,223,30,0.2)',
   },
   reactIcon: { fontSize: '0.9rem' },
-  vueIcon: { fontSize: '0.75rem', color: '#3f3f46', transition: 'color 0.15s' },
+  vueIcon: { fontSize: '0.75rem', color: 'var(--pg-text-4)', transition: 'color 0.15s' },
   jsIcon: {
-    fontSize: '0.65rem', fontWeight: 700, color: '#3f3f46', transition: 'color 0.15s',
+    fontSize: '0.65rem', fontWeight: 700, color: 'var(--pg-text-4)', transition: 'color 0.15s',
   },
 
   exTabs: {
     display: 'flex', gap: 2,
-    background: 'rgba(255,255,255,0.025)', borderRadius: 8, padding: 3,
-    border: '1px solid rgba(255,255,255,0.05)',
+    background: 'rgba(var(--pg-fg-rgb),0.025)', borderRadius: 8, padding: 3,
+    border: '1px solid rgba(var(--pg-fg-rgb),0.05)',
   },
   exTab: {
     display: 'flex', alignItems: 'center', gap: 6,
     fontSize: '0.775rem', fontWeight: 500, padding: '5px 11px', borderRadius: 6,
-    border: 'none', background: 'transparent', color: '#52525b',
+    border: 'none', background: 'transparent', color: 'var(--pg-text-3)',
     cursor: 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em',
   },
-  exTabActive: { background: '#7c3aed', color: '#ffffff', fontWeight: 700 },
+  exTabActive: { background: 'var(--pg-accent)', color: '#ffffff', fontWeight: 700 },
   exBadge: {
     fontSize: '0.6rem', fontWeight: 700, padding: '2px 5px', borderRadius: 4,
-    background: 'rgba(255,255,255,0.08)', color: '#3f3f46',
+    background: 'rgba(var(--pg-fg-rgb),0.08)', color: 'var(--pg-text-4)',
     letterSpacing: '0.04em', textTransform: 'uppercase' as const, transition: 'all 0.15s',
   },
-  exBadgeActive: { background: 'rgba(255,255,255,0.2)', color: '#ffffff' },
+  exBadgeActive: { background: 'rgba(var(--pg-fg-rgb),0.2)', color: '#ffffff' },
 
   runBtn: {
     display: 'flex', alignItems: 'center', gap: 6,
     fontSize: '0.8125rem', fontWeight: 700, padding: '6px 16px', borderRadius: 7,
-    border: 'none', background: '#7c3aed', color: '#ffffff',
+    border: 'none', background: 'var(--pg-accent)', color: '#ffffff',
     cursor: 'pointer', transition: 'opacity 0.15s, transform 0.1s',
     letterSpacing: '0.01em', flexShrink: 0,
   },
   iconBtn: {
     width: 32, height: 32, borderRadius: 7,
-    border: '1px solid rgba(255,255,255,0.07)',
-    background: 'rgba(255,255,255,0.04)', color: '#52525b',
+    border: '1px solid rgba(var(--pg-fg-rgb),0.07)',
+    background: 'rgba(var(--pg-fg-rgb),0.04)', color: 'var(--pg-text-3)',
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
     fontSize: '0.875rem', transition: 'all 0.15s', flexShrink: 0,
   },
@@ -1840,34 +1570,34 @@ const s: Record<string, React.CSSProperties> = {
   },
   mobilePillsRow: {
     display: 'flex', gap: 6, padding: '8px 12px',
-    borderBottom: '1px solid rgba(255,255,255,0.05)',
+    borderBottom: '1px solid rgba(var(--pg-fg-rgb),0.05)',
     overflowX: 'auto' as const, flexShrink: 0,
   },
   mobilePill: {
     flexShrink: 0, padding: '6px 14px', borderRadius: 999,
-    border: '1px solid rgba(255,255,255,0.08)',
-    background: 'rgba(255,255,255,0.04)', color: '#52525b',
+    border: '1px solid rgba(var(--pg-fg-rgb),0.08)',
+    background: 'rgba(var(--pg-fg-rgb),0.04)', color: 'var(--pg-text-3)',
     fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s',
     whiteSpace: 'nowrap' as const,
   },
-  mobilePillActive: { background: '#7c3aed', border: '1px solid #7c3aed', color: '#ffffff' },
+  mobilePillActive: { background: 'var(--pg-accent)', border: '1px solid var(--pg-accent)', color: '#ffffff' },
 
   mobileViewToggle: {
     display: 'flex', alignItems: 'center', gap: 2, padding: '6px 12px',
-    background: '#0a0a0c', borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0,
+    background: 'var(--pg-bg-raised)', borderBottom: '1px solid rgba(var(--pg-fg-rgb),0.05)', flexShrink: 0,
   },
   mobileViewBtn: {
     padding: '5px 16px', borderRadius: 6, border: 'none', background: 'transparent',
-    color: '#52525b', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s',
+    color: 'var(--pg-text-3)', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s',
   },
-  mobileViewBtnActive: { background: 'rgba(124,58,237,0.1)', color: '#7c3aed' },
+  mobileViewBtnActive: { background: 'rgba(124,58,237,0.1)', color: 'var(--pg-accent)' },
   mobileExDesc: {
-    marginLeft: 8, fontSize: '0.72rem', color: '#3f3f46', flex: 1,
+    marginLeft: 8, fontSize: '0.72rem', color: 'var(--pg-text-4)', flex: 1,
     overflow: 'hidden', textOverflow: 'ellipsis' as const, whiteSpace: 'nowrap' as const,
   },
   mobilePane: { position: 'absolute' as const, inset: 0, flexDirection: 'column' as const },
   paneHeader: {
-    height: 34, background: '#0a0a0c', borderBottom: '1px solid rgba(255,255,255,0.05)',
+    height: 34, background: 'var(--pg-bg-raised)', borderBottom: '1px solid rgba(var(--pg-fg-rgb),0.05)',
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     padding: '0 14px', flexShrink: 0,
   },
@@ -1879,35 +1609,35 @@ const s: Record<string, React.CSSProperties> = {
     minHeight: 0, overflow: 'hidden', position: 'relative', zIndex: 10,
   },
   fileTab: {
-    fontSize: '0.75rem', fontWeight: 500, color: '#71717a', padding: '3px 10px',
-    borderRadius: 5, background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.07)',
+    fontSize: '0.75rem', fontWeight: 500, color: 'var(--pg-text-2)', padding: '3px 10px',
+    borderRadius: 5, background: 'rgba(var(--pg-fg-rgb),0.04)',
+    border: '1px solid rgba(var(--pg-fg-rgb),0.07)',
     display: 'flex', alignItems: 'center', flexShrink: 0,
   },
   exampleDesc: {
-    fontSize: '0.72rem', color: '#3f3f46',
+    fontSize: '0.72rem', color: 'var(--pg-text-4)',
     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const, flex: 1,
   },
-  autoRunHint: { fontSize: '0.7rem', color: 'rgba(255,255,255,0.1)' },
-  renderingBadge: { fontSize: '0.7rem', color: '#7c3aed', fontWeight: 600 },
+  autoRunHint: { fontSize: '0.7rem', color: 'rgba(var(--pg-fg-rgb),0.1)' },
+  renderingBadge: { fontSize: '0.7rem', color: 'var(--pg-accent)', fontWeight: 600 },
   editorWrap: { flex: 1, minHeight: 0, overflow: 'hidden', position: 'relative' },
 
   dragHandle: {
-    height: 8, background: 'rgba(255,255,255,0.02)',
-    borderTop: '1px solid rgba(255,255,255,0.05)',
-    borderBottom: '1px solid rgba(255,255,255,0.05)',
+    height: 8, background: 'rgba(var(--pg-fg-rgb),0.02)',
+    borderTop: '1px solid rgba(var(--pg-fg-rgb),0.05)',
+    borderBottom: '1px solid rgba(var(--pg-fg-rgb),0.05)',
     cursor: 'row-resize', display: 'flex', alignItems: 'center', justifyContent: 'center',
     flexShrink: 0, transition: 'background 0.15s', userSelect: 'none',
   },
   dragPills: { display: 'flex', gap: 3 },
-  dragPill: { width: 20, height: 2, borderRadius: 999, background: 'rgba(255,255,255,0.1)', display: 'block' },
+  dragPill: { width: 20, height: 2, borderRadius: 999, background: 'rgba(var(--pg-fg-rgb),0.1)', display: 'block' },
 
   previewPane: { flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' },
   previewLabel: {
-    fontSize: '0.75rem', fontWeight: 600, color: '#3f3f46',
+    fontSize: '0.75rem', fontWeight: 600, color: 'var(--pg-text-4)',
     textTransform: 'uppercase' as const, letterSpacing: '0.06em',
   },
-  previewHint:        { fontSize: '0.7rem', color: 'rgba(255,255,255,0.08)' },
+  previewHint:        { fontSize: '0.7rem', color: 'rgba(var(--pg-fg-rgb),0.08)' },
   previewHintVue:     { fontSize: '0.7rem', color: 'rgba(65,184,131,0.4)' },
   previewHintVanilla: { fontSize: '0.7rem', color: 'rgba(247,223,30,0.4)' },
   vueLiveBadge: {
@@ -1920,26 +1650,28 @@ const s: Record<string, React.CSSProperties> = {
     fontSize: '0.72rem', color: '#f7df1e', padding: '2px 8px', borderRadius: 4,
     background: 'rgba(247,223,30,0.08)', border: '1px solid rgba(247,223,30,0.15)', fontWeight: 600,
   },
-  loadingDots: { display: 'flex', gap: 1, color: '#3f3f46', fontSize: 18, lineHeight: '1' },
+  loadingDots: { display: 'flex', gap: 1, color: 'var(--pg-text-4)', fontSize: 18, lineHeight: '1' },
   dot: { display: 'inline-block' },
+  // Always dark, not themed — sits directly behind the preview iframes,
+  // which render a fixed-dark "live app" regardless of site theme.
   iframeWrap: { flex: 1, minHeight: 0, background: '#09090b' },
   iframe: { width: '100%', height: '100%', border: 'none', display: 'block' },
 
   footer: {
-    height: 36, background: '#0a0a0c', borderTop: '1px solid rgba(255,255,255,0.05)',
+    height: 36, background: 'var(--pg-bg-raised)', borderTop: '1px solid rgba(var(--pg-fg-rgb),0.05)',
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     padding: '0 16px', flexShrink: 0, gap: 12,
   },
   footerLeft: {
-    fontSize: '0.72rem', color: '#27272a',
+    fontSize: '0.72rem', color: 'var(--pg-text-5)',
     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const,
   },
   inlineCode: {
-    fontFamily: 'monospace', background: 'rgba(255,255,255,0.05)',
-    padding: '1px 5px', borderRadius: 4, color: '#52525b', fontSize: '0.68rem',
+    fontFamily: 'monospace', background: 'rgba(var(--pg-fg-rgb),0.05)',
+    padding: '1px 5px', borderRadius: 4, color: 'var(--pg-text-3)', fontSize: '0.68rem',
   },
   footerLink: {
-    color: '#7c3aed', textDecoration: 'none', fontWeight: 600, fontSize: '0.72rem',
+    color: 'var(--pg-accent)', textDecoration: 'none', fontWeight: 600, fontSize: '0.72rem',
     opacity: 0.85, flexShrink: 0,
   },
 }

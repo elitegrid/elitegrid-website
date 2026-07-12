@@ -210,6 +210,78 @@ Flipping `data-theme` re-cascades every `--eg-*` variable your CSS defines for t
 
 ---
 
+## Live example
+
+The "follow the site's own theme toggle" pattern from above, live: a button flips a `data-theme` attribute on an ancestor, which re-cascades the `--eg-*` variables scoped to `appearance.className: 'my-grid'` — no grid re-creation.
+
+```tsx
+import { useState } from 'react'
+import { createGrid, Grid } from '@elitegrid/react'
+import '@elitegrid/react/styles.css'
+
+interface Employee {
+  id: number
+  name: string
+  department: string
+  role: string
+}
+
+const employees: Employee[] = [
+  { id: 1, name: 'Ada Lovelace', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 2, name: 'Alan Turing', department: 'Research', role: 'Principal Scientist' },
+  { id: 3, name: 'Grace Hopper', department: 'Engineering', role: 'Eng Manager' },
+  { id: 4, name: 'Margaret Hamilton', department: 'Engineering', role: 'Tech Lead' },
+  { id: 5, name: 'Katherine Johnson', department: 'Research', role: 'Senior Analyst' },
+  { id: 6, name: 'Linus Torvalds', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 7, name: 'Tim Berners-Lee', department: 'Research', role: 'Principal Scientist' },
+  { id: 8, name: 'Barbara Liskov', department: 'Engineering', role: 'Eng Manager' },
+  { id: 9, name: 'Dennis Ritchie', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 10, name: 'Radia Perlman', department: 'Research', role: 'Senior Analyst' },
+]
+
+const grid = createGrid<Employee>({
+  columns: [
+    { field: 'name', header: 'Name', size: { flex: 2 } },
+    { field: 'department', header: 'Department', size: { flex: 1.5 } },
+    { field: 'role', header: 'Role', size: { flex: 1.5 } },
+  ],
+  data: employees,
+  appearance: { className: 'my-grid' },
+})
+
+export default function App() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+
+  return (
+    <div style={{ height: 440, display: 'flex', flexDirection: 'column', gap: 8, padding: 8, boxSizing: 'border-box' }}>
+      <style>{`
+        .my-grid { --eg-header-bg: #f9fafb; --eg-row-bg: #ffffff; --eg-cell-text: #111827; --eg-border: #e5e7eb; --eg-accent: #6d28d9; }
+        [data-theme='dark'] .my-grid { --eg-header-bg: #1a1a2a; --eg-row-bg: #0f0f1a; --eg-cell-text: #e2e8f0; --eg-border: #2d2d4d; --eg-accent: #a78bfa; }
+      `}</style>
+      <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+        <button
+          onClick={() => setTheme((t) => (t === 'light' ? 'dark' : 'light'))}
+          style={{
+            padding: '7px 16px', borderRadius: 7, border: 'none', cursor: 'pointer',
+            fontSize: '0.8rem', fontWeight: 600, fontFamily: 'system-ui',
+            background: '#7c3aed', color: '#ffffff',
+          }}
+        >
+          Switch to {theme === 'light' ? 'dark' : 'light'} theme
+        </button>
+      </div>
+      <div data-theme={theme} style={{ flex: 1, minHeight: 0 }}>
+        <Grid grid={grid} />
+      </div>
+    </div>
+  )
+}
+```
+
+[[LIVE_DEMO:react:0]]
+
+---
+
 ## Common appearance mistakes
 
 | Symptom | Cause | Fix |

@@ -45,7 +45,7 @@ export default function DocsToc({
     <nav className="hidden xl:block sticky top-[76px] self-start w-[220px] shrink-0 max-h-[calc(100vh-96px)] overflow-y-auto py-6 pl-1.5 pr-2">
       {items.length > 0 && (
         <>
-          <div className="text-[12px] font-bold tracking-[0.07em] uppercase text-[#a3a3a3] dark:text-[#374151] mb-2.5">
+          <div className="text-[11px] font-bold tracking-[0.07em] uppercase text-[#a3a3a3] dark:text-[#374151] mb-2.5">
             On this page
           </div>
           <ul className="flex flex-col">
@@ -56,8 +56,8 @@ export default function DocsToc({
                   <a
                     href={`#${item.id}`}
                     className={[
-                      'block text-[15px] leading-[1.4] py-0.5 pl-2.5 border-l transition-colors',
-                      item.depth === 3 ? 'ml-2.5 text-[14px]' : '',
+                      'block text-[13px] leading-[1.4] py-0.5 pl-2.5 border-l transition-colors',
+                      item.depth === 3 ? 'ml-2.5 text-[12.5px]' : '',
                       active
                         ? 'text-[#7c3aed] border-[#7c3aed] font-medium'
                         : 'text-[#a3a3a3] dark:text-[#374151] border-black/[0.08] dark:border-white/[0.07] hover:text-[#18181b] dark:hover:text-[#edf0fa]',
@@ -79,7 +79,7 @@ export default function DocsToc({
             href={editHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-[13px] text-[#a3a3a3] dark:text-[#374151] hover:text-[#7c3aed] transition-colors"
+            className="flex items-center gap-1 text-[12px] text-[#a3a3a3] dark:text-[#374151] hover:text-[#7c3aed] transition-colors"
           >
             <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
               <path d="M7 2l3 3M2 7l5-5 3 3-5 5H2V7z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />

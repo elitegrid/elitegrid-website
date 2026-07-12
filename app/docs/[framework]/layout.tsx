@@ -30,7 +30,7 @@ export default async function DocsLayout({
 
       <div className="flex flex-col md:flex-row pt-[60px] min-h-screen">
         {/* Sidebar — sticky rail on desktop, inline dropdown on mobile */}
-        <aside className="md:w-[300px] md:shrink-0 md:sticky md:top-[60px] md:h-[calc(100vh-60px)] md:bg-white md:dark:bg-[#0c0c14] md:border-r md:border-black/[0.08] md:dark:border-white/[0.07]">
+        <aside className="md:w-[260px] md:shrink-0 md:sticky md:top-[60px] md:h-[calc(100vh-60px)] md:bg-white md:dark:bg-[#0c0c14] md:border-r md:border-black/[0.08] md:dark:border-white/[0.07]">
           <DocsSidebar framework={framework} frameworks={allFrameworks} groups={groups} />
         </aside>
 

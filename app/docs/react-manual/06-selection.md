@@ -166,6 +166,91 @@ const grid = createGrid<User>({
 
 ---
 
+## Live example
+
+Checkbox multi-select with a live "N selected" readout — `onSelectionChange` fires on every check/uncheck. Since `createGrid()` runs at module scope (before any component exists — see [Chapter 01](/docs/react/getting-started#3-the-grid-api-is-how-you-control-the-grid-from-code)), the handler forwards each change through a small mutable subscriber slot that the component fills in via `useEffect`.
+
+```tsx
+import { useEffect, useState } from 'react'
+import { createGrid, Grid, type GridAPI } from '@elitegrid/react'
+import '@elitegrid/react/styles.css'
+
+interface Employee {
+  id: number
+  name: string
+  department: string
+  role: string
+}
+
+const employees: Employee[] = [
+  { id: 1, name: 'Ada Lovelace', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 2, name: 'Alan Turing', department: 'Research', role: 'Principal Scientist' },
+  { id: 3, name: 'Grace Hopper', department: 'Engineering', role: 'Eng Manager' },
+  { id: 4, name: 'Margaret Hamilton', department: 'Engineering', role: 'Tech Lead' },
+  { id: 5, name: 'Katherine Johnson', department: 'Research', role: 'Senior Analyst' },
+  { id: 6, name: 'Linus Torvalds', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 7, name: 'Tim Berners-Lee', department: 'Research', role: 'Principal Scientist' },
+  { id: 8, name: 'Barbara Liskov', department: 'Engineering', role: 'Eng Manager' },
+  { id: 9, name: 'Dennis Ritchie', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 10, name: 'Radia Perlman', department: 'Research', role: 'Senior Analyst' },
+]
+
+let api: GridAPI<Employee> | null = null
+let onSelectionChanged: ((rows: Employee[]) => void) | null = null
+
+const grid = createGrid<Employee>({
+  columns: [
+    { field: 'name', header: 'Name', size: { flex: 2 } },
+    { field: 'department', header: 'Department', size: { flex: 1.5 } },
+    { field: 'role', header: 'Role', size: { flex: 1.5 } },
+  ],
+  data: employees,
+  selection: { mode: 'multiple', showCheckboxes: true },
+  events: {
+    onReady: (a) => { api = a },
+    onSelectionChange: (rows) => onSelectionChanged?.(rows),
+  },
+})
+
+export default function App() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    onSelectionChanged = (rows) => setCount(rows.length)
+    return () => { onSelectionChanged = null }
+  }, [])
+
+  return (
+    <div style={{ height: 440, display: 'flex', flexDirection: 'column', gap: 8, padding: 8, boxSizing: 'border-box' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+        <button
+          onClick={() => { api?.deselectAll(); setCount(0) }}
+          style={{
+            padding: '7px 16px', borderRadius: 7, border: 'none', cursor: 'pointer',
+            fontSize: '0.8rem', fontWeight: 600, fontFamily: 'system-ui',
+            background: '#7c3aed', color: '#ffffff',
+          }}
+        >
+          Clear selection
+        </button>
+        <span style={{ fontSize: '0.8rem', color: '#a1a1aa', fontFamily: 'system-ui' }}>
+          {count} selected
+        </span>
+      </div>
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <Grid grid={grid} />
+      </div>
+    </div>
+  )
+}
+```
+
+[[LIVE_DEMO:react:0]]
+
+> In a real app, `grid` (and its `events.onSelectionChange`) would typically be built once at module scope for the whole page's lifetime, same as `api` — the mutable `onSelectionChanged` slot above only exists so this one component can react to an engine it doesn't own. If the grid and the component that displays its selection count are always mounted together, an equally valid alternative is skipping the slot and just calling `setCount` directly from `events.onSelectionChange` — but that requires creating the grid *inside* the component (e.g. with `useMemo`) rather than at true module scope.
+
+---
+
 ## Common selection mistakes
 
 | Symptom | Cause | Fix |

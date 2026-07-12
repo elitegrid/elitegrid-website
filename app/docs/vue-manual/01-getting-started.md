@@ -155,6 +155,45 @@ const grid = createGrid<Product>({
 
 Run it and you already have: click-to-sort headers, a filter funnel on each column, resizable columns, and keyboard arrow-key navigation. 🎉
 
+### Try it live
+
+The same example, runnable right here in the page. Browser sandboxes can't compile a `.vue` single-file component on the fly, so this version is written as a plain `defineComponent` + `h()` render function instead of `<script setup>`/`<template>` — still real Composition API Vue, just render-function-shaped rather than SFC-shaped. Everything about the grid itself (`createGrid`, `<Grid>`, the config) is identical.
+
+```ts
+import { defineComponent, h } from 'vue'
+import { createGrid, Grid } from '@elitegrid/vue'
+
+interface Product {
+  id: number
+  name: string
+  price: number
+  inStock: boolean
+}
+
+const products: Product[] = [
+  { id: 1, name: 'Keyboard', price: 49.99, inStock: true },
+  { id: 2, name: 'Mouse', price: 19.99, inStock: false },
+  { id: 3, name: 'Monitor', price: 199.0, inStock: true },
+]
+
+const grid = createGrid<Product>({
+  columns: [
+    { field: 'name', header: 'Product' },
+    { field: 'price', header: 'Price' },
+    { field: 'inStock', header: 'In Stock' },
+  ],
+  data: products,
+})
+
+export default defineComponent({
+  setup() {
+    return () => h('div', { style: 'height:100%' }, [h(Grid, { grid })])
+  },
+})
+```
+
+[[LIVE_DEMO:vue:0]]
+
 ---
 
 ## Why is this safe in `<script setup>`, unlike some other frameworks?

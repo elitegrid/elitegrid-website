@@ -8,7 +8,7 @@ The same code lives as a runnable file in [`examples/employee-grid.html`](/docs/
 <!doctype html>
 <html>
   <head>
-    <link rel="stylesheet" href="/node_modules/@elitegrid/core/dist/styles.css" />
+    <link rel="stylesheet" href="/node_modules/@elitegrid/vanilla/dist/styles.css" />
     <style>
       body { font-family: system-ui, sans-serif; }
       .toolbar { display: flex; gap: 8px; align-items: center; padding: 24px 24px 12px; }
@@ -29,7 +29,7 @@ The same code lives as a runnable file in [`examples/employee-grid.html`](/docs/
     <div id="grid-container" class="grid-wrap"></div>
 
     <script type="module">
-      import { createGrid, mount, buildGridAPI } from '@elitegrid/core'
+      import { createGrid, mount, buildGridAPI } from '@elitegrid/vanilla'
 
       // ── 1. The data shape ────────────────────────────────────────────────
       // interface Employee {

@@ -88,6 +88,48 @@ function parseBlurbs(readme) {
   return map
 }
 
+// Embed live-demo placeholders into baked HTML, without touching the
+// shiki/remark pipeline. Authoring convention: a fenced code block
+// immediately followed (after a blank line) by a lone marker paragraph
+// `[[LIVE_DEMO:framework:index]]` in the raw markdown. That marker is inert
+// plain text to remark (renders as a plain `<p>`), so every other code block
+// and the rest of the pipeline is completely unaffected. We pull the *raw*
+// source (not the shiki-highlighted HTML) out of the markdown here, because
+// the client needs plain text to hand to Babel at runtime, not markup.
+// The code group must not itself contain a fence-closing sequence — with a
+// plain lazy `[\s\S]*?` the regex doesn't respect fence pairing and can skip
+// straight from the *first* fence in the whole document to whichever later
+// "```" happens to precede a marker, silently grabbing the wrong block's
+// content. `(?:(?!\n```)[\s\S])*` forces each fence to close at its own next
+// "\n```", so this only ever matches the fence immediately before the marker.
+const LIVE_DEMO_RE = /```(\w+)\n((?:(?!\n```)[\s\S])*)\n```\s*\n+\s*\[\[LIVE_DEMO:(\w+):(\d+)\]\]/g
+
+function injectLiveDemos(rawBody, html) {
+  let out = html
+  let m
+  // Source .md files are CRLF — normalize so the literal \n's in
+  // LIVE_DEMO_RE actually match, and so the extracted code (which gets
+  // shipped to the browser and fed to Babel) is clean LF-only.
+  const normalized = rawBody.replace(/\r\n/g, '\n')
+  LIVE_DEMO_RE.lastIndex = 0
+  while ((m = LIVE_DEMO_RE.exec(normalized))) {
+    const [, , code, framework, index] = m
+    const b64 = Buffer.from(code, 'utf8').toString('base64')
+    const marker = `[[LIVE_DEMO:${framework}:${index}]]`
+    const div = `<div class="docs-live-demo" data-framework="${framework}" data-code="${b64}"></div>`
+    // Exact-string match confirmed against this repo's actual remark/rehype
+    // output; fall back to a looser regex if a future dependency bump ever
+    // changes how the marker paragraph is serialized.
+    const exact = `<p>${marker}</p>`
+    if (out.includes(exact)) {
+      out = out.replace(exact, div)
+    } else {
+      out = out.replace(new RegExp(`<p>\\s*\\[\\[LIVE_DEMO:${framework}:${index}\\]\\]\\s*</p>`), div)
+    }
+  }
+  return out
+}
+
 // --- build ------------------------------------------------------------------
 
 async function buildPage(dir, file, framework, titleOverride, blurb) {
@@ -105,12 +147,14 @@ async function buildPage(dir, file, framework, titleOverride, blurb) {
   const slug = /^(\d+)-(.+)\.md$/.exec(file)?.[2] ?? ''
   const body = rewriteLinks(stripLeadingH1(raw), framework)
 
+  const html = injectLiveDemos(body, await renderMarkdown(body))
+
   return {
     num,
     slug,
     title,
     blurb: blurb ?? '',
-    html: await renderMarkdown(body),
+    html,
     toc: extractToc(body),
   }
 }

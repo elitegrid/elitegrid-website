@@ -78,7 +78,7 @@ const grid = createGrid<User>({
 ## A worked example
 
 ```ts
-import { createGrid, mount } from '@elitegrid/core'
+import { createGrid, mount } from '@elitegrid/vanilla'
 
 const grid = createGrid<User>({
   columns,
@@ -167,7 +167,7 @@ If you're coordinating multiple pieces of UI off different events, you can rely 
 Everything above is the ergonomic `events` object passed to `createGrid()`. Under the hood, EliteGrid runs on a small **event bus** — a publish/subscribe system exposed as `grid.kernel.eventBus`. You rarely need it directly (the `events` group and the Grid API cover almost everything), but it's there for advanced cases, like listening for the same accessibility announcements a screen reader hears (see [Chapter 13](/docs/vanilla/accessibility#listening-to-announcements-yourself)):
 
 ```ts
-import { GridEvent } from '@elitegrid/core'
+import { GridEvent } from '@elitegrid/vanilla'
 
 const off = grid.kernel.eventBus.on(GridEvent.SORT_COMPLETED, (payload) => {
   console.log('sort completed', payload)

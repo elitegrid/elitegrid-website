@@ -44,7 +44,7 @@ export default function AnimatedStat({
 
   return (
     <div ref={ref} className={className}>
-      {value}
+      {value.toLocaleString()}
     </div>
   )
 }

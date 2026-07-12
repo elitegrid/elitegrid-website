@@ -1,12 +1,46 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { createRoot, type Root } from 'react-dom/client'
+import DocsLiveDemo from './DocsLiveDemo'
 
 function guessLang(code: string): string {
   if (/^\s*(npm|pnpm|yarn|bun)\s/m.test(code)) return 'bash'
   if (/^\s*</.test(code) && /className=|<Grid|<EliteGrid|<[A-Z]/.test(code)) return 'tsx'
   if (/\b(interface|type)\s+\w+/.test(code) || /:\s*(string|number|boolean)\b/.test(code)) return 'ts'
   return 'ts'
+}
+
+// Teardown of a `.docs-live-demo` root is deferred (see below) so it can't
+// race React's own commit of the same root's initial render. React Strict
+// Mode's dev-mode double-invoke (mount -> cleanup -> mount, synchronously,
+// on every real mount) would otherwise hit this window and either throw
+// ("Attempted to synchronously unmount a root while React was already
+// rendering") or, if teardown is naively deferred without also tracking it,
+// call createRoot() a second time on the same still-mounted node ("container
+// that has already been passed to createRoot() before"). Keyed by DOM node
+// identity (module-level, not component state) so the second Strict Mode
+// invocation — a fresh call of this same effect — can find and cancel the
+// first invocation's pending teardown instead of creating a competing root.
+const pendingTeardowns = new WeakMap<Element, ReturnType<typeof setTimeout>>()
+const liveRootsByEl = new WeakMap<Element, Root>()
+
+function scheduleTeardown(el: Element, liveRoot: Root | undefined) {
+  const timeoutId = setTimeout(() => {
+    pendingTeardowns.delete(el)
+    liveRootsByEl.delete(el)
+    if (!liveRoot) return
+    try {
+      liveRoot.unmount()
+    } catch {
+      // A markdown edit during `next dev` re-bakes docs-content.json, which
+      // HMRs a new `html` prop in — dangerouslySetInnerHTML replaces this
+      // element (detaching this root's container) before this timeout fires,
+      // so unmount() can throw on an already-detached node. Nothing to clean
+      // up in that case.
+    }
+  }, 0)
+  pendingTeardowns.set(el, timeoutId)
 }
 
 /**
@@ -67,6 +101,36 @@ export default function DocsProse({ html }: { html: string }) {
       pre.parentNode?.insertBefore(wrapper, pre)
       wrapper.appendChild(toolbar)
       wrapper.appendChild(pre)
+    })
+
+    // Mount a live, running grid sandbox (see components/docs/DocsLiveDemo.tsx)
+    // into every `.docs-live-demo` placeholder baked in by
+    // scripts/generate-docs.mjs.
+    const liveDemoEls = root.querySelectorAll<HTMLDivElement>('.docs-live-demo')
+    liveDemoEls.forEach((el) => {
+      // Strict Mode's second invocation of this same effect finds the exact
+      // same DOM node again (dangerouslySetInnerHTML didn't change, so
+      // nothing regenerated it). If the first invocation's teardown is still
+      // pending, cancel it and reuse the root that's already mounted here —
+      // do NOT create a second one on the same node.
+      const pending = pendingTeardowns.get(el)
+      if (pending !== undefined) {
+        clearTimeout(pending)
+        pendingTeardowns.delete(el)
+        cleanups.push(() => scheduleTeardown(el, liveRootsByEl.get(el)))
+        return
+      }
+
+      const framework = el.dataset.framework as 'react' | 'vue' | 'vanilla' | undefined
+      const encoded = el.dataset.code
+      if (!framework || !encoded) return
+
+      const code = new TextDecoder().decode(Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0)))
+      const liveRoot: Root = createRoot(el)
+      liveRootsByEl.set(el, liveRoot)
+      liveRoot.render(<DocsLiveDemo framework={framework} code={code} />)
+
+      cleanups.push(() => scheduleTeardown(el, liveRoot))
     })
 
     return () => cleanups.forEach((fn) => fn())

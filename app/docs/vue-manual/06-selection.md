@@ -182,6 +182,70 @@ const grid = createGrid<User>({
 
 ---
 
+## Live example
+
+Checkbox multi-select with a live "N selected" readout, using the `useSelectionState` composable introduced above — no manual `onSelectionChange` bookkeeping needed. Written as `defineComponent` + `h()`, per the note in [Chapter 01](/docs/vue/getting-started#try-it-live).
+
+```ts
+import { defineComponent, h } from 'vue'
+import { createGrid, Grid, useSelectionState, type GridAPI } from '@elitegrid/vue'
+
+interface Employee {
+  id: number
+  name: string
+  department: string
+  role: string
+}
+
+const employees: Employee[] = [
+  { id: 1, name: 'Ada Lovelace', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 2, name: 'Alan Turing', department: 'Research', role: 'Principal Scientist' },
+  { id: 3, name: 'Grace Hopper', department: 'Engineering', role: 'Eng Manager' },
+  { id: 4, name: 'Margaret Hamilton', department: 'Engineering', role: 'Tech Lead' },
+  { id: 5, name: 'Katherine Johnson', department: 'Research', role: 'Senior Analyst' },
+  { id: 6, name: 'Linus Torvalds', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 7, name: 'Tim Berners-Lee', department: 'Research', role: 'Principal Scientist' },
+  { id: 8, name: 'Barbara Liskov', department: 'Engineering', role: 'Eng Manager' },
+  { id: 9, name: 'Dennis Ritchie', department: 'Engineering', role: 'Staff Engineer' },
+  { id: 10, name: 'Radia Perlman', department: 'Research', role: 'Senior Analyst' },
+]
+
+let api: GridAPI<Employee> | null = null
+
+const grid = createGrid<Employee>({
+  columns: [
+    { field: 'name', header: 'Name', size: { flex: 2 } },
+    { field: 'department', header: 'Department', size: { flex: 1.5 } },
+    { field: 'role', header: 'Role', size: { flex: 1.5 } },
+  ],
+  data: employees,
+  selection: { mode: 'multiple' },
+  events: { onReady: (a) => { api = a } },
+})
+
+export default defineComponent({
+  setup() {
+    const selection = useSelectionState(grid)
+
+    return () =>
+      h('div', { style: 'height:440px;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box' }, [
+        h('div', { style: 'display:flex;align-items:center;gap:12px;flex-shrink:0' }, [
+          h('button', {
+            onClick: () => api?.deselectAll(),
+            style: 'padding:7px 16px;border-radius:7px;border:none;cursor:pointer;font-size:0.8rem;font-weight:600;font-family:system-ui;background:#7c3aed;color:#ffffff',
+          }, 'Clear selection'),
+          h('span', { style: 'font-size:0.8rem;color:#a1a1aa;font-family:system-ui' }, `${selection.value.count} selected`),
+        ]),
+        h('div', { style: 'flex:1;min-height:0' }, [h(Grid, { grid })]),
+      ])
+  },
+})
+```
+
+[[LIVE_DEMO:vue:0]]
+
+---
+
 ## Common selection mistakes
 
 | Symptom | Cause | Fix |

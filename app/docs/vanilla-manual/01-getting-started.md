@@ -22,19 +22,19 @@ EliteGrid solves all of these for you. You describe *what* your data looks like 
 
 ## Step 1 — Install
 
-EliteGrid's framework-agnostic core ships as a single package:
+EliteGrid's vanilla-JS adapter ships as a single package — like `@elitegrid/react` and `@elitegrid/vue`, it wraps the framework-agnostic engine internally, so you never install or import that engine (`@elitegrid/core`) directly:
 
 ```bash
-npm install @elitegrid/core
+npm install @elitegrid/vanilla
 # or
-pnpm add @elitegrid/core
+pnpm add @elitegrid/vanilla
 # or
-yarn add @elitegrid/core
+yarn add @elitegrid/vanilla
 ```
 
-> **Note:** In this monorepo the package is already linked via the workspace, so you don't need to install anything — just import from `@elitegrid/core`.
+> **Note:** In this monorepo the package is already linked via the workspace, so you don't need to install anything — just import from `@elitegrid/vanilla`.
 
-> **No bundler?** `@elitegrid/core` also ships a browser-ready build you can drop straight into a `<script type="module">` tag — no build step required. See the CDN example at the end of [Chapter 15](/docs/vanilla/full-example).
+> **No bundler?** `@elitegrid/vanilla` also ships a browser-ready build you can drop straight into a `<script type="module">` tag — no build step required. See the CDN example at the end of [Chapter 15](/docs/vanilla/full-example).
 
 ---
 
@@ -44,13 +44,13 @@ Somewhere near the top of your page, import the CSS **one time**. Without it the
 
 ```ts
 // main.ts
-import '@elitegrid/core/styles.css'
+import '@elitegrid/vanilla/styles.css'
 ```
 
 Without a bundler, link it instead:
 
 ```html
-<link rel="stylesheet" href="/node_modules/@elitegrid/core/dist/styles.css" />
+<link rel="stylesheet" href="/node_modules/@elitegrid/vanilla/dist/styles.css" />
 ```
 
 ---
@@ -93,7 +93,7 @@ const products: Product[] = [
 Call `createGrid()`. Pass it two things to start: `columns` (how to display each field) and `data` (your rows).
 
 ```ts
-import { createGrid } from '@elitegrid/core'
+import { createGrid } from '@elitegrid/vanilla'
 
 const grid = createGrid<Product>({
   columns: [
@@ -119,7 +119,7 @@ const grid = createGrid<Product>({
 `mount()` takes the engine and a container element, and draws the grid inside it.
 
 ```ts
-import { mount } from '@elitegrid/core'
+import { mount } from '@elitegrid/vanilla'
 
 const container = document.getElementById('grid-container')
 mount(grid, container)
@@ -132,8 +132,8 @@ mount(grid, container)
 ## The complete first example
 
 ```ts
-import { createGrid, mount } from '@elitegrid/core'
-import '@elitegrid/core/styles.css'
+import { createGrid, mount } from '@elitegrid/vanilla'
+import '@elitegrid/vanilla/styles.css'
 
 interface Product {
   id: number
@@ -160,6 +160,8 @@ const grid = createGrid<Product>({
 const container = document.getElementById('grid-container')
 mount(grid, container)
 ```
+
+[[LIVE_DEMO:vanilla:0]]
 
 ```html
 <div id="grid-container" style="height: 500px"></div>
@@ -221,7 +223,7 @@ const grid = createGrid<Product>({
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | Grid is invisible / 0 height | Parent has no height | Give the container a height, e.g. `style="height: 500px"` |
-| Grid looks unstyled | CSS not imported | `import '@elitegrid/core/styles.css'` |
+| Grid looks unstyled | CSS not imported | `import '@elitegrid/vanilla/styles.css'` |
 | `mount() requires a non-null container element` error | Script ran before the container existed in the DOM | Move the `<script type="module">` tag after the container, or wrap the call in a `DOMContentLoaded` listener |
 | Selection/edit acts on the wrong row | Missing/duplicate row IDs | Set `rowId` to a unique field |
 | Old grid's rows/listeners linger after swapping containers | `dispose()` from a previous `mount()` was never called | Call the dispose function `mount()` returned before mounting a new grid into the same spot — see [Chapter 12](/docs/vanilla/grid-api#cleaning-up) |

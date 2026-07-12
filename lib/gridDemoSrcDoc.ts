@@ -22,7 +22,7 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
   <meta charset="UTF-8" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body, #root { height: 100%; }
@@ -45,10 +45,15 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
       --eg-btn-bg: #f3f4f6; --eg-btn-text: #374151;
     }
 
-    .cell-active   { color: #16a34a !important; font-weight: 500; }
-    .cell-inactive { color: #9ca3af !important; }
-    [data-theme='dark'] .cell-active   { color: #4ade80 !important; }
-    [data-theme='dark'] .cell-inactive { color: #64748b !important; }
+    .yg-cell.cell-status-active span   { background: rgba(22,163,74,0.12); color: #16a34a; border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; }
+    .yg-cell.cell-status-remote span   { background: rgba(37,99,235,0.12); color: #2563eb; border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; }
+    .yg-cell.cell-status-onleave span  { background: rgba(217,119,6,0.12); color: #d97706; border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; }
+    [data-theme='dark'] .yg-cell.cell-status-active span  { background: rgba(74,222,128,0.15); color: #4ade80; }
+    [data-theme='dark'] .yg-cell.cell-status-remote span  { background: rgba(96,165,250,0.15); color: #60a5fa; }
+    [data-theme='dark'] .yg-cell.cell-status-onleave span { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+    .yg-cell.cell-salary { justify-content: flex-end; }
+    .yg-cell.cell-salary span { font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; }
 
     .yg-header-cell {
       font-size: 0.8125rem !important;
@@ -65,6 +70,15 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
     input[type="checkbox"] {
       accent-color: var(--eg-primary);
       width: 15px !important; height: 15px !important; cursor: pointer;
+    }
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px !important;
+      cursor: pointer;
     }
     .yg-body::-webkit-scrollbar { width: 6px; height: 6px; }
     .yg-body::-webkit-scrollbar-track { background: transparent; }
@@ -87,7 +101,9 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
   <\/script>
 </head>
 <body>
-  <div id="root" style="height:100%;"></div>
+  <div id="root" style="height:100%;display:flex;flex-direction:column;">
+    <div id="grid-mount" style="flex:1;min-height:0;display:flex;flex-direction:column;"></div>
+  </div>
   <script type="module">
     import React from 'react'
     import { createRoot } from 'react-dom/client'
@@ -121,7 +137,7 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
           role:       rl[Math.floor(i / DEPTS.length) % rl.length],
           salary:     BASE[dept] + (i * 137) % 40000,
           location:   LOCS[i % LOCS.length],
-          status:     i % 7 !== 0,
+          status:     i % 11 === 0 ? 'On Leave' : i % 4 === 0 ? 'Remote' : 'Active',
           joinDate:   (2019 + (i % 6)) + '-' +
                       String(1 + (i * 7)  % 12).padStart(2, '0') + '-' +
                       String(1 + (i * 13) % 28).padStart(2, '0'),
@@ -158,6 +174,15 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
         '--eg-overlay-bg':           'rgba(255,255,255,0.95)',
         '--eg-btn-bg':               '#f3f4f6',
         '--eg-btn-text':             '#374151',
+        '--eg-surface':              '#ffffff',
+        '--eg-toolbar-bg':           '#ffffff',
+        '--eg-primary-text':         '#ffffff',
+        '--eg-border-color':         '#e5e7eb',
+        '--eg-header-active-bg':     '#f3f4f6',
+        '--eg-row-selected-outline': 'rgba(99,102,241,0.2)',
+        '--eg-error':                '#dc2626',
+        '--eg-error-bg':             '#fee2e2',
+        '--eg-error-text':           '#ffffff',
       },
       dark: {
         '--eg-primary':              '#818cf8',
@@ -186,6 +211,15 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
         '--eg-overlay-bg':           'rgba(15,15,26,0.95)',
         '--eg-btn-bg':               '#2d2d4d',
         '--eg-btn-text':             '#e2e8f0',
+        '--eg-surface':              '#1a1a2a',
+        '--eg-toolbar-bg':           '#0f0f1a',
+        '--eg-primary-text':         '#ffffff',
+        '--eg-border-color':         '#2d2d4d',
+        '--eg-header-active-bg':     '#2a2a3e',
+        '--eg-row-selected-outline': 'rgba(129,140,248,0.2)',
+        '--eg-error':                '#f87171',
+        '--eg-error-bg':             '#450a0a',
+        '--eg-error-text':           '#fecaca',
       },
     }
 
@@ -199,80 +233,114 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
 
     // ── Grid instance ─────────────────────────────────────────────
     let gridApi = null
+    let grid = null
+    let root = null
     const data = gen(${rowCount})
 
-    const grid = createGrid({
-      columns: [
-        {
-          field: 'name', header: 'Name',
-          size:   { flex: 2, minWidth: 140 },
-          filter: { type: 'text' },
-          edit:   { enabled: true, type: 'text', validator: v => (!v || !String(v).trim()) ? 'Name is required' : null },
-        },
-        {
-          field: 'department', header: 'Department',
-          size:   { flex: 1.5, minWidth: 130 },
-          filter: { type: 'text' },
-          edit:   { enabled: true, type: 'dropdown', options: ['Engineering','Design','Product','Marketing','Sales','HR','Finance','Support'] },
-        },
-        {
-          field: 'role', header: 'Role',
-          size:   { flex: 1.5, minWidth: 120 },
-          filter: { type: 'text' },
-          edit:   { enabled: true, type: 'text' },
-        },
-        {
-          field: 'salary', header: 'Salary',
-          size:    { flex: 1, minWidth: 110 },
-          filter:  { type: 'number' },
-          display: { formatter: v => '$' + Number(v).toLocaleString() },
-          edit:    { enabled: true, type: 'number', min: 0, max: 500000, parser: raw => Number(raw) },
-        },
-        {
-          field: 'location', header: 'Location',
-          size:   { flex: 1.5, minWidth: 120 },
-          filter: { type: 'text' },
-          edit:   { enabled: true, type: 'dropdown', options: ['San Francisco','New York','Austin','Seattle','Chicago','London','Berlin','Toronto','Bangalore','Remote'] },
-        },
-        {
-          field: 'status', header: 'Status',
-          size:    { width: 90 },
-          filter:  { type: 'boolean' },
-          display: { formatter: v => v ? 'Active' : 'Inactive', cellClass: v => v ? 'cell-active' : 'cell-inactive' },
-          edit:    { enabled: true, type: 'boolean' },
-        },
-        {
-          field: 'joinDate', header: 'Joined',
-          size:   { flex: 1, minWidth: 100 },
-          filter: { type: 'date' },
-          edit:   { enabled: true, type: 'date' },
-        },
-      ],
-      data,
-      sorting:    { enabled: true, multiSort: true },
-      filtering:  { enabled: true },
-      pagination: { enabled: true, pageSize: ${pageSize}, pageSizeOptions: ${JSON.stringify(pageSizeOptions)} },
-      selection:  { mode: 'multiple', showCheckboxes: true, selectOnRowClick: false },
-      editing:    { enabled: true, trigger: 'doubleClick', confirmOnEnter: true, cancelOnEscape: true, moveOnTab: true },
-      export:     { filename: 'elitegrid-demo', scope: 'filtered' },
-      appearance: { rowStriping: true, showHoverHighlight: true },
-      events: {
-        onReady: api => {
-          gridApi = api
-          window.parent.postMessage({ type: 'GRID_READY', totalCount: data.length }, '*')
-        },
-        onSelectionChange: rows => {
-          window.parent.postMessage({ type: 'SELECTION_CHANGED', count: rows.length }, '*')
-        },
-        onFilterChange: () => {
-          requestAnimationFrame(() => {
-            if (!gridApi) return
-            const s = gridApi.getPaginationState()
-            window.parent.postMessage({ type: 'FILTER_CHANGED', filteredCount: s.totalRows }, '*')
-          })
-        },
+    const COLUMNS = [
+      {
+        field: 'name', header: 'Name',
+        size:   { flex: 2, minWidth: 140 },
+        filter: { type: 'text' },
+        edit:   { enabled: true, type: 'text', validator: v => (!v || !String(v).trim()) ? 'Name is required' : null },
       },
-    })
+      {
+        field: 'department', header: 'Department',
+        size:   { flex: 1.5, minWidth: 130 },
+        filter: { type: 'text' },
+        edit:   { enabled: true, type: 'dropdown', options: ['Engineering','Design','Product','Marketing','Sales','HR','Finance','Support'] },
+      },
+      {
+        field: 'role', header: 'Role',
+        size:   { flex: 1.5, minWidth: 120 },
+        filter: { type: 'text' },
+        edit:   { enabled: true, type: 'text' },
+      },
+      {
+        field: 'salary', header: 'Salary',
+        size:    { flex: 1, minWidth: 110 },
+        filter:  { type: 'number' },
+        display: { formatter: v => '$' + Number(v).toLocaleString(), cellClass: 'cell-salary' },
+        edit:    { enabled: true, type: 'number', min: 0, max: 500000, parser: raw => Number(raw) },
+      },
+      {
+        field: 'location', header: 'Location',
+        size:   { flex: 1.5, minWidth: 120 },
+        filter: { type: 'text' },
+        edit:   { enabled: true, type: 'dropdown', options: ['San Francisco','New York','Austin','Seattle','Chicago','London','Berlin','Toronto','Bangalore','Remote'] },
+      },
+      {
+        field: 'status', header: 'Status',
+        size:    { width: 110 },
+        filter:  { type: 'text' },
+        display: {
+          formatter: v => v,
+          cellClass: v => 'cell-status-' + String(v).toLowerCase().replace(' ', ''),
+        },
+        edit: { enabled: true, type: 'dropdown', options: ['Active', 'Remote', 'On Leave'] },
+      },
+      {
+        field: 'joinDate', header: 'Joined',
+        size:   { flex: 1, minWidth: 100 },
+        filter: { type: 'date' },
+        edit:   { enabled: true, type: 'date' },
+      },
+    ]
+
+    // Density is an appearance option baked in at createGrid() time — the
+    // Grid component has no reactive setter for it, so changing density
+    // means tearing down and rebuilding the grid instance + React root.
+    // appearance.density only switches a CSS class (font-size/padding via
+    // --eg-* vars); the actual pixel row/header height is a *separate*
+    // numeric appearance.rowHeight/headerHeight (defaults to 40/44
+    // regardless of density and wins via inline style + virtualization
+    // math), so both must be set together to match the size table in
+    // the library's own styles.css .yg-density-* rules.
+    const DENSITY_SIZES = {
+      compact:     { rowHeight: 32, headerHeight: 36 },
+      normal:      { rowHeight: 40, headerHeight: 44 },
+      comfortable: { rowHeight: 52, headerHeight: 56 },
+    }
+
+    function mountGrid(density) {
+      if (root) root.unmount()
+      if (grid) grid.kernel.destroy()
+
+      const sizes = DENSITY_SIZES[density] || DENSITY_SIZES.normal
+
+      grid = createGrid({
+        columns: COLUMNS,
+        data,
+        sorting:    { enabled: true, multiSort: true },
+        filtering:  { enabled: true },
+        pagination: { enabled: true, pageSize: ${pageSize}, pageSizeOptions: ${JSON.stringify(pageSizeOptions)} },
+        selection:  { mode: 'multiple', showCheckboxes: true, selectOnRowClick: false },
+        editing:    { enabled: true, trigger: 'doubleClick', confirmOnEnter: true, cancelOnEscape: true, moveOnTab: true },
+        export:     { filename: 'elitegrid-demo', scope: 'filtered' },
+        appearance: { rowStriping: true, showHoverHighlight: true, density, rowHeight: sizes.rowHeight, headerHeight: sizes.headerHeight },
+        events: {
+          onReady: api => {
+            gridApi = api
+            window.parent.postMessage({ type: 'GRID_READY', totalCount: data.length }, '*')
+          },
+          onSelectionChange: rows => {
+            window.parent.postMessage({ type: 'SELECTION_CHANGED', count: rows.length }, '*')
+          },
+          onFilterChange: () => {
+            requestAnimationFrame(() => {
+              if (!gridApi) return
+              const s = gridApi.getPaginationState()
+              window.parent.postMessage({ type: 'FILTER_CHANGED', filteredCount: s.totalRows }, '*')
+            })
+          },
+        },
+      })
+
+      root = createRoot(document.getElementById('grid-mount'))
+      root.render(React.createElement(Grid, { grid }))
+    }
+
+    mountGrid('normal')
 
     // ── Message listener ──────────────────────────────────────────
     window.addEventListener('message', ev => {
@@ -282,20 +350,12 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
         applyTheme(theme)
       }
       if (type === 'SET_DENSITY') {
-        const g = document.querySelector('.yg-grid')
-        if (g) {
-          g.classList.remove('yg-density-compact', 'yg-density-normal', 'yg-density-comfortable')
-          g.classList.add('yg-density-' + density)
-        }
+        mountGrid(density)
       }
       if (type === 'EXPORT_CSV' && gridApi) {
         gridApi.exportCSV({ filename: 'elitegrid-demo', scope: 'filtered' })
       }
     })
-
-    // ── Mount ─────────────────────────────────────────────────────
-    const root = createRoot(document.getElementById('root'))
-    root.render(React.createElement(Grid, { grid, style: { height: '100%' } }))
   <\/script>
 </body>
 </html>`
