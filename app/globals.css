@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (toggled by ThemeToggle) instead of the media-query
+   default, so the landing page's `dark:` utilities respond to a manual switch. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,6 +14,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-bricolage);
+  --font-body: var(--font-dm-sans);
+  --font-code: var(--font-jetbrains-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,12 +34,17 @@ body {
 
 /* ==========================================================================
    Docs prose — renders generated manual HTML to match DESIGN_SYSTEM.md
-   (near-black surfaces, electric-lime accent, Geist sans + mono)
+   (warm paper-white / deep-violet, light-first with a `.dark` twin;
+   Bricolage Grotesque headings, DM Sans body, always-dark JetBrains Mono code)
    ========================================================================== */
 .docs-prose {
-  color: #a1a1aa;
-  font-size: 0.95rem;
+  color: #525252;
+  font-family: var(--font-body), 'DM Sans', sans-serif;
+  font-size: 20px;
   line-height: 1.75;
+}
+.dark .docs-prose {
+  color: #7a8399;
 }
 
 .docs-prose > :first-child {
@@ -43,19 +55,28 @@ body {
 .docs-prose h2,
 .docs-prose h3,
 .docs-prose h4 {
-  color: #f4f4f5;
-  font-weight: 800;
+  font-family: var(--font-heading), 'Bricolage Grotesque', sans-serif;
+  color: #18181b;
+  font-weight: 700;
   letter-spacing: -0.02em;
   scroll-margin-top: 6rem;
 }
+.dark .docs-prose h2,
+.dark .docs-prose h3,
+.dark .docs-prose h4 {
+  color: #edf0fa;
+}
 
 .docs-prose h2 {
-  font-size: 1.65rem;
-  line-height: 1.2;
-  margin-top: 3.5rem;
+  font-size: 33px;
+  line-height: 1.25;
+  margin-top: 3.25rem;
   margin-bottom: 1.25rem;
-  padding-top: 2.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.dark .docs-prose h2 {
+  border-top-color: rgba(255, 255, 255, 0.07);
 }
 
 .docs-prose > h2:first-child {
@@ -65,15 +86,15 @@ body {
 }
 
 .docs-prose h3 {
-  font-size: 1.2rem;
+  font-size: 24px;
   margin-top: 2.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
 }
 
 .docs-prose h4 {
-  font-size: 1rem;
+  font-size: 21.5px;
   margin-top: 2rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 /* Anchor link affordance on hover */
@@ -85,32 +106,35 @@ body {
 
 /* Paragraphs & inline ------------------------------------------------------ */
 .docs-prose p {
-  margin: 1.1rem 0;
+  margin: 1.3rem 0;
 }
 
 .docs-prose strong {
-  color: #f4f4f5;
+  color: #18181b;
   font-weight: 700;
+}
+.dark .docs-prose strong {
+  color: #edf0fa;
 }
 
 .docs-prose a {
-  color: #e8ff47;
+  color: #7c3aed;
   text-decoration: none;
-  border-bottom: 1px solid rgba(232, 255, 71, 0.3);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.3);
   transition: border-color 0.15s, color 0.15s;
 }
 
 .docs-prose a:hover {
-  border-bottom-color: #e8ff47;
+  border-bottom-color: #7c3aed;
 }
 
 /* Inline code (not inside a code block) */
 .docs-prose :not(pre) > code {
-  font-family: var(--font-mono), ui-monospace, monospace;
+  font-family: var(--font-code), 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.82em;
-  color: #e8ff47;
-  background: rgba(232, 255, 71, 0.08);
-  border: 1px solid rgba(232, 255, 71, 0.18);
+  color: #7c3aed;
+  background: rgba(91, 33, 182, 0.1);
+  border: 1px solid rgba(91, 33, 182, 0.18);
   padding: 0.12em 0.4em;
   border-radius: 0.375rem;
   white-space: nowrap;
@@ -119,21 +143,24 @@ body {
 /* Lists -------------------------------------------------------------------- */
 .docs-prose ul,
 .docs-prose ol {
-  margin: 1.1rem 0;
-  padding-left: 1.4rem;
+  margin: 1.3rem 0;
+  padding-left: 1.6rem;
 }
 
 .docs-prose li {
-  margin: 0.4rem 0;
+  margin: 0.55rem 0;
 }
 
 .docs-prose ul > li::marker {
-  color: #52525b;
+  color: #a3a3a3;
+}
+.dark .docs-prose ul > li::marker {
+  color: #374151;
 }
 
 .docs-prose ol > li::marker {
-  color: #71717a;
-  font-family: var(--font-mono), monospace;
+  color: #7c3aed;
+  font-family: var(--font-code), monospace;
   font-size: 0.85em;
 }
 
@@ -142,18 +169,44 @@ body {
   margin: 0.4rem 0;
 }
 
-/* Blockquotes — "Note" callouts ------------------------------------------- */
+/* Blockquotes — rendered as "tip" callouts, matching the docs mock -------- */
 .docs-prose blockquote {
-  margin: 1.5rem 0;
-  padding: 0.9rem 1.1rem;
-  border-left: 3px solid #e8ff47;
-  background: rgba(232, 255, 71, 0.04);
-  border-radius: 0 0.5rem 0.5rem 0;
+  position: relative;
+  margin: 1.75rem 0;
+  padding: 1.1rem 1.35rem 1.1rem 2.9rem;
+  border: 1px solid rgba(91, 33, 182, 0.18);
+  border-left: 3px solid #7c3aed;
+  background: rgba(91, 33, 182, 0.05);
+  border-radius: 0.625rem;
+}
+.dark .docs-prose blockquote {
+  background: rgba(124, 58, 237, 0.07);
+}
+
+.docs-prose blockquote::before {
+  content: '💡';
+  position: absolute;
+  left: 1.05rem;
+  top: 1.1rem;
+  font-size: 16px;
+  line-height: 1;
 }
 
 .docs-prose blockquote p {
-  margin: 0.4rem 0;
-  color: #d4d4d8;
+  margin: 0.55rem 0;
+  color: #52525b;
+  font-size: 18.5px;
+  line-height: 1.7;
+}
+.dark .docs-prose blockquote p {
+  color: #a3aec2;
+}
+
+.docs-prose blockquote strong {
+  color: #18181b;
+}
+.dark .docs-prose blockquote strong {
+  color: #edf0fa;
 }
 
 .docs-prose blockquote > :first-child {
@@ -163,51 +216,80 @@ body {
   margin-bottom: 0;
 }
 
-/* Code blocks (Shiki) — design-system code panel with mac titlebar --------- */
+/* Code blocks (Shiki) — always-dark shell, chrome added by DocsProse ------- */
+.docs-cb {
+  margin: 1.75rem 0;
+  background: #131316;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+.dark .docs-cb {
+  background: #0c0c14;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.45);
+}
+
+.docs-cb-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.docs-cb-lang {
+  font-family: var(--font-code), 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #a855f7;
+  background: rgba(91, 33, 182, 0.15);
+  border: 1px solid rgba(91, 33, 182, 0.25);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.docs-cb-copy {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body), 'DM Sans', sans-serif;
+  font-size: 14.5px;
+  color: rgba(255, 255, 255, 0.3);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.docs-cb-copy:hover {
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.docs-cb-copy.copied {
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
 .docs-prose pre {
-  position: relative;
-  margin: 1.5rem 0;
-  padding: 3rem 1.25rem 1.25rem;
-  border: 1px solid rgba(232, 255, 71, 0.2);
-  border-radius: 0.75rem;
+  margin: 0;
+  padding: 1.35rem 1.5rem;
   overflow-x: auto;
-  font-size: 0.82rem;
-  line-height: 1.65;
-  background: #0d0d0f !important;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  background: transparent !important;
 }
 
 .docs-prose pre code {
-  font-family: var(--font-mono), ui-monospace, monospace;
+  font-family: var(--font-code), 'JetBrains Mono', ui-monospace, monospace;
   background: transparent !important;
   display: block;
   width: fit-content;
   min-width: 100%;
-}
-
-/* Fake titlebar */
-.docs-prose pre::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2.1rem;
-  background: rgba(232, 255, 71, 0.05);
-  border-bottom: 1px solid rgba(232, 255, 71, 0.2);
-  border-radius: 0.75rem 0.75rem 0 0;
-}
-
-/* Three traffic-light dots */
-.docs-prose pre::after {
-  content: "";
-  position: absolute;
-  top: 0.82rem;
-  left: 1rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 9999px;
-  background: #ff5f56;
-  box-shadow: 0.8rem 0 0 #ffbd2e, 1.6rem 0 0 #27c93f;
 }
 
 /* Tables ------------------------------------------------------------------- */
@@ -217,37 +299,63 @@ body {
   max-width: 100%;
   overflow-x: auto;
   border-collapse: collapse;
-  margin: 1.5rem 0;
-  font-size: 0.85rem;
+  margin: 1.75rem 0;
+  font-size: 17.5px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+}
+.dark .docs-prose table {
+  border-color: rgba(255, 255, 255, 0.07);
 }
 
 .docs-prose th,
 .docs-prose td {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0.75rem 1.1rem;
   text-align: left;
   vertical-align: top;
 }
+.dark .docs-prose th,
+.dark .docs-prose td {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+.docs-prose tr > :last-child {
+  border-right: 0;
+}
+.docs-prose tr:last-child > * {
+  border-bottom: 0;
+}
 
 .docs-prose thead th {
-  background: #111113;
-  color: #f4f4f5;
-  font-family: var(--font-mono), monospace;
-  font-size: 0.72rem;
+  background: rgba(91, 33, 182, 0.045);
+  color: #18181b;
+  font-family: var(--font-code), monospace;
+  font-size: 13.5px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
+}
+.dark .docs-prose thead th {
+  background: rgba(124, 58, 237, 0.08);
+  color: #edf0fa;
 }
 
 .docs-prose tbody tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.015);
+}
+.dark .docs-prose tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
 }
 
 /* Misc --------------------------------------------------------------------- */
 .docs-prose hr {
   border: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  margin: 2.5rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin: 3rem 0;
+}
+.dark .docs-prose hr {
+  border-top-color: rgba(255, 255, 255, 0.07);
 }
 
 .docs-prose img {
@@ -256,7 +364,29 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .docs-prose a {
+  .docs-prose a,
+  .docs-cb-copy {
     transition: none;
   }
+}
+
+/* ==========================================================================
+   Landing page — warm paper-white / deep-violet system (DESIGN_SYSTEM.md)
+   Scoped with a `landing-` prefix so it can't leak into docs/playground.
+   ========================================================================== */
+.landing-g-text {
+  background: linear-gradient(130deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes landing-pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+}
+
+@keyframes landing-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(7px); }
 }

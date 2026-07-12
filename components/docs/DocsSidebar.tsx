@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 
 interface NavChapter {
   num: string
@@ -9,115 +10,150 @@ interface NavChapter {
   title: string
 }
 
+interface NavGroup {
+  label: string
+  chapters: NavChapter[]
+}
+
 interface FrameworkTab {
   framework: string
   label: string
 }
 
+function SidebarBody({
+  framework,
+  frameworks,
+  groups,
+  pathname,
+}: {
+  framework: string
+  frameworks: FrameworkTab[]
+  groups: NavGroup[]
+  pathname: string | null
+}) {
+  const base = `/docs/${framework}`
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
+  const isActive = (href: string) => pathname === href
+
+  return (
+    <>
+      <div className="px-4 pb-4">
+        <div className="mx-1 flex items-center justify-between bg-black/[0.025] dark:bg-white/[0.025] border border-black/[0.08] dark:border-white/[0.07] rounded-lg px-3.5 py-2.5">
+          <span className="text-[13px] text-[#a3a3a3] dark:text-[#374151]">Version</span>
+          <span className="font-code text-[13px] font-semibold text-[#7c3aed]">v0.1.0-beta</span>
+        </div>
+      </div>
+
+      <div className="px-4 pb-4 flex gap-2">
+        {frameworks.map((f) => {
+          const active = f.framework === framework
+          return (
+            <Link
+              key={f.framework}
+              href={`/docs/${f.framework}`}
+              className={[
+                'flex-1 text-center font-code text-[13px] font-semibold px-2 py-2 rounded-md border transition-all',
+                active
+                  ? 'bg-[#5b21b6] dark:bg-[#7c3aed] text-white border-transparent'
+                  : 'border-black/[0.08] dark:border-white/[0.07] text-[#525252] dark:text-[#7a8399] hover:text-[#18181b] dark:hover:text-[#edf0fa] hover:border-[rgba(91,33,182,0.25)]',
+              ].join(' ')}
+            >
+              {f.label}
+            </Link>
+          )
+        })}
+      </div>
+
+      <Link
+        href={base}
+        className={[
+          'flex items-center gap-2.5 px-5 py-2.5 text-[16.5px] transition-colors border-l-2 mb-2',
+          isActive(base)
+            ? 'text-[#7c3aed] bg-[rgba(91,33,182,0.06)] border-[#7c3aed] font-semibold'
+            : 'text-[#525252] dark:text-[#7a8399] border-transparent hover:text-[#18181b] dark:hover:text-[#edf0fa] hover:bg-black/[0.025] dark:hover:bg-white/[0.025]',
+        ].join(' ')}
+      >
+        <span
+          className={`w-[5px] h-[5px] rounded-full shrink-0 ${isActive(base) ? 'bg-current opacity-100' : 'bg-current opacity-40'}`}
+        />
+        Overview
+      </Link>
+
+      {groups.map((group) => {
+        const isCollapsed = collapsed[group.label]
+        return (
+          <div key={group.label} className="mb-2 mt-2">
+            <button
+              onClick={() => setCollapsed((c) => ({ ...c, [group.label]: !c[group.label] }))}
+              className="w-full flex items-center justify-between px-5 py-2.5 text-[12px] font-bold tracking-[0.07em] uppercase text-[#a3a3a3] dark:text-[#374151] hover:text-[#525252] dark:hover:text-[#7a8399] transition-colors"
+            >
+              {group.label}
+              <span className={`text-[8px] opacity-50 transition-transform ${isCollapsed ? '-rotate-90' : ''}`}>▼</span>
+            </button>
+            {!isCollapsed && (
+              <div>
+                {group.chapters.map((c) => {
+                  const href = `${base}/${c.slug}`
+                  const active = isActive(href)
+                  return (
+                    <Link
+                      key={c.slug}
+                      href={href}
+                      className={[
+                        'flex items-center gap-2.5 px-5 py-2.5 text-[16.5px] leading-snug transition-colors border-l-2',
+                        active
+                          ? 'text-[#7c3aed] bg-[rgba(91,33,182,0.06)] border-[#7c3aed] font-semibold'
+                          : 'text-[#525252] dark:text-[#7a8399] border-transparent hover:text-[#18181b] dark:hover:text-[#edf0fa] hover:bg-black/[0.025] dark:hover:bg-white/[0.025]',
+                      ].join(' ')}
+                    >
+                      <span
+                        className={`w-[5px] h-[5px] rounded-full shrink-0 ${active ? 'bg-current opacity-100' : 'bg-current opacity-40'}`}
+                      />
+                      {c.title}
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </>
+  )
+}
+
 /**
- * Left documentation rail: framework switcher + chapter list.
- * Renders from data baked into lib/docs-content.ts (passed in by the server
- * layout) — it never reads the markdown source at runtime.
- * On mobile it collapses into a <details> dropdown.
+ * Left documentation rail: version chip, framework switcher, grouped
+ * chapter list. Renders from data baked into lib/docs-content.json (passed
+ * in by the server layout) — it never reads markdown at runtime.
+ * Desktop: fixed sticky column. Mobile: collapses into a <details> dropdown.
  */
 export default function DocsSidebar({
   framework,
   frameworks,
-  chapters,
+  groups,
 }: {
   framework: string
   frameworks: FrameworkTab[]
-  chapters: NavChapter[]
+  groups: NavGroup[]
 }) {
   const pathname = usePathname()
-  const base = `/docs/${framework}`
-
-  const isActive = (href: string) => pathname === href
-
-  const tabs = (
-    <div className="flex gap-2">
-      {frameworks.map((f) => {
-        const active = f.framework === framework
-        return (
-          <Link
-            key={f.framework}
-            href={`/docs/${f.framework}`}
-            className={`flex-1 text-center font-mono text-xs font-semibold px-3 py-2 rounded-lg border transition-all ${
-              active
-                ? 'bg-[#e8ff47] text-[#09090b] border-[#e8ff47]'
-                : 'border-white/8 bg-white/[0.02] text-[#a1a1aa] hover:text-[#e8ff47] hover:border-[#e8ff47]/25'
-            }`}
-          >
-            {f.label}
-          </Link>
-        )
-      })}
-    </div>
-  )
-
-  const list = (
-    <nav className="flex flex-col gap-0.5">
-      <Link
-        href={base}
-        className={`font-mono text-xs px-3 py-1.5 rounded-lg border-l-2 transition-all ${
-          isActive(base)
-            ? 'border-[#e8ff47] text-[#e8ff47] bg-[#e8ff47]/5'
-            : 'border-transparent text-[#71717a] hover:text-[#f4f4f5]'
-        }`}
-      >
-        Overview
-      </Link>
-      {chapters.map((c) => {
-        const href = `${base}/${c.slug}`
-        const active = isActive(href)
-        return (
-          <Link
-            key={c.slug}
-            href={href}
-            className={`flex items-baseline gap-2 px-3 py-1.5 rounded-lg border-l-2 transition-all ${
-              active
-                ? 'border-[#e8ff47] bg-[#e8ff47]/5'
-                : 'border-transparent hover:bg-white/[0.03]'
-            }`}
-          >
-            <span className="font-mono text-[0.7rem] text-[#52525b] w-5 shrink-0">
-              {c.num}
-            </span>
-            <span
-              className={`text-sm leading-snug ${
-                active ? 'text-[#e8ff47]' : 'text-[#a1a1aa]'
-              }`}
-            >
-              {c.title}
-            </span>
-          </Link>
-        )
-      })}
-    </nav>
-  )
 
   return (
     <>
       {/* Desktop rail */}
-      <div className="hidden lg:flex flex-col gap-5">
-        <div className="font-mono text-xs text-[#e8ff47] tracking-widest uppercase">
-          Documentation
-        </div>
-        {tabs}
-        {list}
+      <div className="hidden md:block h-full overflow-y-auto pt-6 pb-12 [scrollbar-width:thin]">
+        <SidebarBody framework={framework} frameworks={frameworks} groups={groups} pathname={pathname} />
       </div>
 
       {/* Mobile dropdown */}
-      <details className="lg:hidden rounded-xl border border-white/8 bg-[#111113]">
-        <summary className="flex items-center justify-between px-4 py-3 cursor-pointer font-mono text-xs text-[#a1a1aa] list-none">
-          <span className="tracking-widest uppercase text-[#e8ff47]">
-            Documentation menu
-          </span>
-          <span className="text-[#52525b]">▾</span>
+      <details className="md:hidden rounded-xl border border-black/[0.08] dark:border-white/[0.07] bg-white dark:bg-[#0c0c14] mx-4 mt-4 mb-2">
+        <summary className="flex items-center justify-between px-4 py-3 cursor-pointer text-[13px] font-bold tracking-[0.07em] uppercase text-[#7c3aed] list-none">
+          Documentation menu
+          <span className="text-[#a3a3a3] dark:text-[#374151] text-[9px]">▾</span>
         </summary>
-        <div className="flex flex-col gap-4 px-4 pb-4">
-          {tabs}
-          {list}
+        <div className="pb-3">
+          <SidebarBody framework={framework} frameworks={frameworks} groups={groups} pathname={pathname} />
         </div>
       </details>
     </>

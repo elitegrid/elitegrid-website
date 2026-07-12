@@ -29,6 +29,7 @@ const OUT_FILE = path.join(ROOT, 'lib', 'docs-content.json')
 const MANUALS = [
   { framework: 'react', label: 'React', dir: 'app/docs/react-manual' },
   { framework: 'vue', label: 'Vue', dir: 'app/docs/vue-manual' },
+  { framework: 'vanilla', label: 'Vanilla JS', dir: 'app/docs/vanilla-manual' },
 ]
 
 // --- markdown helpers -------------------------------------------------------
@@ -120,13 +121,9 @@ async function loadExistingManuals() {
   if (!existsSync(OUT_FILE)) return []
   try {
     const src = await readFile(OUT_FILE, 'utf8')
-    const marker = 'export const manuals: Manual[] = '
-    const start = src.indexOf(marker)
-    if (start === -1) return []
-    const json = src.slice(start + marker.length).trim()
-    return JSON.parse(json)
+    return JSON.parse(src)
   } catch (err) {
-    console.warn('  could not parse existing docs-content.ts:', err.message)
+    console.warn('  could not parse existing docs-content.json:', err.message)
     return []
   }
 }

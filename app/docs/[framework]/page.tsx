@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getManual, frameworks } from '@/lib/docs'
 import DocsToc from '@/components/docs/DocsToc'
+import DocsProse from '@/components/docs/DocsProse'
 
 export async function generateStaticParams() {
   return frameworks.map((f) => ({ framework: f.framework }))
@@ -31,27 +33,56 @@ export default async function DocsOverviewPage({
   if (!manual) notFound()
 
   const { overview } = manual
+  const nextUp = manual.chapters.slice(0, 4)
 
   return (
-    <div className="flex gap-10 min-w-0">
-      <article className="flex-1 min-w-0 max-w-3xl">
-        <div className="mb-8">
-          <div className="font-mono text-xs text-[#e8ff47] tracking-widest uppercase mb-3">
-            {manual.label} Manual
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-[#f4f4f5]">
-            {overview.title}
-          </h1>
-          {overview.blurb && (
-            <p className="mt-2 text-[#71717a] text-sm">{overview.blurb}</p>
-          )}
+    <div className="flex min-w-0">
+      <main className="flex-1 min-w-0 max-w-[960px] px-6 md:px-14 py-12 md:py-16 mx-auto xl:mx-0">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-[15.5px] text-[#a3a3a3] dark:text-[#374151] mb-7">
+          <Link href={`/docs/${framework}`} className="hover:text-[#7c3aed] transition-colors">
+            Docs
+          </Link>
+          <span className="opacity-40 text-[11px]">›</span>
+          <span className="text-[#525252] dark:text-[#7a8399]">{manual.label} Manual</span>
         </div>
-        <div
-          className="docs-prose"
-          dangerouslySetInnerHTML={{ __html: overview.html }}
-        />
-      </article>
-      <DocsToc items={overview.toc} />
+
+        <h1 className="font-heading font-extrabold text-[clamp(38px,5vw,50px)] tracking-[-0.03em] leading-[1.1] text-[#18181b] dark:text-[#edf0fa] mb-4">
+          {overview.title === 'Overview' ? `${manual.label} Manual` : overview.title}
+        </h1>
+        {overview.blurb && (
+          <p className="text-[21px] text-[#525252] dark:text-[#7a8399] leading-[1.7] mb-10 pb-8 border-b border-black/[0.08] dark:border-white/[0.07]">
+            {overview.blurb}
+          </p>
+        )}
+
+        <DocsProse html={overview.html} />
+
+        {nextUp.length > 0 && (
+          <div className="mt-14">
+            <h2 className="font-heading font-bold text-[21px] tracking-[-0.01em] text-[#18181b] dark:text-[#edf0fa] mb-4">
+              Start here
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {nextUp.map((c) => (
+                <Link
+                  key={c.slug}
+                  href={`/docs/${framework}/${c.slug}`}
+                  className="group bg-black/[0.025] dark:bg-white/[0.025] border border-black/[0.07] dark:border-white/[0.065] rounded-[10px] px-5 py-4 transition-[border-color,background] duration-200 hover:border-[rgba(91,33,182,0.3)] hover:bg-[rgba(91,33,182,0.04)]"
+                >
+                  <div className="flex items-center justify-between text-[18px] font-semibold text-[#18181b] dark:text-[#edf0fa] mb-1.5">
+                    {c.title}
+                    <span className="opacity-40 group-hover:opacity-100 group-hover:text-[#7c3aed] transition-all">→</span>
+                  </div>
+                  <div className="text-[15px] text-[#a3a3a3] dark:text-[#374151] leading-[1.55]">{c.blurb}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </main>
+
+      <DocsToc items={overview.toc} editHref="https://github.com/elitegrid" />
     </div>
   )
 }

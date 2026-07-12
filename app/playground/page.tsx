@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'
+import Link from 'next/link'
 import Editor, { loader } from '@monaco-editor/react'
 
 // Pre-warm Monaco workers as soon as this module is imported (browser only).
@@ -162,10 +163,14 @@ const ELITEGRID_TYPES = `
     style?: { [key: string]: any }
     className?: string
   }): any
+  export function mount<TData = unknown>(
+    grid: GridInstance<TData>,
+    container: Element | null
+  ): () => void
 `
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type Framework = 'react' | 'vue'
+type Framework = 'react' | 'vue' | 'vanilla'
 type ExampleKey = 'performance' | 'api' | 'editable' | 'export'
 
 interface ExampleDef {
@@ -367,8 +372,8 @@ const Btn = ({ label, onClick, primary = false }: any) => (
   <button onClick={onClick} style={{
     padding: '7px 16px', borderRadius: 7, border: 'none', cursor: 'pointer',
     fontSize: '0.8rem', fontWeight: 600, fontFamily: 'system-ui',
-    background: primary ? '#e8ff47' : 'rgba(255,255,255,0.07)',
-    color:      primary ? '#09090b' : '#a1a1aa',
+    background: primary ? '#7c3aed' : 'rgba(255,255,255,0.07)',
+    color:      primary ? '#ffffff' : '#a1a1aa',
   }}>{label}</button>
 )
 
@@ -590,8 +595,8 @@ const btn = (label: string, primary: boolean, onClick: () => void) =>
     style: {
       padding: '7px 16px', borderRadius: '7px', border: 'none', cursor: 'pointer',
       fontSize: '0.8rem', fontWeight: '600', fontFamily: 'system-ui',
-      background: primary ? '#e8ff47' : 'rgba(255,255,255,0.07)',
-      color:      primary ? '#09090b' : '#a1a1aa',
+      background: primary ? '#7c3aed' : 'rgba(255,255,255,0.07)',
+      color:      primary ? '#ffffff' : '#a1a1aa',
     },
   }, label)
 
@@ -613,6 +618,225 @@ export default defineComponent({
   },
 }
 
+// ── Vanilla JS examples — createGrid() + mount(), no framework at all ────────
+const VANILLA_EXAMPLES: Record<ExampleKey, ExampleDef> = {
+  performance: {
+    label: 'Virtual Scroll',
+    badge: '10K rows',
+    desc: 'Identical config, zero framework — 10,000 rows, same 60fps performance',
+    filename: 'performance.ts',
+    code: `import { createGrid, mount } from '@elitegrid/core'
+
+const DEPTS     = ['Engineering','Design','Marketing','HR','Sales','Finance']
+const LOCATIONS = ['New York','London','Berlin','Tokyo','Sydney','Toronto']
+const NAMES     = ['Alice','Bob','Carol','David','Eva','Frank','Grace','Henry',
+                   'Isabel','Jack','Karen','Leo','Mia','Nate','Olivia','Pete']
+
+const grid = createGrid({
+  columns: [
+    { field: 'id',       header: 'ID',         size: { width: 70 } },
+    { field: 'name',     header: 'Name',       size: { flex: 2, minWidth: 140 },
+      filter: { type: 'text' } },
+    { field: 'dept',     header: 'Department', size: { flex: 1, minWidth: 120 },
+      filter: { type: 'text' } },
+    { field: 'salary',   header: 'Salary',     size: { flex: 1, minWidth: 110 },
+      filter: { type: 'number' },
+      display: { formatter: v => '$' + Number(v).toLocaleString() } },
+    { field: 'location', header: 'Location',   size: { flex: 1, minWidth: 110 },
+      filter: { type: 'text' } },
+    { field: 'status',   header: 'Status',     size: { width: 90 },
+      display: { formatter: v => v ? 'Active' : 'Inactive' } },
+  ],
+  data: Array.from({ length: 10000 }, (_, i) => ({
+    id:       i + 1,
+    name:     NAMES[i % NAMES.length] + ' ' + (Math.floor(i / NAMES.length) + 1),
+    dept:     DEPTS[i % DEPTS.length],
+    salary:   50000 + ((i * 317) % 100000),
+    location: LOCATIONS[i % LOCATIONS.length],
+    status:   i % 7 !== 0,
+  })),
+  sorting:    { enabled: true, multiSort: true },
+  filtering:  { enabled: true },
+  pagination: { enabled: true, pageSize: 100, pageSizeOptions: [50, 100, 200, 500] },
+  selection:  { mode: 'multiple', showCheckboxes: true },
+  appearance: { rowHeight: 36, headerHeight: 44, rowStriping: true },
+})
+
+// No component, no re-render cycle — just point mount() at a container.
+mount(grid, document.getElementById('grid-container'))`,
+  },
+  api: {
+    label: 'Real API',
+    badge: 'Live fetch',
+    desc: 'Fetch from a real API — sort, filter and paginate live data, zero framework glue',
+    filename: 'real-api.ts',
+    code: `import { createGrid, mount } from '@elitegrid/core'
+
+const grid = createGrid({
+  columns: [
+    { field: 'id',      header: 'ID',      size: { width: 60 } },
+    { field: 'name',    header: 'Name',    size: { flex: 2, minWidth: 140 },
+      filter: { type: 'text' } },
+    { field: 'email',   header: 'Email',   size: { flex: 2, minWidth: 160 },
+      filter: { type: 'text' } },
+    { field: 'phone',   header: 'Phone',   size: { flex: 1, minWidth: 120 } },
+    { field: 'company', header: 'Company', size: { flex: 1, minWidth: 120 },
+      filter: { type: 'text' } },
+    { field: 'city',    header: 'City',    size: { flex: 1, minWidth: 100 },
+      filter: { type: 'text' } },
+  ],
+  data: [],
+  sorting:    { enabled: true, multiSort: true },
+  filtering:  { enabled: true },
+  pagination: { enabled: true, pageSize: 10 },
+  appearance: { rowHeight: 36, headerHeight: 44, rowStriping: true },
+  events: {
+    onReady: (api) => {
+      fetch('https://jsonplaceholder.typicode.com/users')
+        .then(r => r.json())
+        .then(users => api.setData(users.map((u: any) => ({
+          id:      u.id,
+          name:    u.name,
+          email:   u.email,
+          phone:   u.phone,
+          company: u.company.name,
+          city:    u.address.city,
+        }))))
+    },
+  },
+})
+
+mount(grid, document.getElementById('grid-container'))`,
+  },
+  editable: {
+    label: 'Inline Edit',
+    badge: 'Validated',
+    desc: 'Double-click any cell to edit — type-safe validators, dropdowns, Tab/Enter nav',
+    filename: 'editable.ts',
+    code: `import { createGrid, mount } from '@elitegrid/core'
+
+const grid = createGrid({
+  columns: [
+    { field: 'name',   header: 'Name',       size: { flex: 2 },
+      edit: { enabled: true, type: 'text',
+              validator: v => (!v || !String(v).trim()) ? 'Name is required' : null } },
+    { field: 'dept',   header: 'Department', size: { flex: 1 },
+      edit: { enabled: true, type: 'dropdown',
+              options: ['Engineering','Design','Marketing','HR','Finance'] } },
+    { field: 'role',   header: 'Role',       size: { flex: 1 },
+      edit: { enabled: true, type: 'dropdown',
+              options: ['Engineer','Designer','Manager','Lead','Director'] } },
+    { field: 'salary', header: 'Salary',     size: { flex: 1 },
+      display: { formatter: v => '$' + Number(v).toLocaleString() },
+      edit: { enabled: true, type: 'number', min: 0, max: 1000000,
+              parser: raw => Number(raw),
+              validator: v => Number(v) < 30000 ? 'Min salary is $30,000' : null } },
+    { field: 'active', header: 'Active',     size: { width: 80 },
+      display: { formatter: v => v ? 'Yes' : 'No' },
+      edit: { enabled: true, type: 'boolean' } },
+  ],
+  data: Array.from({ length: 20 }, (_, i) => ({
+    id:     i + 1,
+    name:   'Employee ' + (i + 1),
+    dept:   ['Engineering','Design','Marketing','HR'][i % 4],
+    role:   ['Engineer','Designer','Manager','Lead'][i % 4],
+    salary: 70000 + i * 2500,
+    active: i % 3 !== 0,
+  })),
+  editing:    { enabled: true, trigger: 'doubleClick',
+                confirmOnEnter: true, cancelOnEscape: true, moveOnTab: true },
+  sorting:    { enabled: true },
+  pagination: { enabled: true, pageSize: 20 },
+  appearance: { rowHeight: 40, headerHeight: 44, rowStriping: true },
+  events: {
+    onEditCommit: (rowId, field, value) =>
+      console.log('Saved:', { rowId, field, value }),
+  },
+})
+
+// Re-runnable: clear the container first so nothing stacks up on re-run.
+const container = document.getElementById('grid-container')!
+container.innerHTML = ''
+container.style.cssText =
+  'height:100%;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box'
+
+const hint = document.createElement('p')
+hint.textContent = 'Double-click any cell to edit · Tab moves · Enter saves · Esc cancels'
+hint.style.cssText = 'margin:0;font-size:0.8rem;color:#52525b;font-family:system-ui'
+container.appendChild(hint)
+
+const gridEl = document.createElement('div')
+gridEl.style.cssText = 'flex:1;min-height:0'
+container.appendChild(gridEl)
+
+mount(grid, gridEl)`,
+  },
+  export: {
+    label: 'CSV Export',
+    badge: 'Multi-scope',
+    desc: 'Export all, filtered, or selected rows — with separate export formatters',
+    filename: 'export.ts',
+    code: `import { createGrid, mount } from '@elitegrid/core'
+
+let api: any = null
+
+const grid = createGrid({
+  columns: [
+    { field: 'id',     header: 'ID',         size: { width: 60 } },
+    { field: 'name',   header: 'Name',       size: { flex: 2 }, filter: { type: 'text' } },
+    { field: 'role',   header: 'Role',       size: { flex: 1 }, filter: { type: 'text' } },
+    { field: 'salary', header: 'Salary',     size: { flex: 1 }, filter: { type: 'number' },
+      display: {
+        formatter:       v => '$' + Number(v).toLocaleString(),
+        exportFormatter: v => String(v),
+      } },
+    { field: 'dept',   header: 'Department', size: { flex: 1 }, filter: { type: 'text' } },
+  ],
+  data: Array.from({ length: 100 }, (_, i) => ({
+    id:     i + 1,
+    name:   'Employee ' + (i + 1),
+    role:   ['Engineer','Designer','PM','QA'][i % 4],
+    salary: 65000 + i * 500,
+    dept:   ['Engineering','Design','Marketing','HR'][i % 4],
+  })),
+  sorting:    { enabled: true },
+  filtering:  { enabled: true },
+  selection:  { mode: 'multiple', showCheckboxes: true },
+  pagination: { enabled: true, pageSize: 25 },
+  appearance: { rowHeight: 36, headerHeight: 44, rowStriping: true },
+  events: { onReady: (a) => { api = a } },
+})
+
+function makeBtn(label: string, primary: boolean, onClick: () => void) {
+  const btn = document.createElement('button')
+  btn.textContent = label
+  btn.style.cssText = 'padding:7px 16px;border-radius:7px;border:none;cursor:pointer;' +
+    'font-size:0.8rem;font-weight:600;font-family:system-ui;' +
+    'background:' + (primary ? '#7c3aed' : 'rgba(255,255,255,0.07)') + ';' +
+    'color:' + (primary ? '#ffffff' : '#a1a1aa')
+  btn.onclick = onClick
+  return btn
+}
+
+const container = document.getElementById('grid-container')!
+container.innerHTML = ''
+container.style.cssText =
+  'height:100%;display:flex;flex-direction:column;gap:8px;padding:8px;box-sizing:border-box'
+
+const toolbar = document.createElement('div')
+toolbar.style.cssText = 'display:flex;gap:8px;flex-shrink:0'
+toolbar.appendChild(makeBtn('Export All',      true,  () => api?.exportCSV({ scope: 'all',      filename: 'all-employees'      })))
+toolbar.appendChild(makeBtn('Export Filtered', false, () => api?.exportCSV({ scope: 'filtered', filename: 'filtered-employees' })))
+toolbar.appendChild(makeBtn('Export Selected', false, () => api?.exportCSV({ scope: 'selected', filename: 'selected-rows'      })))
+container.appendChild(toolbar)
+
+const gridEl = document.createElement('div')
+gridEl.style.cssText = 'flex:1;min-height:0'
+container.appendChild(gridEl)
+
+mount(grid, gridEl)`,
+  },
+}
 
 // ── Shared iframe CSS (used in both React and Vue sandboxes) ─────────────────
 const IFRAME_CSS = `
@@ -624,49 +848,49 @@ const IFRAME_CSS = `
     color: #e4e4e7;
   }
   :root, body {
-    --eg-primary: #e8ff47; --eg-primary-text: #09090b;
-    --eg-primary-light: rgba(232,255,71,0.08); --eg-primary-hover: #d4eb3a;
+    --eg-primary: #7c3aed; --eg-primary-text: #ffffff;
+    --eg-primary-light: rgba(124,58,237,0.08); --eg-primary-hover: #6d28d9;
     --eg-error: #f87171; --eg-error-text: #09090b;
     --eg-error-bg: rgba(248,113,113,0.08); --eg-surface: #111113;
     --eg-overlay-bg: rgba(9,9,11,0.97); --eg-header-bg: #0d0d0f;
     --eg-header-text: #52525b; --eg-header-border: 1px solid rgba(255,255,255,0.06);
     --eg-header-active-bg: #18181b; --eg-row-bg: #09090b;
     --eg-row-striped-bg: #0f0f11; --eg-row-border: 1px solid rgba(255,255,255,0.04);
-    --eg-row-hover-bg: rgba(232,255,71,0.045);
-    --eg-row-selected-bg: rgba(232,255,71,0.08);
-    --eg-row-selected-border: 1px solid rgba(232,255,71,0.22);
+    --eg-row-hover-bg: rgba(124,58,237,0.045);
+    --eg-row-selected-bg: rgba(124,58,237,0.08);
+    --eg-row-selected-border: 1px solid rgba(124,58,237,0.22);
     --eg-row-selected-outline: transparent; --eg-cell-text: #d4d4d8;
     --eg-cell-border: 1px solid rgba(255,255,255,0.04); --eg-text: #e4e4e7;
     --eg-muted-text: #52525b; --eg-border: rgba(255,255,255,0.07);
-    --eg-border-hover: rgba(232,255,71,0.28); --eg-sort-active-color: #e8ff47;
-    --eg-sort-icon-color: #3f3f46; --eg-btn-bg: rgba(232,255,71,0.08);
-    --eg-btn-text: #e8ff47; --eg-skeleton-base: #18181b;
+    --eg-border-hover: rgba(124,58,237,0.28); --eg-sort-active-color: #7c3aed;
+    --eg-sort-icon-color: #3f3f46; --eg-btn-bg: rgba(124,58,237,0.08);
+    --eg-btn-text: #7c3aed; --eg-skeleton-base: #18181b;
     --eg-skeleton-highlight: #27272a; --eg-empty-icon-bg: #18181b;
   }
   .yg-header { font-size:.6875rem!important; font-weight:600!important;
     letter-spacing:.09em!important; text-transform:uppercase!important; color:#3f3f46!important; }
   .yg-header-cell--sortable:hover { background:#18181b!important; }
-  .yg-header-cell--sorted { color:#e8ff47!important; }
+  .yg-header-cell--sorted { color:#7c3aed!important; }
   .yg-row { transition:background .1s ease; font-size:.875rem!important; }
   .yg-cell { font-size:.875rem!important; color:#d4d4d8!important;
     font-family:'Inter',system-ui,sans-serif!important; letter-spacing:-.01em; }
   .yg-pagination { font-size:.8125rem!important;
     border-top:1px solid rgba(255,255,255,.05)!important;
     background:#0a0a0c!important; padding:0 16px!important; color:#3f3f46!important; }
-  .yg-row[aria-selected="true"] { background:rgba(232,255,71,.07)!important; }
-  .yg-cell:focus { outline:2px solid rgba(232,255,71,.3)!important; outline-offset:-2px; }
+  .yg-row[aria-selected="true"] { background:rgba(124,58,237,.07)!important; }
+  .yg-cell:focus { outline:2px solid rgba(124,58,237,.3)!important; outline-offset:-2px; }
   .yg-sort-indicator { opacity:.25; transition:opacity .15s; }
-  .yg-header-cell--sorted .yg-sort-indicator { opacity:1!important; color:#e8ff47!important; }
-  .yg-header-cell--filtered svg { color:#e8ff47!important; }
-  .yg-resize-handle:hover>div { background:rgba(232,255,71,.3)!important; }
-  input[type="checkbox"] { accent-color:#e8ff47; width:14px!important; height:14px!important; cursor:pointer; }
+  .yg-header-cell--sorted .yg-sort-indicator { opacity:1!important; color:#7c3aed!important; }
+  .yg-header-cell--filtered svg { color:#7c3aed!important; }
+  .yg-resize-handle:hover>div { background:rgba(124,58,237,.3)!important; }
+  input[type="checkbox"] { accent-color:#7c3aed; width:14px!important; height:14px!important; cursor:pointer; }
   .yg-pagination select {
     appearance: none; -webkit-appearance: none;
     height: 28px !important; padding: 0 26px 0 10px !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
     border-radius: 6px !important;
     background-color: rgba(255,255,255,0.05) !important;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23e8ff47' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237c3aed' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important;
     background-position: right 8px center !important;
     color: #a1a1aa !important;
@@ -677,37 +901,37 @@ const IFRAME_CSS = `
     transition: border-color 0.15s, background-color 0.15s;
   }
   .yg-pagination select:hover {
-    border-color: rgba(232,255,71,0.3) !important;
-    background-color: rgba(232,255,71,0.06) !important;
-    color: #e8ff47 !important;
+    border-color: rgba(124,58,237,0.3) !important;
+    background-color: rgba(124,58,237,0.06) !important;
+    color: #7c3aed !important;
   }
   .yg-pagination select:focus {
-    border-color: rgba(232,255,71,0.4) !important;
-    box-shadow: 0 0 0 2px rgba(232,255,71,0.1) !important;
+    border-color: rgba(124,58,237,0.4) !important;
+    box-shadow: 0 0 0 2px rgba(124,58,237,0.1) !important;
   }
   .yg-pagination select option { background: #18181b; color: #e4e4e7; }
   ::-webkit-scrollbar { width:4px; height:4px; }
   ::-webkit-scrollbar-track { background:transparent; }
-  ::-webkit-scrollbar-thumb { background:rgba(232,255,71,.15); border-radius:999px; }
-  ::-webkit-scrollbar-thumb:hover { background:rgba(232,255,71,.35); }
+  ::-webkit-scrollbar-thumb { background:rgba(124,58,237,.15); border-radius:999px; }
+  ::-webkit-scrollbar-thumb:hover { background:rgba(124,58,237,.35); }
   ::-webkit-scrollbar-corner { background:transparent; }
 `
 
 const ROOT_STYLE = `height:100%;display:flex;flex-direction:column;
-  --eg-primary:#e8ff47; --eg-primary-text:#09090b; --eg-primary-light:rgba(232,255,71,0.08);
-  --eg-primary-hover:#d4eb3a; --eg-error:#f87171; --eg-error-text:#09090b;
+  --eg-primary:#7c3aed; --eg-primary-text:#ffffff; --eg-primary-light:rgba(124,58,237,0.08);
+  --eg-primary-hover:#6d28d9; --eg-error:#f87171; --eg-error-text:#09090b;
   --eg-error-bg:rgba(248,113,113,0.08); --eg-surface:#111113;
   --eg-overlay-bg:rgba(9,9,11,0.97); --eg-header-bg:#0d0d0f; --eg-header-text:#52525b;
   --eg-header-border:1px solid rgba(255,255,255,0.06); --eg-header-active-bg:#18181b;
   --eg-row-bg:#09090b; --eg-row-striped-bg:#0f0f11;
   --eg-row-border:1px solid rgba(255,255,255,0.04);
-  --eg-row-hover-bg:rgba(232,255,71,0.045); --eg-row-selected-bg:rgba(232,255,71,0.08);
-  --eg-row-selected-border:1px solid rgba(232,255,71,0.22);
+  --eg-row-hover-bg:rgba(124,58,237,0.045); --eg-row-selected-bg:rgba(124,58,237,0.08);
+  --eg-row-selected-border:1px solid rgba(124,58,237,0.22);
   --eg-row-selected-outline:transparent; --eg-cell-text:#d4d4d8;
   --eg-cell-border:1px solid rgba(255,255,255,0.04); --eg-text:#e4e4e7;
   --eg-muted-text:#52525b; --eg-border:rgba(255,255,255,0.07);
-  --eg-border-hover:rgba(232,255,71,0.28); --eg-sort-active-color:#e8ff47;
-  --eg-sort-icon-color:#3f3f46; --eg-btn-bg:rgba(232,255,71,0.08); --eg-btn-text:#e8ff47;
+  --eg-border-hover:rgba(124,58,237,0.28); --eg-sort-active-color:#7c3aed;
+  --eg-sort-icon-color:#3f3f46; --eg-btn-bg:rgba(124,58,237,0.08); --eg-btn-text:#7c3aed;
   --eg-skeleton-base:#18181b; --eg-skeleton-highlight:#27272a; --eg-empty-icon-bg:#18181b;`
 
 // ── React playground iframe ───────────────────────────────────────────────────
@@ -856,17 +1080,117 @@ function buildVueIframeSrcDoc(origin: string): string {
 </body></html>`
 }
 
+// ── Vanilla JS playground iframe ──────────────────────────────────────────────
+// @elitegrid/core's browser build only ships the framework-agnostic kernel and
+// plugins — createGrid() and a DOM mount() actually live in the React adapter.
+// We re-export both under the '@elitegrid/core' name here so the vanilla
+// example code the user edits never has to mention React — the sandbox is the
+// only thing that knows a <Grid> component is doing the painting underneath.
+function buildVanillaIframeSrcDoc(origin: string): string {
+  return `<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>${IFRAME_CSS}</style>
+  <script type="importmap">{
+    "imports":{
+      "react":"https://esm.sh/react@18.3.1",
+      "react-dom":"https://esm.sh/react-dom@18.3.1",
+      "react-dom/client":"https://esm.sh/react-dom@18.3.1/client",
+      "react/jsx-runtime":"https://esm.sh/react@18.3.1/jsx-runtime",
+      "@elitegrid/core":"${origin}/cdn/core.js",
+      "@elitegrid/react":"${origin}/cdn/react.js"
+    }
+  }</script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
+</head>
+<body>
+  <div id="grid-container" style="${ROOT_STYLE}"></div>
+  <script type="module">
+    import React          from 'react'
+    import{createRoot}    from 'react-dom/client'
+    import*as EliteReact  from '@elitegrid/react'
+    import*as EliteCore   from '@elitegrid/core'
+
+    // currentMountEl tracks the actual DOM node the live root was created on.
+    // Vanilla example code is free to do raw container.innerHTML='' between
+    // runs (see editable/export examples) — that detaches this wrapper from
+    // the document without going through React, which desyncs the fiber tree
+    // and makes unmount() try to removeChild a node that's already gone. Only
+    // unmount() while the wrapper is still actually attached; otherwise React
+    // has nothing left to clean up and calling it just throws.
+    let currentRoot=null
+    let currentMountEl=null
+    function mount(grid,container){
+      if(!container)throw new Error('mount() requires a container element')
+      if(currentRoot){
+        if(currentMountEl&&currentMountEl.isConnected){try{currentRoot.unmount()}catch(_){}}
+        currentRoot=null
+        currentMountEl=null
+      }
+      container.innerHTML=''
+      const wrapper=document.createElement('div')
+      wrapper.style.cssText='height:100%'
+      container.appendChild(wrapper)
+      currentRoot=createRoot(wrapper)
+      currentMountEl=wrapper
+      currentRoot.render(React.createElement(EliteReact.Grid,{grid,style:{height:'100%'}}))
+      return ()=>{
+        if(currentRoot&&currentMountEl&&currentMountEl.isConnected){try{currentRoot.unmount()}catch(_){}}
+        currentRoot=null
+        currentMountEl=null
+      }
+    }
+    const CoreShim=Object.assign({},EliteCore,{createGrid:EliteReact.createGrid,mount})
+
+    const require=mod=>{
+      const m={'@elitegrid/core':CoreShim}
+      if(m[mod])return m[mod]
+      throw new Error('Module not available: '+mod+' — the vanilla sandbox only provides "@elitegrid/core"')
+    }
+    const rootEl=document.getElementById('grid-container')
+
+    function showError(msg){
+      if(currentRoot){try{currentRoot.unmount()}catch(_){}currentRoot=null}
+      rootEl.innerHTML='<div style="padding:24px;font-family:monospace;font-size:12.5px;'+
+        'color:#f87171;background:rgba(248,113,113,0.06);border-left:2px solid rgba(248,113,113,0.5);'+
+        'white-space:pre-wrap;overflow:auto;height:100%;box-sizing:border-box;line-height:1.6;">'+
+        msg.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>'
+    }
+
+    function runCode(raw){
+      const Babel=window.Babel
+      if(!Babel){showError('Babel not ready yet.');return}
+      let t
+      try{t=Babel.transform(raw,{presets:[
+        ['typescript',{allExtensions:true}],
+        ['env',{targets:{esmodules:true},modules:'commonjs'}]
+      ],filename:'app.ts'}).code}
+      catch(e){showError('Syntax error:\\n\\n'+e.message);return}
+      const w='"use strict";\\nvar exports={__esModule:true};\\nvar module={exports:exports};\\n'+t
+      try{(new Function('require',w))(require)}
+      catch(e){showError('Runtime error:\\n\\n'+e.message);return}
+    }
+
+    window.addEventListener('message',e=>{if(e.data?.type==='RUN_CODE')runCode(e.data.code)})
+    window.parent.postMessage({type:'IFRAME_READY'},'*')
+  </script>
+</body></html>`
+}
+
 // ── Monaco loading placeholder (dark-themed, no jarring white flash) ─────────
 const MONACO_LOADING = (
   <div style={{
     height: '100%', background: '#09090b',
     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
   }}>
-    <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#e8ff47', opacity: 0.5,
+    <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#7c3aed', opacity: 0.5,
       animation: 'pulse 1.2s ease-in-out infinite', animationDelay: '0ms', display: 'block' }} />
-    <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#e8ff47', opacity: 0.5,
+    <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#7c3aed', opacity: 0.5,
       animation: 'pulse 1.2s ease-in-out infinite', animationDelay: '150ms', display: 'block' }} />
-    <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#e8ff47', opacity: 0.5,
+    <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#7c3aed', opacity: 0.5,
       animation: 'pulse 1.2s ease-in-out infinite', animationDelay: '300ms', display: 'block' }} />
   </div>
 )
@@ -875,7 +1199,7 @@ const MONACO_LOADING = (
 const LOADING_DOC = `<!DOCTYPE html><html><head><style>
   body{margin:0;display:flex;align-items:center;justify-content:center;
        height:100vh;font-family:system-ui;background:#09090b;}
-  .dot{width:5px;height:5px;border-radius:50%;background:#e8ff47;display:inline-block;
+  .dot{width:5px;height:5px;border-radius:50%;background:#7c3aed;display:inline-block;
        margin:0 3px;animation:pulse 1.2s ease-in-out infinite;}
   .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
   @keyframes pulse{0%,80%,100%{opacity:.2}40%{opacity:1}}
@@ -968,10 +1292,10 @@ export function PlaygroundPage() {
       .monaco-editor .overflowingContentWidgets { position: fixed !important; }
       ::-webkit-scrollbar { width: 4px; height: 4px; }
       ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb { background: rgba(232,255,71,0.18); border-radius: 999px; }
-      ::-webkit-scrollbar-thumb:hover { background: rgba(232,255,71,0.4); }
+      ::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.18); border-radius: 999px; }
+      ::-webkit-scrollbar-thumb:hover { background: rgba(124,58,237,0.4); }
       ::-webkit-scrollbar-corner { background: transparent; }
-      * { scrollbar-width: thin; scrollbar-color: rgba(232,255,71,0.18) transparent; }
+      * { scrollbar-width: thin; scrollbar-color: rgba(124,58,237,0.18) transparent; }
     `
     document.head.appendChild(style)
     return () => { document.head.removeChild(style) }
@@ -996,7 +1320,9 @@ export function PlaygroundPage() {
     if (!_srcDocCache[key]) {
       _srcDocCache[key] = framework === 'react'
         ? buildReactIframeSrcDoc(origin)
-        : buildVueIframeSrcDoc(origin)
+        : framework === 'vue'
+        ? buildVueIframeSrcDoc(origin)
+        : buildVanillaIframeSrcDoc(origin)
     }
     setIframeReady(false)
     setSrcDoc(_srcDocCache[key])
@@ -1038,12 +1364,13 @@ export function PlaygroundPage() {
   handleCodeChangeRef.current = handleCodeChange
 
   // ── Framework & example switching ──
-  const examples = framework === 'react' ? REACT_EXAMPLES : VUE_EXAMPLES
+  const examplesFor = (fw: Framework) =>
+    fw === 'react' ? REACT_EXAMPLES : fw === 'vue' ? VUE_EXAMPLES : VANILLA_EXAMPLES
+  const examples = examplesFor(framework)
 
   const switchFramework = (fw: Framework) => {
     if (fw === framework) return
-    const exs = fw === 'react' ? REACT_EXAMPLES : VUE_EXAMPLES
-    const newCode = exs[activeExample].code
+    const newCode = examplesFor(fw)[activeExample].code
     setCode(newCode)
     pendingCodeRef.current = newCode  // send when iframe is ready
     setFramework(fw)  // triggers srcDoc rebuild via useEffect
@@ -1059,12 +1386,13 @@ export function PlaygroundPage() {
 
   const currentExample = examples[activeExample]
   const isVue = framework === 'vue'
+  const isVanilla = framework === 'vanilla'
 
   // ── Monaco configuration ──
   const handleEditorMount = useCallback((editor: any, monaco: any) => {
     const oldModel = editor.getModel()
     if (!oldModel) return
-    const ext = isVue ? '.ts' : '.tsx'
+    const ext = framework === 'react' ? '.tsx' : '.ts'
     const targetUri = monaco.Uri.parse(`file:///app${ext}`)
     if (oldModel.uri.toString() === targetUri.toString()) return
     const stale = monaco.editor.getModel(targetUri)
@@ -1073,7 +1401,7 @@ export function PlaygroundPage() {
     editor.setModel(newModel)
     oldModel.dispose()
     newModel.onDidChangeContent(() => { handleCodeChangeRef.current(newModel.getValue()) })
-  }, [isVue])
+  }, [framework])
 
   const handleEditorBeforeMount = useCallback((monaco: any) => {
     const ts = monaco.languages.typescript.typescriptDefaults
@@ -1151,6 +1479,10 @@ export function PlaygroundPage() {
       "declare module '@elitegrid/vue' {\n" + ELITEGRID_TYPES + '\n}',
       'file:///node_modules/@elitegrid/vue/index.d.ts'
     )
+    ts.addExtraLib(
+      "declare module '@elitegrid/core' {\n" + ELITEGRID_TYPES + '\n}',
+      'file:///node_modules/@elitegrid/core/index.d.ts'
+    )
   }, [])
 
   const monacoOptions = {
@@ -1197,9 +1529,17 @@ export function PlaygroundPage() {
       {/* ── Top bar ─────────────────────────────────────────────── */}
       <div style={s.topbar}>
         <div style={s.topbarLeft}>
-          <div style={s.logoGlow} />
-          <div style={s.logoDot} />
-          <span style={s.logoText}><span style={s.accent}>Elite</span>Grid</span>
+          <Link href="/" style={s.logoLink}>
+            <div style={s.logoIcon}>
+              <svg width="17" height="17" viewBox="0 0 48 48" fill="none">
+                <rect x="8" y="28" width="8" height="12" rx="2" fill="white" fillOpacity="0.3" />
+                <rect x="19.5" y="21" width="8" height="19" rx="2" fill="white" fillOpacity="0.6" />
+                <rect x="31" y="13" width="8" height="27" rx="2" fill="white" />
+                <circle cx="35" cy="11" r="2.5" fill="#c4b5fd" />
+              </svg>
+            </div>
+            <span style={s.logoText}>EliteGrid</span>
+          </Link>
           <span style={s.divider}>/</span>
           <span style={s.pageTitle}>Playground</span>
         </div>
@@ -1214,6 +1554,11 @@ export function PlaygroundPage() {
             style={{ ...s.fwTab, ...(isVue ? s.fwTabVueActive : {}) }}
             onClick={() => switchFramework('vue')}>
             <span style={{ ...s.vueIcon, ...(isVue ? { color: '#41b883' } : {}) }}>◆</span> Vue
+          </button>
+          <button
+            style={{ ...s.fwTab, ...(isVanilla ? s.fwTabVanillaActive : {}) }}
+            onClick={() => switchFramework('vanilla')}>
+            <span style={{ ...s.jsIcon, ...(isVanilla ? { color: '#f7df1e' } : {}) }}>JS</span> Vanilla
           </button>
         </div>
 
@@ -1310,7 +1655,7 @@ export function PlaygroundPage() {
             <div style={s.paneHeader}>
               <div style={s.paneHeaderLeft}>
                 <span style={s.fileTab}>
-                  <span style={{ color: isVue ? '#41b883' : '#e8ff47', fontSize: 10, marginRight: 5 }}>◆</span>
+                  <span style={{ color: isVue ? '#41b883' : isVanilla ? '#f7df1e' : '#7c3aed', fontSize: 10, marginRight: 5 }}>◆</span>
                   {currentExample.filename}
                 </span>
                 <span style={s.exampleDesc}>{currentExample.desc}</span>
@@ -1351,6 +1696,11 @@ export function PlaygroundPage() {
                     <span style={{ color: '#41b883' }}>◆</span> Vue 3 · Live
                   </span>
                 )}
+                {isVanilla && (
+                  <span style={s.vanillaLiveBadge}>
+                    <span style={{ color: '#f7df1e' }}>JS</span> Zero deps · Live
+                  </span>
+                )}
                 {!iframeReady && (
                   <span style={s.loadingDots}>
                     <span style={s.dot}>·</span>
@@ -1360,7 +1710,7 @@ export function PlaygroundPage() {
                 )}
               </div>
               <div style={s.paneHeaderRight}>
-                <span style={isVue ? s.previewHintVue : s.previewHint}>Live output</span>
+                <span style={isVue ? s.previewHintVue : isVanilla ? s.previewHintVanilla : s.previewHint}>Live output</span>
               </div>
             </div>
             <div style={s.iframeWrap}>
@@ -1380,7 +1730,7 @@ export function PlaygroundPage() {
       {/* ── Footer ──────────────────────────────────────────────── */}
       <div style={s.footer}>
         <span style={s.footerLeft}>
-          Import <code style={s.inlineCode}>@elitegrid/{framework}</code> — no install needed in playground.
+          Import <code style={s.inlineCode}>@elitegrid/{isVanilla ? 'core' : framework}</code> — no install needed in playground.
         </span>
         <a href="https://elitegrid.dev#waitlist" style={s.footerLink}>
           Join waitlist for v1 →
@@ -1404,18 +1754,20 @@ const s: Record<string, React.CSSProperties> = {
     padding: '0 16px', flexShrink: 0, gap: 12,
   },
   topbarLeft: { display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, position: 'relative' },
-  logoGlow: {
-    position: 'absolute', left: -4, top: '50%', transform: 'translateY(-50%)',
-    width: 24, height: 24,
-    background: 'radial-gradient(circle, rgba(232,255,71,0.35) 0%, transparent 70%)',
-    borderRadius: '50%', pointerEvents: 'none',
+  logoLink: {
+    display: 'flex', alignItems: 'center', gap: 10,
+    textDecoration: 'none', color: 'inherit', cursor: 'pointer',
   },
-  logoDot: {
-    width: 7, height: 7, borderRadius: '50%', background: '#e8ff47', flexShrink: 0,
-    boxShadow: '0 0 8px rgba(232,255,71,0.6)', position: 'relative',
+  logoIcon: {
+    width: 26, height: 26, borderRadius: 7, flexShrink: 0,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    background: 'linear-gradient(to bottom right, #7c3aed, #a855f7)',
+    boxShadow: '0 0 14px rgba(124,58,237,0.3)',
   },
-  logoText: { fontSize: '0.9375rem', fontWeight: 700, color: '#f4f4f5', letterSpacing: '-0.025em' },
-  accent: { color: '#e8ff47' },
+  logoText: {
+    fontFamily: 'var(--font-bricolage), "Bricolage Grotesque", sans-serif',
+    fontSize: '1.0625rem', fontWeight: 700, color: '#edf0fa', letterSpacing: '-0.02em',
+  },
   divider: { color: 'rgba(255,255,255,0.1)', margin: '0 2px' },
   pageTitle: { fontSize: '0.8125rem', color: '#3f3f46', fontWeight: 400 },
   topbarRight: { display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 },
@@ -1439,8 +1791,15 @@ const s: Record<string, React.CSSProperties> = {
     background: 'rgba(65,184,131,0.12)', color: '#41b883',
     boxShadow: '0 0 0 1px rgba(65,184,131,0.2)',
   },
+  fwTabVanillaActive: {
+    background: 'rgba(247,223,30,0.12)', color: '#f7df1e',
+    boxShadow: '0 0 0 1px rgba(247,223,30,0.2)',
+  },
   reactIcon: { fontSize: '0.9rem' },
   vueIcon: { fontSize: '0.75rem', color: '#3f3f46', transition: 'color 0.15s' },
+  jsIcon: {
+    fontSize: '0.65rem', fontWeight: 700, color: '#3f3f46', transition: 'color 0.15s',
+  },
 
   exTabs: {
     display: 'flex', gap: 2,
@@ -1453,18 +1812,18 @@ const s: Record<string, React.CSSProperties> = {
     border: 'none', background: 'transparent', color: '#52525b',
     cursor: 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em',
   },
-  exTabActive: { background: '#e8ff47', color: '#09090b', fontWeight: 700 },
+  exTabActive: { background: '#7c3aed', color: '#ffffff', fontWeight: 700 },
   exBadge: {
     fontSize: '0.6rem', fontWeight: 700, padding: '2px 5px', borderRadius: 4,
     background: 'rgba(255,255,255,0.08)', color: '#3f3f46',
     letterSpacing: '0.04em', textTransform: 'uppercase' as const, transition: 'all 0.15s',
   },
-  exBadgeActive: { background: 'rgba(9,9,11,0.2)', color: '#09090b' },
+  exBadgeActive: { background: 'rgba(255,255,255,0.2)', color: '#ffffff' },
 
   runBtn: {
     display: 'flex', alignItems: 'center', gap: 6,
     fontSize: '0.8125rem', fontWeight: 700, padding: '6px 16px', borderRadius: 7,
-    border: 'none', background: '#e8ff47', color: '#09090b',
+    border: 'none', background: '#7c3aed', color: '#ffffff',
     cursor: 'pointer', transition: 'opacity 0.15s, transform 0.1s',
     letterSpacing: '0.01em', flexShrink: 0,
   },
@@ -1477,7 +1836,7 @@ const s: Record<string, React.CSSProperties> = {
   },
   iconBtnSuccess: {
     background: 'rgba(134,239,172,0.12)',
-    borderColor: 'rgba(134,239,172,0.25)', color: '#86efac',
+    border: '1px solid rgba(134,239,172,0.25)', color: '#86efac',
   },
   mobilePillsRow: {
     display: 'flex', gap: 6, padding: '8px 12px',
@@ -1491,7 +1850,7 @@ const s: Record<string, React.CSSProperties> = {
     fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s',
     whiteSpace: 'nowrap' as const,
   },
-  mobilePillActive: { background: '#e8ff47', borderColor: '#e8ff47', color: '#09090b' },
+  mobilePillActive: { background: '#7c3aed', border: '1px solid #7c3aed', color: '#ffffff' },
 
   mobileViewToggle: {
     display: 'flex', alignItems: 'center', gap: 2, padding: '6px 12px',
@@ -1501,7 +1860,7 @@ const s: Record<string, React.CSSProperties> = {
     padding: '5px 16px', borderRadius: 6, border: 'none', background: 'transparent',
     color: '#52525b', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s',
   },
-  mobileViewBtnActive: { background: 'rgba(232,255,71,0.1)', color: '#e8ff47' },
+  mobileViewBtnActive: { background: 'rgba(124,58,237,0.1)', color: '#7c3aed' },
   mobileExDesc: {
     marginLeft: 8, fontSize: '0.72rem', color: '#3f3f46', flex: 1,
     overflow: 'hidden', textOverflow: 'ellipsis' as const, whiteSpace: 'nowrap' as const,
@@ -1530,7 +1889,7 @@ const s: Record<string, React.CSSProperties> = {
     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const, flex: 1,
   },
   autoRunHint: { fontSize: '0.7rem', color: 'rgba(255,255,255,0.1)' },
-  renderingBadge: { fontSize: '0.7rem', color: '#e8ff47', fontWeight: 600 },
+  renderingBadge: { fontSize: '0.7rem', color: '#7c3aed', fontWeight: 600 },
   editorWrap: { flex: 1, minHeight: 0, overflow: 'hidden', position: 'relative' },
 
   dragHandle: {
@@ -1548,12 +1907,18 @@ const s: Record<string, React.CSSProperties> = {
     fontSize: '0.75rem', fontWeight: 600, color: '#3f3f46',
     textTransform: 'uppercase' as const, letterSpacing: '0.06em',
   },
-  previewHint:    { fontSize: '0.7rem', color: 'rgba(255,255,255,0.08)' },
-  previewHintVue: { fontSize: '0.7rem', color: 'rgba(65,184,131,0.4)' },
+  previewHint:        { fontSize: '0.7rem', color: 'rgba(255,255,255,0.08)' },
+  previewHintVue:     { fontSize: '0.7rem', color: 'rgba(65,184,131,0.4)' },
+  previewHintVanilla: { fontSize: '0.7rem', color: 'rgba(247,223,30,0.4)' },
   vueLiveBadge: {
     display: 'flex', alignItems: 'center', gap: 5,
     fontSize: '0.72rem', color: '#41b883', padding: '2px 8px', borderRadius: 4,
     background: 'rgba(65,184,131,0.08)', border: '1px solid rgba(65,184,131,0.15)', fontWeight: 600,
+  },
+  vanillaLiveBadge: {
+    display: 'flex', alignItems: 'center', gap: 5,
+    fontSize: '0.72rem', color: '#f7df1e', padding: '2px 8px', borderRadius: 4,
+    background: 'rgba(247,223,30,0.08)', border: '1px solid rgba(247,223,30,0.15)', fontWeight: 600,
   },
   loadingDots: { display: 'flex', gap: 1, color: '#3f3f46', fontSize: 18, lineHeight: '1' },
   dot: { display: 'inline-block' },
@@ -1574,7 +1939,7 @@ const s: Record<string, React.CSSProperties> = {
     padding: '1px 5px', borderRadius: 4, color: '#52525b', fontSize: '0.68rem',
   },
   footerLink: {
-    color: '#e8ff47', textDecoration: 'none', fontWeight: 600, fontSize: '0.72rem',
+    color: '#7c3aed', textDecoration: 'none', fontWeight: 600, fontSize: '0.72rem',
     opacity: 0.85, flexShrink: 0,
   },
 }

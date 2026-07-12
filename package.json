@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/dev.js",
+    "dev:kill": "pkill -9 -f \"$PWD/.next\"; pkill -9 -f 'next-server'; pkill -9 -f 'postcss.js'; echo 'killed leftover Next/Turbopack workers'",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --acc: #5b21b6; --acc-h: #4c1d95; --acc-rgb: 91,33,182;
+      --t1: #7c3aed; --t2: #a855f7;
+      --hfont: 'Bricolage Grotesque', sans-serif;
+      /* light */
+      --bg:          #f5f4ef;
+      --bg-raised:   #ffffff;
+      --bg-code:     #131316;
+      --sb-bg:       #ffffff;
+      --text-1:      #18181b;
+      --text-2:      #52525b;
+      --text-3:      #a1a1aa;
+      --border:      rgba(0,0,0,0.08);
+      --border-str:  rgba(0,0,0,0.12);
+      --card-bg:     rgba(0,0,0,0.025);
+      --nav-bg:      rgba(245,244,239,0.9);
+    }
+    .dr.dark {
+      --bg:          #09090e;
+      --bg-raised:   #0e0e17;
+      --bg-code:     #0c0c14;
+      --sb-bg:       #0c0c14;
+      --text-1:      #edf0fa;
+      --text-2:      #7a8399;
+      --text-3:      #374151;
+      --border:      rgba(255,255,255,0.07);
+      --border-str:  rgba(255,255,255,0.11);
+      --card-bg:     rgba(255,255,255,0.025);
+      --nav-bg:      rgba(9,9,14,0.9);
+    }
+
+    /* Root */
+    .dr { background: var(--bg); color: var(--text-1); font-family: 'DM Sans', sans-serif; min-height: 100vh; line-height: 1.6; transition: background 0.3s, color 0.3s; }
+
+    /* Top nav */
+    .dn { position: fixed; top: 0; left: 0; right: 0; height: 60px; z-index: 100; background: var(--nav-bg); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: flex; align-items: center; padding: 0 24px; gap: 0; }
+    .dn-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; width: 244px; flex-shrink: 0; }
+    .dn-logo-mark { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--acc), var(--t2)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dn-divider { width: 1px; height: 20px; background: var(--border-str); margin: 0 20px; flex-shrink: 0; }
+    .dn-search { flex: 1; max-width: 320px; position: relative; }
+    .dn-search-input { width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px 7px 32px; font-size: 13px; color: var(--text-2); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+    .dn-search-input:focus { border-color: rgba(var(--acc-rgb),0.45); }
+    .dn-search-input::placeholder { color: var(--text-3); }
+    .dn-links { display: flex; align-items: center; gap: 24px; margin-left: auto; }
+    .dn-link { font-size: 13.5px; color: var(--text-2); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    .dn-link:hover { color: var(--text-1); }
+    .dn-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--t1); background: rgba(var(--acc-rgb),0.1); border: 1px solid rgba(var(--acc-rgb),0.2); padding: 2px 6px; border-radius: 4px; }
+
+    /* Body layout */
+    .db { display: flex; padding-top: 60px; min-height: 100vh; }
+
+    /* Sidebar */
+    .ds { width: 260px; flex-shrink: 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; background: var(--sb-bg); border-right: 1px solid var(--border); padding: 20px 0 40px; }
+    .ds::-webkit-scrollbar { width: 4px; } .ds::-webkit-scrollbar-track { background: transparent; } .ds::-webkit-scrollbar-thumb { background: var(--border-str); border-radius: 2px; }
+    .ds-section { margin-bottom: 4px; }
+    .ds-group { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-3); padding: 10px 20px 5px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; transition: color 0.2s; }
+    .ds-group:hover { color: var(--text-2); }
+    .ds-items { padding: 2px 0; }
+    .ds-item { display: flex; align-items: center; gap: 8px; padding: 6px 20px; font-size: 13.5px; color: var(--text-2); text-decoration: none; cursor: pointer; transition: color 0.15s, background 0.15s; border-left: 2px solid transparent; margin: 1px 0; }
+    .ds-item:hover { color: var(--text-1); background: rgba(var(--acc-rgb),0.04); }
+    .ds-item.active { color: var(--t1); background: rgba(var(--acc-rgb),0.06); border-left-color: var(--t1); font-weight: 600; }
+    .ds-item-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.4; flex-shrink: 0; }
+    .ds-item.active .ds-item-dot { opacity: 1; }
+    .ds-ver { margin: 0 12px 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .ds-ver-label { font-size: 12px; color: var(--text-3); }
+    .ds-ver-val { font-size: 12px; font-weight: 600; color: var(--t1); font-family: 'JetBrains Mono', monospace; }
+
+    /* Main content */
+    .dm { flex: 1; min-width: 0; padding: 48px 40px 80px; max-width: 740px; }
+    .dm-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-3); margin-bottom: 24px; }
+    .dm-breadcrumb a { color: var(--text-3); text-decoration: none; transition: color 0.2s; } .dm-breadcrumb a:hover { color: var(--t1); }
+    .dm-breadcrumb-sep { opacity: 0.4; font-size: 11px; }
+    .dm h1 { font-family: var(--hfont); font-size: 38px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); line-height: 1.1; margin-bottom: 14px; }
+    .dm-lead { font-size: 17px; color: var(--text-2); line-height: 1.7; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 32px; }
+    .dm h2 { font-family: var(--hfont); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--text-1); margin: 40px 0 14px; }
+    .dm h3 { font-family: var(--hfont); font-size: 16px; font-weight: 700; color: var(--text-1); margin: 28px 0 10px; }
+    .dm p { font-size: 15px; color: var(--text-2); line-height: 1.75; margin-bottom: 16px; }
+    .dm ul { padding-left: 20px; margin-bottom: 16px; }
+    .dm ul li { font-size: 15px; color: var(--text-2); line-height: 1.7; margin-bottom: 5px; }
+    .dm a { color: var(--t1); text-decoration: none; } .dm a:hover { text-decoration: underline; }
+    .ic { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--t1); background: rgba(var(--acc-rgb),0.1); padding: 2px 6px; border-radius: 4px; }
+
+    /* Code blocks */
+    .cb { background: var(--bg-code); border-radius: 12px; overflow: hidden; margin: 16px 0; border: 1px solid rgba(255,255,255,0.06); }
+    .cb-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .cb-lang { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: var(--t1); background: rgba(var(--acc-rgb),0.15); border: 1px solid rgba(var(--acc-rgb),0.25); padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
+    .cb-copy { display: flex; align-items: center; gap: 5px; font-size: 12px; color: rgba(255,255,255,0.3); background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: color 0.2s, border-color 0.2s; }
+    .cb-copy:hover { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.2); }
+    .cb-copy.copied { color: #22c55e; border-color: rgba(34,197,94,0.4); }
+    .cb pre { padding: 18px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.75; overflow-x: auto; color: #e2e8f0; }
+    .cb pre .c-kw { color: #c084fc; } .cb pre .c-str { color: #86efac; } .cb pre .c-fn { color: #93c5fd; }
+    .cb pre .c-prop { color: #7dd3fc; } .cb pre .c-num { color: #fb923c; } .cb pre .c-cm { color: #4a5568; font-style: italic; }
+    .cb pre .c-op { color: #64748b; }
+
+    /* Package manager tabs */
+    .pm-tabs { display: flex; gap: 2px; margin-bottom: -1px; }
+    .pm-tab { font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,0.35); background: transparent; border: none; padding: 9px 16px; cursor: pointer; font-family: 'JetBrains Mono', monospace; border-radius: 8px 8px 0 0; transition: color 0.2s, background 0.2s; }
+    .pm-tab:hover { color: rgba(255,255,255,0.6); }
+    .pm-tab.active { color: var(--t2); background: rgba(var(--acc-rgb),0.12); }
+
+    /* Callouts */
+    .callout { border-radius: 10px; padding: 16px 18px; margin: 20px 0; display: flex; gap: 12px; }
+    .callout-tip  { background: rgba(var(--acc-rgb),0.06); border: 1px solid rgba(var(--acc-rgb),0.18); border-left: 3px solid var(--t1); }
+    .callout-warn { background: rgba(217,119,6,0.06); border: 1px solid rgba(217,119,6,0.18); border-left: 3px solid #d97706; }
+    .callout-info { background: rgba(14,165,233,0.06); border: 1px solid rgba(14,165,233,0.18); border-left: 3px solid #0ea5e9; }
+    .callout-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .callout-text { font-size: 14px; color: var(--text-2); line-height: 1.65; }
+    .callout-text strong { color: var(--text-1); }
+
+    /* Step markers */
+    .step { display: flex; gap: 16px; margin-bottom: 32px; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(var(--acc-rgb),0.12); border: 1.5px solid rgba(var(--acc-rgb),0.3); color: var(--t1); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 3px; font-family: 'JetBrains Mono', monospace; }
+    .step-body { flex: 1; min-width: 0; }
+    .step-title { font-family: var(--hfont); font-size: 17px; font-weight: 700; color: var(--text-1); margin-bottom: 8px; }
+
+    /* Prerequisite cards */
+    .prereq-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 16px 0 24px; }
+    .prereq-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+    .prereq-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); margin-bottom: 5px; }
+    .prereq-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-1); font-weight: 500; }
+
+    /* Next steps cards */
+    .next-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .next-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; cursor: pointer; text-decoration: none; transition: border-color 0.2s, background 0.2s; }
+    .next-card:hover { border-color: rgba(var(--acc-rgb),0.3); background: rgba(var(--acc-rgb),0.04); }
+    .next-card-title { font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; }
+    .next-card-desc { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+
+    /* Prev/next nav */
+    .page-nav { display: flex; justify-content: space-between; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); gap: 12px; }
+    .page-nav-btn { flex: 1; padding: 14px 18px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: border-color 0.2s, background 0.2s; }
+    .page-nav-btn:hover { border-color: rgba(var(--acc-rgb),0.3); background: rgba(var(--acc-rgb),0.04); }
+    .page-nav-label { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+    .page-nav-title { font-size: 14px; font-weight: 600; color: var(--text-1); }
+    .page-nav-prev { text-align: left; }
+    .page-nav-next { text-align: right; }
+
+    /* Helpful feedback */
+    .helpful { display: flex; align-items: center; gap: 12px; padding: 16px 0; margin-top: 32px; border-top: 1px solid var(--border); }
+    .helpful-q { font-size: 13.5px; color: var(--text-2); }
+    .helpful-btn { padding: 6px 14px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-2); transition: border-color 0.2s, color 0.2s; }
+    .helpful-btn:hover { border-color: rgba(var(--acc-rgb),0.3); color: var(--t1); }
+
+    /* TOC */
+    .dt { width: 220px; flex-shrink: 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; padding: 32px 20px 40px; }
+    .dt-title { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+    .dt-item { display: block; font-size: 13px; color: var(--text-3); text-decoration: none; padding: 4px 0 4px 10px; border-left: 1px solid var(--border); transition: color 0.2s, border-color 0.2s; line-height: 1.5; }
+    .dt-item:hover { color: var(--text-1); }
+    .dt-item.active { color: var(--t1); border-left-color: var(--t1); font-weight: 500; }
+    .dt-item.sub { padding-left: 20px; font-size: 12.5px; }
+    .dt-divider { margin: 20px 0 16px; border: none; border-top: 1px solid var(--border); }
+    .dt-edit { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); text-decoration: none; transition: color 0.2s; }
+    .dt-edit:hover { color: var(--t1); }
+
+    /* Was this page helpful */
+    .dt-helpful { margin-top: 24px; }
+    .dt-helpful-q { font-size: 12px; color: var(--text-3); margin-bottom: 8px; }
+    .dt-helpful-btns { display: flex; gap: 6px; }
+    .dt-helpful-btn { flex: 1; padding: 5px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-3); transition: all 0.2s; text-align: center; }
+    .dt-helpful-btn:hover { border-color: rgba(var(--acc-rgb),0.3); color: var(--t1); }
+
+    @media (max-width: 1024px) { .dt { display: none; } }
+    @media (max-width: 768px)  { .ds { display: none; } .dm { padding: 32px 20px 60px; } }
+  </style>
+</helmet>
+
+<div class="dr" id="docs-root">
+
+  <!-- ── Top Nav ── -->
+  <nav class="dn">
+    <a href="#" class="dn-logo">
+      <div class="dn-logo-mark">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.5" fill="white"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1.5" fill="white" fill-opacity="0.5"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1.5" fill="white" fill-opacity="0.5"/><rect x="9" y="9" width="5.5" height="5.5" rx="1.5" fill="white"/></svg>
+      </div>
+      <span style="font-family:var(--hfont);font-weight:700;font-size:16px;color:var(--text-1);">EliteGrid</span>
+      <span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-3);background:var(--card-bg);border:1px solid var(--border);padding:2px 6px;border-radius:4px;margin-left:2px;">Docs</span>
+    </a>
+    <div class="dn-divider"></div>
+    <div class="dn-search">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:0.35;pointer-events:none;"><circle cx="6.5" cy="6.5" r="5" stroke="var(--text-1)" stroke-width="1.5"/><path d="M10.5 10.5l3.5 3.5" stroke="var(--text-1)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input type="text" class="dn-search-input" placeholder="Search docs…"/>
+      <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace;background:var(--card-bg);border:1px solid var(--border);padding:1px 5px;border-radius:4px;">⌘K</span>
+    </div>
+    <div class="dn-links">
+      <a href="#" class="dn-link">Changelog</a>
+      <a href="#" class="dn-link">Playground</a>
+      <a href="#" class="dn-link" style="display:flex;align-items:center;gap:5px;">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── Body ── -->
+  <div class="db">
+
+    <!-- ── Sidebar ── -->
+    <aside class="ds">
+      <div style="padding:0 12px 12px;">
+        <div class="ds-ver">
+          <span class="ds-ver-label">Version</span>
+          <span class="ds-ver-val">v0.1.0-beta</span>
+        </div>
+      </div>
+
+      <div class="ds-section">
+        <div class="ds-group">Getting Started <span style="opacity:0.4;font-size:9px;">▼</span></div>
+        <div class="ds-items">
+          <div class="ds-item"><span class="ds-item-dot"></span>Introduction</div>
+          <div class="ds-item active"><span class="ds-item-dot"></span>Installation</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Quick Start</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>TypeScript Setup</div>
+        </div>
+      </div>
+
+      <div class="ds-section">
+        <div class="ds-group">Core Concepts <span style="opacity:0.4;font-size:9px;">▼</span></div>
+        <div class="ds-items">
+          <div class="ds-item"><span class="ds-item-dot"></span>Data Source</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Column Definition</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Row Model</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Plugin System</div>
+        </div>
+      </div>
+
+      <div class="ds-section">
+        <div class="ds-group">Features <span style="opacity:0.4;font-size:9px;">▼</span></div>
+        <div class="ds-items">
+          <div class="ds-item"><span class="ds-item-dot"></span>Sorting</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Filtering</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Pagination</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Row Selection</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Inline Editing</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>CSV Export</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Theming</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Accessibility</div>
+        </div>
+      </div>
+
+      <div class="ds-section">
+        <div class="ds-group">API Reference <span style="opacity:0.4;font-size:9px;">▼</span></div>
+        <div class="ds-items">
+          <div class="ds-item"><span class="ds-item-dot"></span>EliteGrid</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Column API</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Grid Events</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Plugin API</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>useGrid Hook</div>
+        </div>
+      </div>
+
+      <div class="ds-section">
+        <div class="ds-group">Guides <span style="opacity:0.4;font-size:9px;">▼</span></div>
+        <div class="ds-items">
+          <div class="ds-item"><span class="ds-item-dot"></span>Server-side Data</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Custom Renderers</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Writing Plugins</div>
+          <div class="ds-item"><span class="ds-item-dot"></span>Migration Guide</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Main Content ── -->
+    <main class="dm">
+      <!-- Breadcrumb -->
+      <div class="dm-breadcrumb">
+        <a href="#">Docs</a>
+        <span class="dm-breadcrumb-sep">›</span>
+        <a href="#">Getting Started</a>
+        <span class="dm-breadcrumb-sep">›</span>
+        <span style="color:var(--text-2);">Installation</span>
+      </div>
+
+      <h1>Installation</h1>
+      <p class="dm-lead">Set up EliteGrid in your project in under five minutes. The core package ships as pure TypeScript with zero runtime dependencies — no setup required beyond a single install command.</p>
+
+      <!-- Prerequisites -->
+      <h2>Prerequisites</h2>
+      <p>Before you begin, make sure your environment meets these requirements:</p>
+      <div class="prereq-grid">
+        <div class="prereq-card"><div class="prereq-label">Node.js</div><div class="prereq-val">≥ 16.0</div></div>
+        <div class="prereq-card"><div class="prereq-label">TypeScript</div><div class="prereq-val">≥ 4.7 <span style="font-size:11px;color:var(--text-3);">(rec.)</span></div></div>
+        <div class="prereq-card"><div class="prereq-label">React / Vue</div><div class="prereq-val">18+ / 3+</div></div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-text"><strong>TypeScript is strongly recommended.</strong> EliteGrid's grouped config API is designed to be used with TypeScript — you'll get full inference on every option, event, and plugin.</div>
+      </div>
+
+      <!-- Install -->
+      <h2>Install the Package</h2>
+      <p>Choose the adapter for your framework. The <span class="ic">@elitegrid/core</span> package is always installed automatically as a peer dependency.</p>
+
+      <!-- Package manager tabs -->
+      <div class="cb">
+        <div class="cb-toolbar">
+          <div class="pm-tabs">{{ pmTabsEl }}</div>
+          <button class="cb-copy {{ copiedClass1 }}" onclick="{{ copyInstall }}">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="4" y="1" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 4v6a1 1 0 001 1h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            {{ copyLabel1 }}
+          </button>
+        </div>
+        <pre dangerouslySetInnerHTML="{{ installCode }}"></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">📦</span>
+        <div class="callout-text"><strong>Zero dependencies.</strong> <span class="ic">@elitegrid/core</span> has no runtime dependencies. The adapter packages only add the framework bindings you're already using.</div>
+      </div>
+
+      <!-- Steps -->
+      <h2>Basic Setup</h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Define your columns</div>
+          <p>Each column maps a key to a display configuration. TypeScript infers the row type from your data automatically.</p>
+          <div class="cb">
+            <div class="cb-toolbar">
+              <span class="cb-lang">tsx</span>
+              <button class="cb-copy {{ copiedClass2 }}" onclick="{{ copyColumns }}">
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="4" y="1" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 4v6a1 1 0 001 1h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                {{ copyLabel2 }}
+              </button>
+            </div>
+            <pre dangerouslySetInnerHTML="{{ columnsCode }}"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Mount the grid</div>
+          <p>Pass your data and columns to <span class="ic">EliteGrid</span>. Every feature is opt-in through its own namespaced config object.</p>
+          <div class="cb">
+            <div class="cb-toolbar">
+              <span class="cb-lang">tsx</span>
+              <button class="cb-copy {{ copiedClass3 }}" onclick="{{ copyMount }}">
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="4" y="1" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 4v6a1 1 0 001 1h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                {{ copyLabel3 }}
+              </button>
+            </div>
+            <pre dangerouslySetInnerHTML="{{ mountCode }}"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Add styles</div>
+          <p>Import the default stylesheet, or use the <span class="ic">appearance</span> prop to switch between <span class="ic">light</span>, <span class="ic">dark</span>, and <span class="ic">auto</span> themes.</p>
+          <div class="cb">
+            <div class="cb-toolbar"><span class="cb-lang">ts</span></div>
+            <pre dangerouslySetInnerHTML="{{ stylesCode }}"></pre>
+          </div>
+          <div class="callout callout-tip" style="margin-top:12px;">
+            <span class="callout-icon">🎨</span>
+            <div class="callout-text">The stylesheet exposes ~50 CSS custom properties. Override any of them at the <span class="ic">:root</span> level to customise every visual detail.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TypeScript -->
+      <h2>TypeScript Support</h2>
+      <p>Types ship bundled with every package — no separate <span class="ic">@types</span> install needed. The config is fully typed end-to-end:</p>
+      <div class="cb">
+        <div class="cb-toolbar"><span class="cb-lang">ts</span></div>
+        <pre dangerouslySetInnerHTML="{{ tsCode }}"></pre>
+      </div>
+
+      <!-- Next Steps -->
+      <h2>Next Steps</h2>
+      <p>You're set up. Here's where to go next:</p>
+      <div class="next-grid">
+        <a href="#" class="next-card">
+          <div class="next-card-title">Quick Start <span style="opacity:0.4;">→</span></div>
+          <div class="next-card-desc">A complete example with sorting, filtering, and pagination in under 30 lines.</div>
+        </a>
+        <a href="#" class="next-card">
+          <div class="next-card-title">Column Definition <span style="opacity:0.4;">→</span></div>
+          <div class="next-card-desc">Learn about column types, renderers, and the full column config API.</div>
+        </a>
+        <a href="#" class="next-card">
+          <div class="next-card-title">Sorting <span style="opacity:0.4;">→</span></div>
+          <div class="next-card-desc">Single, multi-column, and custom comparator sorting with full TypeScript inference.</div>
+        </a>
+        <a href="#" class="next-card">
+          <div class="next-card-title">Theming <span style="opacity:0.4;">→</span></div>
+          <div class="next-card-desc">Light, dark, and auto themes with ~50 CSS variables for full customisation.</div>
+        </a>
+      </div>
+
+      <!-- Prev / Next -->
+      <div class="page-nav">
+        <a href="#" class="page-nav-btn page-nav-prev">
+          <div class="page-nav-label">← Previous</div>
+          <div class="page-nav-title">Introduction</div>
+        </a>
+        <a href="#" class="page-nav-btn page-nav-next">
+          <div class="page-nav-label">Next →</div>
+          <div class="page-nav-title">Quick Start</div>
+        </a>
+      </div>
+
+      <!-- Helpful -->
+      <div class="helpful">
+        <span class="helpful-q">Was this page helpful?</span>
+        <button class="helpful-btn">👍 Yes</button>
+        <button class="helpful-btn">👎 No</button>
+      </div>
+    </main>
+
+    <!-- ── TOC ── -->
+    <aside class="dt">
+      <div class="dt-title">On this page</div>
+      <a href="#" class="dt-item">Prerequisites</a>
+      <a href="#" class="dt-item">Install the Package</a>
+      <a href="#" class="dt-item active">Basic Setup</a>
+      <a href="#" class="dt-item sub">1. Define columns</a>
+      <a href="#" class="dt-item sub">2. Mount the grid</a>
+      <a href="#" class="dt-item sub">3. Add styles</a>
+      <a href="#" class="dt-item">TypeScript Support</a>
+      <a href="#" class="dt-item">Next Steps</a>
+
+      <hr class="dt-divider"/>
+      <a href="#" class="dt-edit">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7 2l3 3M2 7l5-5 3 3-5 5H2V7z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Edit this page
+      </a>
+
+      <div class="dt-helpful" style="margin-top:20px;">
+        <div class="dt-helpful-q">Was this helpful?</div>
+        <div class="dt-helpful-btns">
+          <button class="dt-helpful-btn">👍</button>
+          <button class="dt-helpful-btn">👎</button>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1440, &quot;height&quot;: 900 },
+  &quot;theme&quot;: {
+    &quot;editor&quot;: &quot;enum&quot;,
+    &quot;options&quot;: [&quot;light&quot;, &quot;dark&quot;],
+    &quot;default&quot;: &quot;light&quot;,
+    &quot;tsType&quot;: &quot;'light' | 'dark'&quot;
+  },
+  &quot;accent&quot;: {
+    &quot;editor&quot;: &quot;enum&quot;,
+    &quot;options&quot;: [&quot;violet&quot;, &quot;emerald&quot;, &quot;cobalt&quot;, &quot;rose&quot;],
+    &quot;default&quot;: &quot;violet&quot;,
+    &quot;tsType&quot;: &quot;'violet' | 'emerald' | 'cobalt' | 'rose'&quot;
+  }
+}">
+class Component extends DCLogic {
+  state = { pkgManager: 'npm', copied: null };
+
+  renderVals() {
+    const theme  = this.props.theme  ?? 'light';
+    const accent = this.props.accent ?? 'violet';
+
+    // Apply theme
+    const root = document.getElementById('docs-root');
+    if (root) root.classList.toggle('dark', theme === 'dark');
+
+    // Apply accent
+    const palettes = {
+      violet:  { acc:'#5b21b6', h:'#4c1d95', rgb:'91,33,182',  t1:'#7c3aed', t2:'#a855f7' },
+      emerald: { acc:'#065f46', h:'#064e3b', rgb:'6,95,70',    t1:'#059669', t2:'#10b981' },
+      cobalt:  { acc:'#1e3a8a', h:'#1e40af', rgb:'30,58,138',  t1:'#2563eb', t2:'#3b82f6' },
+      rose:    { acc:'#9f1239', h:'#881337', rgb:'159,18,57',   t1:'#e11d48', t2:'#f43f5e' },
+    };
+    const p = palettes[accent] || palettes.violet;
+    const d = document.documentElement;
+    d.style.setProperty('--acc',     p.acc);
+    d.style.setProperty('--acc-h',   p.h);
+    d.style.setProperty('--acc-rgb', p.rgb);
+    d.style.setProperty('--t1',      p.t1);
+    d.style.setProperty('--t2',      p.t2);
+
+    const { pkgManager, copied } = this.state;
+
+    // Package manager tabs element
+    const managers = ['npm', 'pnpm', 'yarn', 'bun'];
+    const pmTabsEl = React.createElement(React.Fragment, null,
+      ...managers.map(m =>
+        React.createElement('button', {
+          key: m,
+          className: 'pm-tab' + (pkgManager === m ? ' active' : ''),
+          onClick: () => this.setState({ pkgManager: m })
+        }, m)
+      )
+    );
+
+    // Install commands
+    const installCmds = {
+      npm:  'npm install <span class="c-str">@elitegrid/react</span>\n<span class="c-cm"># or for Vue</span>\nnpm install <span class="c-str">@elitegrid/vue</span>\n<span class="c-cm"># or framework-agnostic core</span>\nnpm install <span class="c-str">@elitegrid/core</span>',
+      pnpm: 'pnpm add <span class="c-str">@elitegrid/react</span>\n<span class="c-cm"># or for Vue</span>\npnpm add <span class="c-str">@elitegrid/vue</span>\n<span class="c-cm"># or framework-agnostic core</span>\npnpm add <span class="c-str">@elitegrid/core</span>',
+      yarn: 'yarn add <span class="c-str">@elitegrid/react</span>\n<span class="c-cm"># or for Vue</span>\nyarn add <span class="c-str">@elitegrid/vue</span>\n<span class="c-cm"># or framework-agnostic core</span>\nyarn add <span class="c-str">@elitegrid/core</span>',
+      bun:  'bun add <span class="c-str">@elitegrid/react</span>\n<span class="c-cm"># or for Vue</span>\nbun add <span class="c-str">@elitegrid/vue</span>\n<span class="c-cm"># or framework-agnostic core</span>\nbun add <span class="c-str">@elitegrid/core</span>',
+    };
+    const installCode = { __html: installCmds[pkgManager] };
+
+    const copyLabel1  = copied === 'install'  ? '✓ Copied' : 'Copy';
+    const copiedClass1 = copied === 'install'  ? 'cb-copy copied' : 'cb-copy';
+    const copyLabel2  = copied === 'columns'  ? '✓ Copied' : 'Copy';
+    const copiedClass2 = copied === 'columns'  ? 'cb-copy copied' : 'cb-copy';
+    const copyLabel3  = copied === 'mount'    ? '✓ Copied' : 'Copy';
+    const copiedClass3 = copied === 'mount'    ? 'cb-copy copied' : 'cb-copy';
+
+    const doCopy = (id, text) => {
+      navigator.clipboard.writeText(text).catch(() => {});
+      this.setState({ copied: id });
+      setTimeout(() => this.setState(s => s.copied === id ? { copied: null } : s), 2000);
+    };
+
+    const copyInstall  = () => doCopy('install',  `${pkgManager === 'npm' ? 'npm install' : pkgManager === 'pnpm' ? 'pnpm add' : pkgManager === 'yarn' ? 'yarn add' : 'bun add'} @elitegrid/react`);
+    const copyColumns  = () => doCopy('columns',  `const columns = [\n  { key: 'name', header: 'Name', width: 200 },\n  { key: 'role', header: 'Role' },\n  { key: 'salary', header: 'Salary', type: 'number' },\n]`);
+    const copyMount    = () => doCopy('mount',    `<EliteGrid\n  data={rows}\n  columns={columns}\n  sorting={{ multi: true }}\n  pagination={{ pageSize: 25 }}\n/>`);
+
+    const columnsCode = { __html:
+`<span class="c-kw">import</span> <span class="c-op">{</span> <span class="c-fn">type</span> ColumnDef <span class="c-op">}</span> <span class="c-kw">from</span> <span class="c-str">'@elitegrid/core'</span>
+
+<span class="c-kw">interface</span> Employee <span class="c-op">{</span>
+  id<span class="c-op">:</span> <span class="c-fn">number</span>
+  name<span class="c-op">:</span> <span class="c-fn">string</span>
+  role<span class="c-op">:</span> <span class="c-fn">string</span>
+  salary<span class="c-op">:</span> <span class="c-fn">number</span>
+<span class="c-op">}</span>
+
+<span class="c-kw">const</span> columns<span class="c-op">:</span> ColumnDef<span class="c-op">&lt;</span>Employee<span class="c-op">&gt;[]</span> <span class="c-op">=</span> <span class="c-op">[</span>
+  <span class="c-op">{</span> key<span class="c-op">:</span> <span class="c-str">'name'</span><span class="c-op">,</span>   header<span class="c-op">:</span> <span class="c-str">'Name'</span><span class="c-op">,</span>   width<span class="c-op">:</span> <span class="c-num">200</span> <span class="c-op">},</span>
+  <span class="c-op">{</span> key<span class="c-op">:</span> <span class="c-str">'role'</span><span class="c-op">,</span>   header<span class="c-op">:</span> <span class="c-str">'Role'</span> <span class="c-op">},</span>
+  <span class="c-op">{</span> key<span class="c-op">:</span> <span class="c-str">'salary'</span><span class="c-op">,</span> header<span class="c-op">:</span> <span class="c-str">'Salary'</span><span class="c-op">,</span> type<span class="c-op">:</span> <span class="c-str">'number'</span> <span class="c-op">},</span>
+<span class="c-op">]</span>` };
+
+    const mountCode = { __html:
+`<span class="c-kw">import</span> <span class="c-op">{</span> EliteGrid <span class="c-op">}</span> <span class="c-kw">from</span> <span class="c-str">'@elitegrid/react'</span>
+
+<span class="c-kw">export default function</span> <span class="c-fn">App</span><span class="c-op">() {</span>
+  <span class="c-kw">return</span> <span class="c-op">(</span>
+    <span class="c-op">&lt;</span>EliteGrid<span class="c-op">&lt;</span>Employee<span class="c-op">&gt;</span>
+      data<span class="c-op">={</span>rows<span class="c-op">}</span>
+      columns<span class="c-op">={</span>columns<span class="c-op">}</span>
+      sorting<span class="c-op">={{</span> multi<span class="c-op">:</span> <span class="c-kw">true</span> <span class="c-op">}}</span>
+      filtering<span class="c-op">={{</span> debounce<span class="c-op">:</span> <span class="c-num">300</span> <span class="c-op">}}</span>
+      pagination<span class="c-op">={{</span> pageSize<span class="c-op">:</span> <span class="c-num">25</span> <span class="c-op">}}</span>
+      selection<span class="c-op">={{</span> mode<span class="c-op">:</span> <span class="c-str">'multi'</span> <span class="c-op">}}</span>
+      appearance<span class="c-op">={{</span> theme<span class="c-op">:</span> <span class="c-str">'auto'</span> <span class="c-op">}}</span>
+    <span class="c-op">/&gt;</span>
+  <span class="c-op">)</span>
+<span class="c-op">}</span>` };
+
+    const stylesCode = { __html:
+`<span class="c-cm">// Import once in your app entry point</span>
+<span class="c-kw">import</span> <span class="c-str">'@elitegrid/core/styles'</span>
+
+<span class="c-cm">// Optionally override design tokens</span>
+<span class="c-cm">/* in your CSS */</span>
+<span class="c-op">:root {</span>
+  <span class="c-prop">--eg-row-height</span><span class="c-op">:</span> <span class="c-num">44px</span><span class="c-op">;</span>
+  <span class="c-prop">--eg-font-size</span><span class="c-op">:</span>  <span class="c-num">14px</span><span class="c-op">;</span>
+  <span class="c-prop">--eg-accent</span><span class="c-op">:</span>     <span class="c-str">#7c3aed</span><span class="c-op">;</span>
+<span class="c-op">}</span>` };
+
+    const tsCode = { __html:
+`<span class="c-cm">// All config objects are fully typed</span>
+<span class="c-kw">const</span> grid <span class="c-op">=</span> <span class="c-kw">new</span> <span class="c-fn">EliteGrid</span><span class="c-op">&lt;</span>Employee<span class="c-op">&gt;({</span>
+  data<span class="c-op">:</span> rows<span class="c-op">,</span>
+  columns<span class="c-op">:</span> columns<span class="c-op">,</span>
+  sorting<span class="c-op">: {</span>
+    <span class="c-cm">// ✓ TypeScript knows 'multi' is boolean</span>
+    multi<span class="c-op">:</span> <span class="c-kw">true</span><span class="c-op">,</span>
+    <span class="c-cm">// ✓ initialSort is typed as SortState&lt;Employee&gt;</span>
+    initialSort<span class="c-op">: [{ </span>key<span class="c-op">:</span> <span class="c-str">'name'</span><span class="c-op">,</span> dir<span class="c-op">:</span> <span class="c-str">'asc'</span><span class="c-op"> }]</span>
+  <span class="c-op">},</span>
+  events<span class="c-op">: {</span>
+    <span class="c-cm">// ✓ row is typed as Employee automatically</span>
+    onRowClick<span class="c-op">: (</span>row<span class="c-op">) =&gt;</span> <span class="c-fn">console</span><span class="c-op">.</span><span class="c-fn">log</span><span class="c-op">(</span>row<span class="c-op">.</span>name<span class="c-op">)</span>
+  <span class="c-op">}</span>
+<span class="c-op">})</span>` };
+
+    return {
+      pmTabsEl,
+      installCode,
+      copyLabel1, copiedClass1, copyInstall,
+      copyLabel2, copiedClass2, copyColumns,
+      copyLabel3, copiedClass3, copyMount,
+      columnsCode, mountCode, stylesCode, tsCode,
+    };
+  }
+}
+</script>
+</body>
+</html>

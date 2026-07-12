@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f5f4ef; font-family: 'DM Sans', sans-serif; color: #18181b; }
+    .card { background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 18px; padding: 36px 32px 28px; transition: box-shadow 0.25s, border-color 0.25s; cursor: pointer; }
+    .card:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.14); }
+    .card.selected { border-color: var(--acc); box-shadow: 0 0 0 3px rgba(var(--acc-rgb),0.15), 0 16px 48px rgba(0,0,0,0.1); }
+    :root { --acc: #5b21b6; --acc-rgb: 91,33,182; --t1: #7c3aed; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;background:#f5f4ef;padding:64px 24px 100px;">
+  <div style="max-width:1060px;margin:0 auto;">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:64px;">
+      <div style="display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#7c3aed;background:rgba(124,58,237,0.09);border:1px solid rgba(124,58,237,0.2);padding:5px 14px;border-radius:100px;margin-bottom:20px;">
+        <span style="width:5px;height:5px;background:#7c3aed;border-radius:50%;display:inline-block;"></span>
+        Logo Exploration
+      </div>
+      <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(36px,5vw,60px);font-weight:800;letter-spacing:-0.035em;color:#18181b;line-height:1.05;margin-bottom:16px;">Four original mark concepts</h1>
+      <p style="font-size:17px;color:#52525b;max-width:500px;margin:0 auto;line-height:1.7;">Each concept is designed to be trademarkable, scalable to 16px, and distinctly tied to the EliteGrid product.</p>
+    </div>
+
+    <!-- Grid of options -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+      <!-- ── Option A: Pinnacle ── -->
+      <div class="card" id="opt-a" onclick="selectOpt('a')">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#a1a1aa;">Option A</span>
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#7c3aed;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.18);padding:2px 8px;border-radius:4px;">Recommended</span>
+        </div>
+
+        <!-- Mark previews -->
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap;">
+          <!-- Dark bg -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="11" fill="#120827"/>
+            <rect x="8" y="28" width="8" height="12" rx="2" fill="white" fill-opacity="0.28"/>
+            <rect x="19.5" y="21" width="8" height="19" rx="2" fill="white" fill-opacity="0.55"/>
+            <rect x="31" y="13" width="8" height="27" rx="2" fill="white"/>
+            <circle cx="35" cy="11" r="2.5" fill="#a78bfa"/>
+          </svg>
+          <!-- Accent bg -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <defs><linearGradient id="bgA" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6d28d9"/><stop offset="1" stop-color="#4c1d95"/></linearGradient></defs>
+            <rect width="48" height="48" rx="11" fill="url(#bgA)"/>
+            <rect x="8" y="28" width="8" height="12" rx="2" fill="white" fill-opacity="0.3"/>
+            <rect x="19.5" y="21" width="8" height="19" rx="2" fill="white" fill-opacity="0.6"/>
+            <rect x="31" y="13" width="8" height="27" rx="2" fill="white"/>
+            <circle cx="35" cy="11" r="2.5" fill="#c4b5fd"/>
+          </svg>
+          <!-- Light bg -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="11" fill="#f5f4ef"/>
+            <rect x="8" y="28" width="8" height="12" rx="2" fill="#c4b5fd"/>
+            <rect x="19.5" y="21" width="8" height="19" rx="2" fill="#7c3aed" fill-opacity="0.7"/>
+            <rect x="31" y="13" width="8" height="27" rx="2" fill="#5b21b6"/>
+            <circle cx="35" cy="11" r="2.5" fill="#5b21b6"/>
+          </svg>
+          <!-- Wordmark -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect width="48" height="48" rx="11" fill="#120827"/>
+              <rect x="8" y="28" width="8" height="12" rx="2" fill="white" fill-opacity="0.28"/>
+              <rect x="19.5" y="21" width="8" height="19" rx="2" fill="white" fill-opacity="0.55"/>
+              <rect x="31" y="13" width="8" height="27" rx="2" fill="white"/>
+              <circle cx="35" cy="11" r="2.5" fill="#a78bfa"/>
+            </svg>
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.025em;color:#18181b;">EliteGrid</span>
+          </div>
+        </div>
+
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;color:#18181b;margin-bottom:8px;">Pinnacle</h2>
+        <p style="font-size:14px;color:#52525b;line-height:1.65;">Three ascending columns — left to right, shortest to tallest. The glowing dot above the peak marks the "elite" summit. Reads as data columns (grid) + excellence (ascending scale). Highly scalable.</p>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:#16a34a;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);padding:3px 9px;border-radius:100px;font-weight:600;">✓ Works at 16px</span>
+          <span style="font-size:11px;color:#16a34a;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);padding:3px 9px;border-radius:100px;font-weight:600;">✓ No prior art found</span>
+          <span style="font-size:11px;color:#16a34a;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);padding:3px 9px;border-radius:100px;font-weight:600;">✓ All 3 colorways</span>
+        </div>
+      </div>
+
+      <!-- ── Option B: Row Select ── -->
+      <div class="card" id="opt-b" onclick="selectOpt('b')">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#a1a1aa;">Option B</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap;">
+          <!-- Dark -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="11" fill="#120827"/>
+            <rect x="9" y="11" width="30" height="6" rx="2" fill="white" fill-opacity="0.18"/>
+            <rect x="3" y="20.5" width="3" height="7" rx="1.5" fill="#a78bfa"/>
+            <rect x="9" y="20.5" width="30" height="7" rx="2" fill="white"/>
+            <rect x="9" y="31" width="30" height="6" rx="2" fill="white" fill-opacity="0.18"/>
+          </svg>
+          <!-- Gradient -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <defs><linearGradient id="bgB" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6d28d9"/><stop offset="1" stop-color="#4c1d95"/></linearGradient></defs>
+            <rect width="48" height="48" rx="11" fill="url(#bgB)"/>
+            <rect x="9" y="11" width="30" height="6" rx="2" fill="white" fill-opacity="0.2"/>
+            <rect x="3" y="20.5" width="3" height="7" rx="1.5" fill="#c4b5fd"/>
+            <rect x="9" y="20.5" width="30" height="7" rx="2" fill="white"/>
+            <rect x="9" y="31" width="30" height="6" rx="2" fill="white" fill-opacity="0.2"/>
+          </svg>
+          <!-- Light -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="11" fill="#f0eef9"/>
+            <rect x="9" y="11" width="30" height="6" rx="2" fill="#5b21b6" fill-opacity="0.12"/>
+            <rect x="3" y="20.5" width="3" height="7" rx="1.5" fill="#7c3aed"/>
+            <rect x="9" y="20.5" width="30" height="7" rx="2" fill="#5b21b6"/>
+            <rect x="9" y="31" width="30" height="6" rx="2" fill="#5b21b6" fill-opacity="0.12"/>
+          </svg>
+          <!-- Wordmark -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect width="48" height="48" rx="11" fill="#120827"/>
+              <rect x="9" y="11" width="30" height="6" rx="2" fill="white" fill-opacity="0.18"/>
+              <rect x="3" y="20.5" width="3" height="7" rx="1.5" fill="#a78bfa"/>
+              <rect x="9" y="20.5" width="30" height="7" rx="2" fill="white"/>
+              <rect x="9" y="31" width="30" height="6" rx="2" fill="white" fill-opacity="0.18"/>
+            </svg>
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.025em;color:#18181b;">EliteGrid</span>
+          </div>
+        </div>
+
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;color:#18181b;margin-bottom:8px;">Row Select</h2>
+        <p style="font-size:14px;color:#52525b;line-height:1.65;">Three rows — the middle one selected, signified by a left-edge accent bar. It's literally a row selection UI pattern turned into a mark. Instantly communicates "data grid" and interactive selection.</p>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:#16a34a;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);padding:3px 9px;border-radius:100px;font-weight:600;">✓ Product-native concept</span>
+          <span style="font-size:11px;color:#16a34a;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);padding:3px 9px;border-radius:100px;font-weight:600;">✓ Unique silhouette</span>
+        </div>
+      </div>
+
+      <!-- ── Option C: The E ── -->
+      <div class="card" id="opt-c" onclick="selectOpt('c')">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#a1a1aa;">Option C</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap;">
+          <!-- Circle dark -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="24" fill="#120827"/>
+            <rect x="12" y="11" width="24" height="5" rx="2" fill="white"/>
+            <rect x="12" y="21.5" width="16" height="5" rx="2" fill="white" fill-opacity="0.55"/>
+            <rect x="12" y="32" width="24" height="5" rx="2" fill="white"/>
+          </svg>
+          <!-- Rounded square accent -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <defs><linearGradient id="bgC" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6d28d9"/><stop offset="1" stop-color="#4c1d95"/></linearGradient></defs>
+            <rect width="48" height="48" rx="11" fill="url(#bgC)"/>
+            <rect x="12" y="11" width="24" height="5" rx="2" fill="white"/>
+            <rect x="12" y="21.5" width="16" height="5" rx="2" fill="white" fill-opacity="0.6"/>
+            <rect x="12" y="32" width="24" height="5" rx="2" fill="white"/>
+          </svg>
+          <!-- Light -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="11" fill="#f5f4ef"/>
+            <rect x="12" y="11" width="24" height="5" rx="2" fill="#5b21b6"/>
+            <rect x="12" y="21.5" width="16" height="5" rx="2" fill="#7c3aed" fill-opacity="0.5"/>
+            <rect x="12" y="32" width="24" height="5" rx="2" fill="#5b21b6"/>
+          </svg>
+          <!-- Wordmark -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="24" fill="#120827"/>
+              <rect x="12" y="11" width="24" height="5" rx="2" fill="white"/>
+              <rect x="12" y="21.5" width="16" height="5" rx="2" fill="white" fill-opacity="0.55"/>
+              <rect x="12" y="32" width="24" height="5" rx="2" fill="white"/>
+            </svg>
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.025em;color:#18181b;">EliteGrid</span>
+          </div>
+        </div>
+
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;color:#18181b;margin-bottom:8px;">The E</h2>
+        <p style="font-size:14px;color:#52525b;line-height:1.65;">Three horizontal bars — long, short, long — a Bauhaus interpretation of the letter E. No vertical stroke, just the three data-row-like strokes. Monogram mark that doubles as a table visual. Works beautifully in a circle.</p>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:#16a34a;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);padding:3px 9px;border-radius:100px;font-weight:600;">✓ Monogram + grid dual read</span>
+          <span style="font-size:11px;color:#16a34a;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);padding:3px 9px;border-radius:100px;font-weight:600;">✓ Circle variant</span>
+        </div>
+      </div>
+
+      <!-- ── Option D: Sortmark ── -->
+      <div class="card" id="opt-d" onclick="selectOpt('d')">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#a1a1aa;">Option D</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap;">
+          <!-- Dark -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="11" fill="#120827"/>
+            <!-- Two data rows -->
+            <rect x="8" y="20" width="22" height="4.5" rx="2" fill="white" fill-opacity="0.25"/>
+            <rect x="8" y="27" width="17" height="4.5" rx="2" fill="white" fill-opacity="0.25"/>
+            <!-- Sort column: bright vertical bar -->
+            <rect x="33" y="14" width="6" height="22" rx="3" fill="#7c3aed"/>
+            <!-- Arrow head pointing up -->
+            <path d="M36 10 L39.5 15.5 L32.5 15.5 Z" fill="#a78bfa"/>
+          </svg>
+          <!-- Gradient bg -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <defs><linearGradient id="bgD" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6d28d9"/><stop offset="1" stop-color="#4c1d95"/></linearGradient></defs>
+            <rect width="48" height="48" rx="11" fill="url(#bgD)"/>
+            <rect x="8" y="20" width="22" height="4.5" rx="2" fill="white" fill-opacity="0.3"/>
+            <rect x="8" y="27" width="17" height="4.5" rx="2" fill="white" fill-opacity="0.3"/>
+            <rect x="33" y="14" width="6" height="22" rx="3" fill="white"/>
+            <path d="M36 10 L39.5 15.5 L32.5 15.5 Z" fill="#c4b5fd"/>
+          </svg>
+          <!-- Light -->
+          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="11" fill="#f5f4ef"/>
+            <rect x="8" y="20" width="22" height="4.5" rx="2" fill="#5b21b6" fill-opacity="0.15"/>
+            <rect x="8" y="27" width="17" height="4.5" rx="2" fill="#5b21b6" fill-opacity="0.15"/>
+            <rect x="33" y="14" width="6" height="22" rx="3" fill="#5b21b6"/>
+            <path d="M36 10 L39.5 15.5 L32.5 15.5 Z" fill="#7c3aed"/>
+          </svg>
+          <!-- Wordmark -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect width="48" height="48" rx="11" fill="#120827"/>
+              <rect x="8" y="20" width="22" height="4.5" rx="2" fill="white" fill-opacity="0.25"/>
+              <rect x="8" y="27" width="17" height="4.5" rx="2" fill="white" fill-opacity="0.25"/>
+              <rect x="33" y="14" width="6" height="22" rx="3" fill="#7c3aed"/>
+              <path d="M36 10 L39.5 15.5 L32.5 15.5 Z" fill="#a78bfa"/>
+            </svg>
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.025em;color:#18181b;">EliteGrid</span>
+          </div>
+        </div>
+
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;color:#18181b;margin-bottom:8px;">Sortmark</h2>
+        <p style="font-size:14px;color:#52525b;line-height:1.65;">Two faded data rows (the grid) + one bright vertical column with an ascending sort arrow (the action). Captures the most-used grid feature in a single mark. Clean separation of data and column-level control.</p>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:#16a34a;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);padding:3px 9px;border-radius:100px;font-weight:600;">✓ Feature-driven concept</span>
+          <span style="font-size:11px;color:#d97706;background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.2);padding:3px 9px;border-radius:100px;font-weight:600;">⚠ Complex at 16px</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Favicon row -->
+    <div style="background:#fff;border:1px solid rgba(0,0,0,0.08);border-radius:16px;padding:32px;margin-top:20px;">
+      <p style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#a1a1aa;margin-bottom:20px;">16px favicon test — the hardest size</p>
+      <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <svg width="16" height="16" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="11" fill="#120827"/><rect x="8" y="28" width="8" height="12" rx="2" fill="white" fill-opacity="0.3"/><rect x="19.5" y="21" width="8" height="19" rx="2" fill="white" fill-opacity="0.55"/><rect x="31" y="13" width="8" height="27" rx="2" fill="white"/></svg>
+          <div style="font-size:11px;color:#a1a1aa;margin-top:6px;">A</div>
+        </div>
+        <div style="text-align:center;">
+          <svg width="16" height="16" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="11" fill="#120827"/><rect x="9" y="11" width="30" height="6" rx="2" fill="white" fill-opacity="0.18"/><rect x="3" y="20.5" width="3" height="7" rx="1.5" fill="#a78bfa"/><rect x="9" y="20.5" width="30" height="7" rx="2" fill="white"/><rect x="9" y="31" width="30" height="6" rx="2" fill="white" fill-opacity="0.18"/></svg>
+          <div style="font-size:11px;color:#a1a1aa;margin-top:6px;">B</div>
+        </div>
+        <div style="text-align:center;">
+          <svg width="16" height="16" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#120827"/><rect x="12" y="11" width="24" height="5" rx="2" fill="white"/><rect x="12" y="21.5" width="16" height="5" rx="2" fill="white" fill-opacity="0.55"/><rect x="12" y="32" width="24" height="5" rx="2" fill="white"/></svg>
+          <div style="font-size:11px;color:#a1a1aa;margin-top:6px;">C</div>
+        </div>
+        <div style="text-align:center;">
+          <svg width="16" height="16" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="11" fill="#120827"/><rect x="8" y="20" width="22" height="4.5" rx="2" fill="white" fill-opacity="0.25"/><rect x="8" y="27" width="17" height="4.5" rx="2" fill="white" fill-opacity="0.25"/><rect x="33" y="14" width="6" height="22" rx="3" fill="#7c3aed"/><path d="M36 10 L39.5 15.5 L32.5 15.5 Z" fill="#a78bfa"/></svg>
+          <div style="font-size:11px;color:#a1a1aa;margin-top:6px;">D</div>
+        </div>
+
+        <div style="width:1px;height:40px;background:rgba(0,0,0,0.08);"></div>
+
+        <div>
+          <p style="font-size:13px;color:#52525b;line-height:1.65;max-width:480px;"><strong style="color:#18181b;">Trademark note:</strong> None of these marks are in use by any known data grid library (AG Grid uses a hexagon, TanStack uses a crown, Handsontable uses an "H" lettermark). All four concepts are original. Before filing, run a trademark search on <a href="https://www.tmdn.org" style="color:#7c3aed;">tmdn.org</a> and <a href="https://tmsearch.uspto.gov" style="color:#7c3aed;">USPTO</a> for your target markets.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected indicator -->
+    <div id="selected-bar" style="display:none;background:#5b21b6;border-radius:12px;padding:16px 24px;margin-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <p style="font-size:15px;color:white;font-weight:600;" id="selected-label">Option A selected — Pinnacle</p>
+      <button onclick="downloadSVG()" style="background:white;color:#5b21b6;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Download SVG →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let selectedOpt = null;
+  const names = { a:'Pinnacle', b:'Row Select', c:'The E', d:'Sortmark' };
+
+  function selectOpt(id) {
+    if (selectedOpt) document.getElementById('opt-'+selectedOpt).classList.remove('selected');
+    selectedOpt = id;
+    document.getElementById('opt-'+id).classList.add('selected');
+    const bar = document.getElementById('selected-bar');
+    bar.style.display = 'flex';
+    document.getElementById('selected-label').textContent = 'Option ' + id.toUpperCase() + ' selected — ' + names[id];
+  }
+
+  function downloadSVG() {
+    const svgs = {
+      a: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="11" fill="#120827"/><rect x="8" y="28" width="8" height="12" rx="2" fill="white" fill-opacity="0.28"/><rect x="19.5" y="21" width="8" height="19" rx="2" fill="white" fill-opacity="0.55"/><rect x="31" y="13" width="8" height="27" rx="2" fill="white"/><circle cx="35" cy="11" r="2.5" fill="#a78bfa"/></svg>`,
+      b: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="11" fill="#120827"/><rect x="9" y="11" width="30" height="6" rx="2" fill="white" fill-opacity="0.18"/><rect x="3" y="20.5" width="3" height="7" rx="1.5" fill="#a78bfa"/><rect x="9" y="20.5" width="30" height="7" rx="2" fill="white"/><rect x="9" y="31" width="30" height="6" rx="2" fill="white" fill-opacity="0.18"/></svg>`,
+      c: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#120827"/><rect x="12" y="11" width="24" height="5" rx="2" fill="white"/><rect x="12" y="21.5" width="16" height="5" rx="2" fill="white" fill-opacity="0.55"/><rect x="12" y="32" width="24" height="5" rx="2" fill="white"/></svg>`,
+      d: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="11" fill="#120827"/><rect x="8" y="20" width="22" height="4.5" rx="2" fill="white" fill-opacity="0.25"/><rect x="8" y="27" width="17" height="4.5" rx="2" fill="white" fill-opacity="0.25"/><rect x="33" y="14" width="6" height="22" rx="3" fill="#7c3aed"/><path d="M36 10 L39.5 15.5 L32.5 15.5 Z" fill="#a78bfa"/></svg>`,
+    };
+    const blob = new Blob([svgs[selectedOpt]], {type:'image/svg+xml'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'elitegrid-logo-' + selectedOpt + '.svg';
+    a.click();
+  }
+</script>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

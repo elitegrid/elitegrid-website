@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── CSS variable system ── */
+    :root {
+      --acc: #5b21b6; --acc-h: #4c1d95; --acc-rgb: 91,33,182;
+      --t1: #7c3aed; --t2: #a855f7;
+      --g1: #7c3aed; --g2: #a855f7; --g3: #c084fc;
+      --hfont: 'Bricolage Grotesque', sans-serif;
+    }
+
+    /* Light theme — on :root so all DC children inherit */
+    :root {
+      --bg:          #f5f4ef;
+      --bg-raised:   #ffffff;
+      --bg-code:     #131316;
+      --text-1:      #18181b;
+      --text-2:      #525252;
+      --text-3:      #a3a3a3;
+      --border:      rgba(0,0,0,0.09);
+      --border-str:  rgba(0,0,0,0.13);
+      --card-bg:     rgba(0,0,0,0.025);
+      --card-border: rgba(0,0,0,0.07);
+      --nav-blur-bg: rgba(245,244,239,0.88);
+      --sep: rgba(0,0,0,0.08);
+      --acc-btn:     var(--acc);
+      --acc-btn-h:   var(--acc-h);
+    }
+    .page-root {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+      transition: background 0.4s, color 0.4s;
+      min-height: 100vh;
+    }
+
+    /* Dark theme */
+    .page-root.dark {
+      --bg:          #09090e;
+      --bg-raised:   #0e0e17;
+      --bg-code:     #0e0e17;
+      --text-1:      #edf0fa;
+      --text-2:      #7a8399;
+      --text-3:      #374151;
+      --border:      rgba(255,255,255,0.07);
+      --border-str:  rgba(255,255,255,0.11);
+      --card-bg:     rgba(255,255,255,0.025);
+      --card-border: rgba(255,255,255,0.065);
+      --nav-blur-bg: rgba(9,9,14,0.88);
+      --sep: rgba(255,255,255,0.07);
+      --acc-btn:     var(--t1);
+      --acc-btn-h:   #6d28d9;
+    }
+
+    /* ── Typography ── */
+    .hfont { font-family: var(--hfont); }
+    .g-text {
+      background: linear-gradient(130deg, var(--g1) 0%, var(--g2) 50%, var(--g3) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── Navbar ── */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; padding: 0 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid transparent; transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s; }
+    .navbar.scrolled { background: var(--nav-blur-bg); border-color: var(--border); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .nav-link { color: var(--text-2); font-size: 14px; font-weight: 500; text-decoration: none; transition: color 0.2s; font-family: 'DM Sans', sans-serif; display: inline-flex; align-items: center; gap: 5px; }
+    .nav-link:hover { color: var(--text-1); }
+
+    /* ── Buttons ── */
+    .btn-p { display: inline-flex; align-items: center; gap: 8px; background: var(--acc-btn); color: #fff; font-size: 14px; font-weight: 600; padding: 11px 22px; border-radius: 9px; text-decoration: none; border: none; cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+    .btn-p:hover { background: var(--acc-btn-h); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(var(--acc-rgb),0.35); }
+    .btn-g { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text-1); font-size: 14px; font-weight: 500; padding: 11px 22px; border-radius: 9px; text-decoration: none; border: 1px solid var(--border-str); cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.15s; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+    .btn-g:hover { background: var(--card-bg); border-color: var(--border-str); transform: translateY(-1px); }
+
+    /* ── Hero ── */
+    .hero-pattern { background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 48px 48px; }
+    body.dark .hero-pattern { background-image: radial-gradient(rgba(var(--acc-rgb),0.13) 1px, transparent 1px); background-size: 28px 28px; }
+    .hero-glow { display: none; }
+    body.dark .hero-glow { display: block; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 72px; align-items: center; }
+
+    /* ── Stats grid in hero ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 48px; }
+    .stat-cell { padding: 20px 22px; border-right: 1px solid var(--border); }
+    .stat-cell:last-child { border-right: none; }
+    .stat-num { font-family: var(--hfont); font-size: 34px; font-weight: 800; color: var(--text-1); line-height: 1; letter-spacing: -0.03em; }
+    .stat-acc { font-family: var(--hfont); font-size: 34px; font-weight: 800; color: var(--t1); line-height: 1; letter-spacing: -0.03em; }
+    .stat-lbl { font-size: 11.5px; color: var(--text-3); margin-top: 5px; font-weight: 500; letter-spacing: 0.01em; }
+
+    /* ── Feature rows ── */
+    .feat-row { display: flex; align-items: flex-start; gap: 28px; padding: 28px 0; border-top: 1px solid var(--border); transition: padding-left 0.25s cubic-bezier(.16,1,.3,1), background 0.2s; cursor: default; }
+    .feat-row:hover { padding-left: 10px; }
+    .feat-row:hover .feat-num { color: var(--t1); }
+    .feat-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-3); min-width: 24px; flex-shrink: 0; padding-top: 4px; transition: color 0.25s; letter-spacing: 0.04em; }
+    .feat-icon { width: 38px; height: 38px; background: rgba(var(--acc-rgb),0.1); border: 1px solid rgba(var(--acc-rgb),0.18); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .feat-row-last { border-bottom: 1px solid var(--border); }
+
+    /* ── User feature small cards ── */
+    .uf-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 11px; padding: 18px 20px; transition: border-color 0.22s, background 0.22s; }
+    .uf-card:hover { border-color: rgba(var(--acc-rgb),0.25); background: rgba(var(--acc-rgb),0.03); }
+
+    /* ── Roadmap cards ── */
+    .rm-card { border-radius: 14px; padding: 26px; }
+    .rm-ship  { background: rgba(22,163,74,0.05);  border: 1px solid rgba(22,163,74,0.16); }
+    .rm-build { background: rgba(217,119,6,0.05);  border: 1px solid rgba(217,119,6,0.22); position: relative; overflow: hidden; }
+    .rm-build::before { content:''; position: absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg,#d97706,transparent); }
+    .rm-next  { background: rgba(var(--acc-rgb),0.04); border: 1px solid rgba(var(--acc-rgb),0.18); }
+    .rm-plan  { background: var(--card-bg); border: 1px solid var(--card-border); }
+
+    /* ── Badges ── */
+    .badge-pill { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: #d97706; background: rgba(217,119,6,0.09); border: 1px solid rgba(217,119,6,0.2); padding: 5px 12px; border-radius: 100px; }
+    .badge-label { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--acc-btn); display: block; margin-bottom: 14px; }
+    .badge-soon { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--t1); background: rgba(var(--acc-rgb),0.1); border: 1px solid rgba(var(--acc-rgb),0.2); padding: 2px 6px; border-radius: 5px; margin-left: 4px; }
+    .rm-status-label { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+
+    /* ── Inline code chips ── */
+    .ic-v { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--t1); background: rgba(var(--acc-rgb),0.1); padding: 2px 6px; border-radius: 4px; }
+    .ic-d { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--text-3); background: var(--card-bg); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+
+    /* ── Syntax tokens ── */
+    .tk-kw   { color: #c084fc; } .tk-comp { color: #818cf8; } .tk-fn  { color: #93c5fd; }
+    .tk-prop { color: #7dd3fc; } .tk-str  { color: #86efac; } .tk-num { color: #fb923c; }
+    .tk-punc { color: #64748b; }
+
+    /* ── Code block shell ── */
+    .code-shell { background: var(--bg-code); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; overflow: hidden; }
+    body:not(.dark) .code-shell { box-shadow: 0 28px 64px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.10); }
+    body.dark .code-shell { box-shadow: 0 28px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(var(--acc-rgb),0.06), inset 0 1px 0 rgba(255,255,255,0.04); }
+    .code-toolbar { padding: 12px 18px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; gap: 8px; }
+    .code-lang { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: var(--t1); background: rgba(var(--acc-rgb),0.15); border: 1px solid rgba(var(--acc-rgb),0.25); padding: 2px 8px; border-radius: 5px; text-transform: uppercase; }
+
+    /* ── Reveal ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1); }
+    .reveal.in { opacity: 1; transform: none; }
+    .reveal-d1 { transition-delay:.08s; } .reveal-d2 { transition-delay:.16s; }
+    .reveal-d3 { transition-delay:.24s; } .reveal-d4 { transition-delay:.32s; }
+
+    /* ── Sep ── */
+    .sep { height: 1px; background: linear-gradient(90deg, transparent, var(--sep) 20%, var(--sep) 80%, transparent); }
+
+    /* ── Email ── */
+    .email-in { flex: 1; min-width: 0; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 9px; padding: 12px 18px; color: #edf0fa; font-size: 15px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+    .email-in:focus { border-color: rgba(var(--acc-rgb),0.55); }
+    .email-in::placeholder { color: rgba(255,255,255,0.2); }
+
+    /* ── Footer links ── */
+    .fl { font-size: 13px; color: var(--text-3); text-decoration: none; transition: color 0.2s; }
+    .fl:hover { color: var(--text-2); }
+
+    /* ── Logo ── */
+    .logo-mark { width: 30px; height: 30px; background: linear-gradient(135deg, var(--acc-btn), var(--t2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 14px rgba(var(--acc-rgb),0.3); transition: background 0.3s; }
+
+    /* ── Responsive ── */
+    .feat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .rm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .a11y-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .a11y-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+      .hero-code-col { display: none; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-cell:nth-child(2) { border-right: none; }
+      .stat-cell:nth-child(3) { border-right: 1px solid var(--border); border-top: 1px solid var(--border); }
+      .stat-cell:nth-child(4) { border-top: 1px solid var(--border); }
+    }
+    @media (max-width: 900px) {
+      .navbar { padding: 0 24px; } .nav-links { display: none; }
+      .feat-grid-3 { grid-template-columns: 1fr 1fr; }
+      .rm-grid { grid-template-columns: 1fr; }
+      .a11y-grid { grid-template-columns: 1fr; gap: 40px; }
+    }
+    @media (max-width: 580px) {
+      .feat-grid-3 { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+    @keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
+  </style>
+</helmet>
+
+<div class="page-root" id="eg-root">
+<!-- ══════ NAVBAR ══════ -->
+<nav class="navbar" id="eg-nav">
+  <a href="#" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;">
+    <div class="logo-mark">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.5" fill="white"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1.5" fill="white" fill-opacity="0.5"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1.5" fill="white" fill-opacity="0.5"/><rect x="9" y="9" width="5.5" height="5.5" rx="1.5" fill="white"/></svg>
+    </div>
+    <span class="hfont" style="font-weight:700;font-size:17px;color:var(--text-1);letter-spacing:-0.02em;transition:color 0.3s;">EliteGrid</span>
+  </a>
+
+  <div class="nav-links" style="display:flex;align-items:center;gap:32px;">
+    <a href="#" class="nav-link">Docs <span class="badge-soon">Soon</span></a>
+    <a href="https://elitegrid.dev/playground" class="nav-link" target="_blank">Playground</a>
+    <a href="#roadmap" class="nav-link">Roadmap</a>
+    <a href="#features" class="nav-link">Features</a>
+    <a href="https://github.com/elitegrid" class="nav-link" target="_blank" style="display:flex;align-items:center;gap:5px;">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
+
+  <a href="#waitlist" class="btn-p" style="padding:9px 20px;font-size:13px;flex-shrink:0;">Join Waitlist</a>
+</nav>
+
+<!-- ══════ HERO ══════ -->
+<section style="position:relative;min-height:100vh;overflow:hidden;display:flex;align-items:center;">
+  <div class="hero-pattern" style="position:absolute;inset:0;opacity:0.6;pointer-events:none;"></div>
+  <div class="hero-glow" style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(var(--acc-rgb),0.15) 0%,transparent 65%);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:0;left:0;right:0;height:180px;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none;"></div>
+
+  <div style="position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:100px 24px 80px;width:100%;">
+    <div class="hero-grid">
+      <!-- Left col -->
+      <div>
+        <div style="margin-bottom:28px;">
+          <span class="badge-pill">
+            <span style="width:6px;height:6px;background:#d97706;border-radius:50%;animation:pulse-dot 2s infinite;display:inline-block;"></span>
+            v0.1 · Active Development
+          </span>
+        </div>
+
+        <h1 class="hfont" style="font-size:clamp(52px,7vw,88px);font-weight:800;line-height:1.0;letter-spacing:-0.04em;color:var(--text-1);margin-bottom:24px;">
+          The TypeScript<br/>data grid<br/><span class="g-text">developers<br/>deserve.</span>
+        </h1>
+
+        <p style="font-size:clamp(15px,1.7vw,18px);color:var(--text-2);max-width:480px;line-height:1.7;margin-bottom:36px;">
+          Grouped config API, full WCAG&nbsp;2.1&nbsp;AA, React&nbsp;&amp;&nbsp;Vue adapters — and docs so clear you won't need AI to integrate it.
+        </p>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="#waitlist" class="btn-p" style="padding:13px 26px;font-size:15px;">
+            Join Waitlist
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7h9M7 3l4.5 4L7 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="https://elitegrid.dev/playground" class="btn-g" style="padding:13px 26px;font-size:15px;" target="_blank">
+            Try Playground
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2h8v8M2 10l8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </a>
+        </div>
+
+        <!-- Stats as bordered grid -->
+        <div class="stats-grid">
+          <div class="stat-cell">
+            <div class="stat-num" data-count="662">0</div>
+            <div class="stat-lbl">passing tests</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num" data-count="13">0</div>
+            <div class="stat-lbl">core plugins</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-acc">0</div>
+            <div class="stat-lbl">dependencies</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">100%</div>
+            <div class="stat-lbl">TypeScript</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right col: code block (always dark) -->
+      <div class="hero-code-col">
+        <div class="code-shell">
+          <div class="code-toolbar">
+            <div style="display:flex;gap:6px;"><span style="width:11px;height:11px;border-radius:50%;background:#ff5f57;"></span><span style="width:11px;height:11px;border-radius:50%;background:#ffbd2e;"></span><span style="width:11px;height:11px;border-radius:50%;background:#28c840;"></span></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#374151;margin-left:6px;">App.tsx</span>
+            <span class="code-lang" style="margin-left:auto;">TSX</span>
+          </div>
+          <pre style="padding:22px 24px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;color:#e2e8f0;" dangerouslySetInnerHTML="{{ codeInner }}"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);opacity:0.3;animation:bob 2.5s ease-in-out infinite;">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M3 9.5l6 5.5 6-5.5" stroke="var(--text-2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════ LIVE DEMO ══════ -->
+<section id="demo" style="padding:100px 24px;max-width:1100px;margin:0 auto;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;flex-wrap:wrap;gap:16px;" class="reveal">
+    <div>
+      <span class="badge-label">Live Demo</span>
+      <h2 class="hfont" style="font-size:clamp(28px,4vw,52px);font-weight:800;letter-spacing:-0.03em;color:var(--text-1);line-height:1.05;">See it in action.</h2>
+    </div>
+    <p style="font-size:16px;color:var(--text-2);max-width:380px;line-height:1.7;">Click headers to sort. Type to filter. Click rows to select. This is exactly what your users will experience.</p>
+  </div>
+  <div class="reveal reveal-d1">{{ gridDemo }}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;" class="reveal reveal-d2">
+    <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-3);background:var(--card-bg);border:1px solid var(--card-border);border-radius:100px;padding:4px 12px;font-weight:500;">↕ Multi-column sort</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-3);background:var(--card-bg);border:1px solid var(--card-border);border-radius:100px;padding:4px 12px;font-weight:500;">🔍 Live filtering</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-3);background:var(--card-bg);border:1px solid var(--card-border);border-radius:100px;padding:4px 12px;font-weight:500;">☑ Row selection</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-3);background:var(--card-bg);border:1px solid var(--card-border);border-radius:100px;padding:4px 12px;font-weight:500;">📄 Pagination</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-3);background:var(--card-bg);border:1px solid var(--card-border);border-radius:100px;padding:4px 12px;font-weight:500;">📤 CSV Export</span>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════ FEATURES: numbered rows ══════ -->
+<section id="features" style="padding:100px 24px;max-width:1100px;margin:0 auto;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;flex-wrap:wrap;gap:16px;" class="reveal">
+    <div>
+      <span class="badge-label">For Developers</span>
+      <h2 class="hfont" style="font-size:clamp(28px,4vw,52px);font-weight:800;letter-spacing:-0.03em;color:var(--text-1);line-height:1.05;">Built different,<br/>by design.</h2>
+    </div>
+    <p style="font-size:16px;color:var(--text-2);max-width:360px;line-height:1.7;">Most grids were built for feature lists. EliteGrid was built for the developer first.</p>
+  </div>
+
+  <!-- Feature row 01 -->
+  <div class="feat-row reveal reveal-d1">
+    <span class="feat-num">01</span>
+    <div class="feat-icon">
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" stroke="var(--t1)" stroke-width="1.5"/><rect x="10" y="2" width="6" height="6" rx="1.5" stroke="var(--t1)" stroke-width="1.5"/><rect x="2" y="10" width="6" height="6" rx="1.5" stroke="var(--t1)" stroke-width="1.5"/><rect x="10" y="10" width="6" height="6" rx="1.5" stroke="var(--t1)" stroke-width="1.5"/></svg>
+    </div>
+    <div style="flex:1;">
+      <h3 class="hfont" style="font-size:19px;font-weight:700;color:var(--text-1);margin-bottom:7px;letter-spacing:-0.01em;">Grouped Config API</h3>
+      <p style="font-size:15px;color:var(--text-2);line-height:1.65;"><span class="ic-v">sorting=&#123;{ multi: true }}</span> not <span class="ic-d">enableMultiColumnSorting</span>. Every feature lives in its own namespace — config that reads like English, not a boolean soup.</p>
+    </div>
+  </div>
+
+  <!-- Feature row 02 -->
+  <div class="feat-row reveal reveal-d1">
+    <span class="feat-num">02</span>
+    <div class="feat-icon">
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M9 2L2 6v6l7 4 7-4V6L9 2z" stroke="var(--t1)" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 6l7 4 7-4M9 10v6" stroke="var(--t1)" stroke-width="1.5"/></svg>
+    </div>
+    <div style="flex:1;">
+      <h3 class="hfont" style="font-size:19px;font-weight:700;color:var(--text-1);margin-bottom:7px;letter-spacing:-0.01em;">TypeScript Native</h3>
+      <p style="font-size:15px;color:var(--text-2);line-height:1.65;">Full type inference across config, events, and plugins. TypeScript catches configuration mistakes before runtime — not in a Slack thread at 11 PM.</p>
+    </div>
+  </div>
+
+  <!-- Feature row 03 -->
+  <div class="feat-row reveal reveal-d2">
+    <span class="feat-num">03</span>
+    <div class="feat-icon">
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" stroke="var(--t1)" stroke-width="1.5"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2M4.22 4.22l1.42 1.42M12.36 12.36l1.42 1.42M4.22 13.78l1.42-1.42M12.36 5.64l1.42-1.42" stroke="var(--t1)" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <div style="flex:1;">
+      <h3 class="hfont" style="font-size:19px;font-weight:700;color:var(--text-1);margin-bottom:7px;letter-spacing:-0.01em;">Plugin Architecture</h3>
+      <p style="font-size:15px;color:var(--text-2);line-height:1.65;">Microkernel core where every feature is an independent plugin communicating through a shared event bus. Clean separation, zero coupling, no circular dependencies.</p>
+    </div>
+  </div>
+
+  <!-- Feature row 04 -->
+  <div class="feat-row reveal reveal-d2">
+    <span class="feat-num">04</span>
+    <div class="feat-icon">
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="var(--t1)" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="var(--t1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div style="flex:1;">
+      <h3 class="hfont" style="font-size:19px;font-weight:700;color:var(--text-1);margin-bottom:7px;letter-spacing:-0.01em;">React &amp; Vue Ready</h3>
+      <p style="font-size:15px;color:var(--text-2);line-height:1.65;">First-class adapters with ergonomic hooks — <span class="ic-v">useGrid()</span>, <span class="ic-v">useSelectionState()</span>, <span class="ic-v">usePaginationState()</span>. Framework-agnostic core ready for every ecosystem.</p>
+    </div>
+  </div>
+
+  <!-- Feature row 05 -->
+  <div class="feat-row reveal reveal-d3">
+    <span class="feat-num">05</span>
+    <div class="feat-icon">
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="var(--t1)" stroke-width="1.5"/><path d="M6.5 7h5M6.5 10h3" stroke="var(--t1)" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <div style="flex:1;">
+      <h3 class="hfont" style="font-size:19px;font-weight:700;color:var(--text-1);margin-bottom:7px;letter-spacing:-0.01em;">Docs You Can Trust</h3>
+      <p style="font-size:15px;color:var(--text-2);line-height:1.65;">Written so a junior developer can integrate from docs alone — no AI assist, no Stack Overflow, no tribal knowledge. Documentation as a first-class feature.</p>
+    </div>
+  </div>
+
+  <!-- Feature row 06 -->
+  <div class="feat-row feat-row-last reveal reveal-d3">
+    <span class="feat-num">06</span>
+    <div class="feat-icon">
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M9 1.5l1.8 5.4H17l-4.9 3.5 1.9 5.6L9 12.5l-5 3.5 1.9-5.6L1 7l6.2-.1L9 1.5z" stroke="var(--t1)" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    </div>
+    <div style="flex:1;">
+      <h3 class="hfont" style="font-size:19px;font-weight:700;color:var(--text-1);margin-bottom:7px;letter-spacing:-0.01em;">Zero Dependencies</h3>
+      <p style="font-size:15px;color:var(--text-2);line-height:1.65;">Pure TypeScript core with zero runtime dependencies. No bloat, no supply chain risk, no surprise breaking changes in a dependency you've never heard of.</p>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════ USER FEATURES: minimal 3-col ══════ -->
+<section style="padding:100px 24px;max-width:1100px;margin:0 auto;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;flex-wrap:wrap;gap:16px;" class="reveal">
+    <div>
+      <span class="badge-label">For End Users</span>
+      <h2 class="hfont" style="font-size:clamp(28px,4vw,52px);font-weight:800;letter-spacing:-0.03em;color:var(--text-1);line-height:1.05;">30+ features,<br/>zero setup.</h2>
+    </div>
+    <p style="font-size:16px;color:var(--text-2);max-width:320px;line-height:1.7;">Every feature ships in the box. No plugins to hunt for.</p>
+  </div>
+  <div class="feat-grid-3 reveal">
+    <div class="uf-card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:16px;">↕️</span><span class="hfont" style="font-size:15px;font-weight:700;color:var(--text-1);">Sort</span></div><p style="font-size:13px;color:var(--text-3);line-height:1.6;">Single &amp; multi-column. Three-state cycle. Custom comparators.</p></div>
+    <div class="uf-card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:16px;">🔍</span><span class="hfont" style="font-size:15px;font-weight:700;color:var(--text-1);">Filter</span></div><p style="font-size:13px;color:var(--text-3);line-height:1.6;">Text, number, date, boolean — per column.</p></div>
+    <div class="uf-card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:16px;">📄</span><span class="hfont" style="font-size:15px;font-weight:700;color:var(--text-1);">Pagination</span></div><p style="font-size:13px;color:var(--text-3);line-height:1.6;">Client-side &amp; server-side. Configurable page size.</p></div>
+    <div class="uf-card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:16px;">✏️</span><span class="hfont" style="font-size:15px;font-weight:700;color:var(--text-1);">Inline Editing</span></div><p style="font-size:13px;color:var(--text-3);line-height:1.6;">Async validation. Optimistic updates with rollback.</p></div>
+    <div class="uf-card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:16px;">☑️</span><span class="hfont" style="font-size:15px;font-weight:700;color:var(--text-1);">Row Selection</span></div><p style="font-size:13px;color:var(--text-3);line-height:1.6;">Shift+click range. Ctrl+click toggle. Persists on sort.</p></div>
+    <div class="uf-card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:16px;">📤</span><span class="hfont" style="font-size:15px;font-weight:700;color:var(--text-1);">CSV Export</span></div><p style="font-size:13px;color:var(--text-3);line-height:1.6;">Export all, filtered, or selected rows.</p></div>
+    <div class="uf-card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:16px;">🎨</span><span class="hfont" style="font-size:15px;font-weight:700;color:var(--text-1);">Theming</span></div><p style="font-size:13px;color:var(--text-3);line-height:1.6;">Light/dark/auto. Compact, normal, comfortable density.</p></div>
+    <div class="uf-card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:16px;">↔️</span><span class="hfont" style="font-size:15px;font-weight:700;color:var(--text-1);">Column Controls</span></div><p style="font-size:13px;color:var(--text-3);line-height:1.6;">Resize, reorder, pin, hide. Persistent column state.</p></div>
+    <div class="uf-card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:16px;">⌨️</span><span class="hfont" style="font-size:15px;font-weight:700;color:var(--text-1);">Keyboard Nav</span></div><p style="font-size:13px;color:var(--text-3);line-height:1.6;">Full ARIA Grid Pattern. Arrow, Home, End, PageUp/Down.</p></div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════ ROADMAP ══════ -->
+<section id="roadmap" style="padding:100px 24px;max-width:1100px;margin:0 auto;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;flex-wrap:wrap;gap:16px;" class="reveal">
+    <div>
+      <span class="badge-label">Roadmap</span>
+      <h2 class="hfont" style="font-size:clamp(28px,4vw,52px);font-weight:800;letter-spacing:-0.03em;color:var(--text-1);line-height:1.05;">Where we are.<br/>Where we're going.</h2>
+    </div>
+    <p style="font-size:16px;color:var(--text-2);max-width:300px;line-height:1.7;">No hype. Actively evolving, here is the honest state of the project.</p>
+  </div>
+  <div class="rm-grid">
+    <div class="rm-card rm-ship reveal reveal-d1">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><span style="width:8px;height:8px;background:#16a34a;border-radius:50%;flex-shrink:0;"></span><span class="rm-status-label" style="color:#16a34a;">Shipped</span></div>
+      <h3 class="hfont" style="font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:8px;">Core Engine</h3>
+      <p style="font-size:14px;color:var(--text-2);line-height:1.65;">Microkernel architecture with 13 plugins. DataSource, RowModel, ColumnModel, Filter, Sort, Pagination, Viewport, Selection, Edit &amp; more. 662 passing tests.</p>
+    </div>
+    <div class="rm-card rm-ship reveal reveal-d2">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><span style="width:8px;height:8px;background:#16a34a;border-radius:50%;flex-shrink:0;"></span><span class="rm-status-label" style="color:#16a34a;">Shipped</span></div>
+      <h3 class="hfont" style="font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:8px;">Grouped Config API</h3>
+      <p style="font-size:14px;color:var(--text-2);line-height:1.65;">Namespaced configuration with full TypeScript inference. Config mistakes caught at authoring time, not at runtime.</p>
+    </div>
+    <div class="rm-card rm-build reveal reveal-d3">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><span style="width:8px;height:8px;background:#d97706;border-radius:50%;animation:pulse-dot 1.8s infinite;flex-shrink:0;"></span><span class="rm-status-label" style="color:#d97706;">Building Now</span></div>
+      <h3 class="hfont" style="font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:8px;">React, Vue &amp; JS Adapters</h3>
+      <p style="font-size:14px;color:var(--text-2);line-height:1.65;">First-class React &amp; Vue adapters with hooks. Vanilla JS adapter for framework-free usage. Full WCAG 2.1 AA out of the box.</p>
+    </div>
+    <div class="rm-card rm-build reveal reveal-d4">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><span style="width:8px;height:8px;background:#d97706;border-radius:50%;animation:pulse-dot 1.8s 0.3s infinite;flex-shrink:0;"></span><span class="rm-status-label" style="color:#d97706;">Building Now</span></div>
+      <h3 class="hfont" style="font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:8px;">Sandbox &amp; Docs</h3>
+      <p style="font-size:14px;color:var(--text-2);line-height:1.65;">Interactive StackBlitz sandboxes. Docs written so a junior developer can integrate without AI. Clear, honest, trustworthy.</p>
+    </div>
+    <div class="rm-card rm-next reveal reveal-d1">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><span style="width:8px;height:8px;background:var(--t1);border-radius:50%;flex-shrink:0;"></span><span class="rm-status-label" style="color:var(--t1);">Up Next</span></div>
+      <h3 class="hfont" style="font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:8px;">Public Launch</h3>
+      <p style="font-size:14px;color:var(--text-2);line-height:1.65;">Community version on npm. ProductHunt launch. <span class="ic-v">npm install @elitegrid/core</span></p>
+    </div>
+    <div class="rm-card rm-plan reveal reveal-d2">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><span style="width:8px;height:8px;background:var(--text-3);border-radius:50%;flex-shrink:0;"></span><span class="rm-status-label" style="color:var(--text-3);">Planned</span></div>
+      <h3 class="hfont" style="font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:8px;">Row Grouping &amp; Excel</h3>
+      <p style="font-size:14px;color:var(--text-2);line-height:1.65;">Group rows by any column with aggregations. Import/export XLSX with formatting and column widths.</p>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════ ACCESSIBILITY ══════ -->
+<section style="padding:100px 24px;max-width:1100px;margin:0 auto;">
+  <div class="a11y-grid reveal">
+    <div>
+      <span class="badge-label">Accessibility</span>
+      <h2 class="hfont" style="font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-0.03em;color:var(--text-1);line-height:1.05;margin-bottom:20px;">Accessible<br/>by default.</h2>
+      <p style="color:var(--text-2);font-size:16px;line-height:1.7;margin-bottom:28px;">Full WCAG 2.1 AA compliance ships as part of the default experience — zero configuration required.</p>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-2);">
+          <div style="width:18px;height:18px;border-radius:50%;background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2L7 2" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          Full ARIA Grid Pattern implementation
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-2);">
+          <div style="width:18px;height:18px;border-radius:50%;background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2L7 2" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          Screen reader announcements for all state changes
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-2);">
+          <div style="width:18px;height:18px;border-radius:50%;background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2L7 2" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          Complete keyboard navigation support
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-2);">
+          <div style="width:18px;height:18px;border-radius:50%;background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2L7 2" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          prefers-reduced-motion &amp; Windows High Contrast
+        </div>
+      </div>
+    </div>
+    <div class="a11y-stats">
+      <div style="background:rgba(22,163,74,0.05);border:1px solid rgba(22,163,74,0.15);border-radius:14px;padding:28px;text-align:center;">
+        <div class="hfont" style="font-size:34px;font-weight:800;color:#16a34a;line-height:1;margin-bottom:6px;">2.1 AA</div>
+        <div style="font-size:12px;color:var(--text-3);font-weight:500;">WCAG Level</div>
+      </div>
+      <div style="background:rgba(var(--acc-rgb),0.05);border:1px solid rgba(var(--acc-rgb),0.15);border-radius:14px;padding:28px;text-align:center;">
+        <div class="hfont" style="font-size:34px;font-weight:800;color:var(--t1);line-height:1;margin-bottom:6px;">grid</div>
+        <div style="font-size:12px;color:var(--text-3);font-weight:500;">ARIA Role</div>
+      </div>
+      <div style="background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.15);border-radius:14px;padding:28px;text-align:center;">
+        <div class="hfont" style="font-size:34px;font-weight:800;color:#0ea5e9;line-height:1;margin-bottom:6px;">100%</div>
+        <div style="font-size:12px;color:var(--text-3);font-weight:500;">Keyboard</div>
+      </div>
+      <div style="background:rgba(167,139,250,0.05);border:1px solid rgba(167,139,250,0.15);border-radius:14px;padding:28px;text-align:center;">
+        <div class="hfont" style="font-size:34px;font-weight:800;color:#a78bfa;line-height:1;margin-bottom:6px;">✓</div>
+        <div style="font-size:12px;color:var(--text-3);font-weight:500;">Screen Readers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════ DOCS TEASER ══════ -->
+<section style="padding:80px 24px;max-width:1100px;margin:0 auto;" class="reveal">
+  <div style="background:linear-gradient(135deg,rgba(var(--acc-rgb),0.06) 0%,rgba(var(--acc-rgb),0.02) 100%);border:1px solid rgba(var(--acc-rgb),0.14);border-radius:20px;padding:56px;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap;">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <div style="width:36px;height:36px;background:rgba(var(--acc-rgb),0.12);border:1px solid rgba(var(--acc-rgb),0.22);border-radius:9px;display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="var(--t1)" stroke-width="1.5"/><path d="M5 6h6M5 9.5h4" stroke="var(--t1)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="hfont" style="font-size:13px;font-weight:700;color:var(--t1);letter-spacing:0.05em;text-transform:uppercase;">Documentation</span>
+        <span class="badge-soon">Coming Soon</span>
+      </div>
+      <h2 class="hfont" style="font-size:clamp(22px,3vw,36px);font-weight:800;letter-spacing:-0.025em;color:var(--text-1);margin-bottom:12px;line-height:1.1;">Docs so clear, you won't<br/>need AI to integrate it.</h2>
+      <p style="color:var(--text-2);font-size:15px;line-height:1.7;max-width:440px;">Comprehensive guides, interactive examples, complete API reference. Written for the developer who ships on day one.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <a href="#waitlist" class="btn-p" style="font-size:14px;">Get notified when docs launch →</a>
+      <a href="https://elitegrid.dev/playground" class="btn-g" style="font-size:14px;text-align:center;" target="_blank">Try the Playground first</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ WAITLIST — always dark ══════ -->
+<section id="waitlist" style="background:#09090e;padding:120px 24px;text-align:center;position:relative;overflow:hidden;margin-top:80px;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 100%,rgba(var(--acc-rgb),0.1) 0%,transparent 65%);pointer-events:none;"></div>
+  <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(var(--acc-rgb),0.10) 1px,transparent 1px);background-size:28px 28px;opacity:0.5;pointer-events:none;"></div>
+  <div style="position:relative;z-index:1;max-width:560px;margin:0 auto;" class="reveal">
+    <span style="font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--t1);display:block;margin-bottom:20px;">Early Access</span>
+    <h2 class="hfont" style="font-size:clamp(36px,6vw,68px);font-weight:800;letter-spacing:-0.04em;color:#edf0fa;margin-bottom:20px;line-height:1.0;">Be first.<br/>Build better.</h2>
+    <p style="color:#7a8399;font-size:17px;line-height:1.7;margin-bottom:48px;">Join the waitlist. One email when EliteGrid launches publicly on npm. No spam.</p>
+    <div style="display:flex;gap:10px;max-width:440px;margin:0 auto 14px;">
+      <input type="email" class="email-in" placeholder="your@email.com"/>
+      <a href="https://elitegrid.dev/#waitlist" class="btn-p" target="_blank" style="flex-shrink:0;">Join Waitlist</a>
+    </div>
+    <p style="font-size:13px;color:#374151;margin-bottom:36px;">No spam. One email at launch.</p>
+    <a href="https://elitegrid.dev/playground" style="font-size:14px;color:var(--t1);text-decoration:none;display:inline-flex;align-items:center;gap:6px;" target="_blank">
+      Try the Playground first
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2h8v8M2 10l8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ══════ FOOTER ══════ -->
+<footer style="border-top:1px solid var(--border);padding:36px 24px;">
+  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="logo-mark" style="width:22px;height:22px;border-radius:6px;box-shadow:none;">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.5" fill="white"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1.5" fill="white" fill-opacity="0.5"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1.5" fill="white" fill-opacity="0.5"/><rect x="9" y="9" width="5.5" height="5.5" rx="1.5" fill="white"/></svg>
+      </div>
+      <span class="hfont" style="font-weight:700;font-size:14px;color:var(--text-1);">EliteGrid</span>
+      <span style="font-size:12px;color:var(--text-3);">© 2026 · Built with ♥ in India</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:24px;">
+      <a href="https://github.com/elitegrid" class="fl" target="_blank">GitHub</a>
+      <a href="https://x.com/elitegridhq" class="fl" target="_blank">Twitter</a>
+      <a href="https://npmjs.com/package/@elitegrid/core" class="fl" target="_blank">npm</a>
+      <a href="mailto:hello@elitegrid.dev" class="fl">Contact</a>
+    </div>
+  </div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1440, &quot;height&quot;: 900 },
+  &quot;theme&quot;: {
+    &quot;editor&quot;: &quot;enum&quot;,
+    &quot;options&quot;: [&quot;light&quot;, &quot;dark&quot;],
+    &quot;default&quot;: &quot;light&quot;,
+    &quot;tsType&quot;: &quot;'light' | 'dark'&quot;
+  },
+  &quot;accent&quot;: {
+    &quot;editor&quot;: &quot;enum&quot;,
+    &quot;options&quot;: [&quot;violet&quot;, &quot;emerald&quot;, &quot;cobalt&quot;, &quot;rose&quot;],
+    &quot;default&quot;: &quot;violet&quot;,
+    &quot;tsType&quot;: &quot;'violet' | 'emerald' | 'cobalt' | 'rose'&quot;
+  },
+  &quot;headingFont&quot;: {
+    &quot;editor&quot;: &quot;enum&quot;,
+    &quot;options&quot;: [&quot;bricolage&quot;, &quot;jakarta&quot;, &quot;playfair&quot;],
+    &quot;default&quot;: &quot;bricolage&quot;,
+    &quot;tsType&quot;: &quot;'bricolage' | 'jakarta' | 'playfair'&quot;
+  }
+}">
+class Component extends DCLogic {
+  componentDidMount() {
+    // Navbar scroll
+    const nav = document.getElementById('eg-nav');
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Scroll reveal
+    const ro = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+    // Animated counters
+    const co = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const target = parseInt(el.getAttribute('data-count'));
+        if (!target) return;
+        let cur = 0;
+        const step = target / 55;
+        const t = setInterval(() => {
+          cur = Math.min(cur + step, target);
+          el.textContent = Math.round(cur);
+          if (cur >= target) clearInterval(t);
+        }, 20);
+        co.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-count]').forEach(el => co.observe(el));
+  }
+
+  renderVals() {
+    const theme       = this.props.theme       ?? 'light';
+    const accent      = this.props.accent      ?? 'violet';
+    const headingFont = this.props.headingFont ?? 'bricolage';
+
+    // ── Apply theme ──
+    const pgRoot = document.getElementById('eg-root');
+    if (pgRoot) pgRoot.classList.toggle('dark', theme === 'dark');
+
+    // ── Apply accent palette ──
+    const palettes = {
+      violet:  { acc:'#5b21b6', h:'#4c1d95', rgb:'91,33,182',  t1:'#7c3aed', t2:'#a855f7', g1:'#7c3aed', g2:'#a855f7', g3:'#c084fc' },
+      emerald: { acc:'#065f46', h:'#064e3b', rgb:'6,95,70',    t1:'#059669', t2:'#10b981', g1:'#059669', g2:'#10b981', g3:'#34d399' },
+      cobalt:  { acc:'#1e3a8a', h:'#1e40af', rgb:'30,58,138',  t1:'#2563eb', t2:'#3b82f6', g1:'#2563eb', g2:'#3b82f6', g3:'#60a5fa' },
+      rose:    { acc:'#9f1239', h:'#881337', rgb:'159,18,57',   t1:'#e11d48', t2:'#f43f5e', g1:'#e11d48', g2:'#f43f5e', g3:'#fb7185' },
+    };
+    const p = palettes[accent] || palettes.violet;
+    const r = document.documentElement;
+    r.style.setProperty('--acc',     p.acc);
+    r.style.setProperty('--acc-h',   p.h);
+    r.style.setProperty('--acc-rgb', p.rgb);
+    r.style.setProperty('--t1',      p.t1);
+    r.style.setProperty('--t2',      p.t2);
+    r.style.setProperty('--g1',      p.g1);
+    r.style.setProperty('--g2',      p.g2);
+    r.style.setProperty('--g3',      p.g3);
+
+    // ── Apply heading font ──
+    const fonts = {
+      bricolage: "'Bricolage Grotesque', sans-serif",
+      jakarta:   "'Plus Jakarta Sans', sans-serif",
+      playfair:  "'Playfair Display', serif",
+    };
+    r.style.setProperty('--hfont', fonts[headingFont] || fonts.bricolage);
+
+    // ── Code HTML ──
+    const codeInner = { __html:
+`<span class="tk-kw">import</span> <span class="tk-punc">{ </span><span class="tk-comp">EliteGrid</span><span class="tk-punc"> }</span> <span class="tk-kw">from</span> <span class="tk-str">'@elitegrid/react'</span>
+
+<span class="tk-kw">export default function</span> <span class="tk-fn">App</span><span class="tk-punc">() {</span>
+  <span class="tk-kw">return</span> <span class="tk-punc">(</span>
+    <span class="tk-punc">&lt;</span><span class="tk-comp">EliteGrid</span>
+      <span class="tk-prop">data</span><span class="tk-punc">={</span>rows<span class="tk-punc">}</span>
+      <span class="tk-prop">columns</span><span class="tk-punc">={</span>columns<span class="tk-punc">}</span>
+      <span class="tk-prop">sorting</span><span class="tk-punc">={{</span> multi<span class="tk-punc">:</span> <span class="tk-kw">true</span> <span class="tk-punc">}}</span>
+      <span class="tk-prop">filtering</span><span class="tk-punc">={{</span> debounce<span class="tk-punc">:</span> <span class="tk-num">300</span> <span class="tk-punc">}}</span>
+      <span class="tk-prop">pagination</span><span class="tk-punc">={{</span> pageSize<span class="tk-punc">:</span> <span class="tk-num">25</span> <span class="tk-punc">}}</span>
+      <span class="tk-prop">selection</span><span class="tk-punc">={{</span> mode<span class="tk-punc">:</span> <span class="tk-str">'multi'</span> <span class="tk-punc">}}</span>
+      <span class="tk-prop">editing</span><span class="tk-punc">={{</span> trigger<span class="tk-punc">:</span> <span class="tk-str">'doubleClick'</span> <span class="tk-punc">}}</span>
+      <span class="tk-prop">appearance</span><span class="tk-punc">={{</span> theme<span class="tk-punc">:</span> <span class="tk-str">'dark'</span><span class="tk-punc">,</span> density<span class="tk-punc">:</span> <span class="tk-str">'compact'</span> <span class="tk-punc">}}</span>
+      <span class="tk-prop">export</span><span class="tk-punc">={{</span> csv<span class="tk-punc">: {</span> filename<span class="tk-punc">:</span> <span class="tk-str">'data-export'</span> <span class="tk-punc">} }}</span>
+      <span class="tk-prop">events</span><span class="tk-punc">={{</span>
+        <span class="tk-prop">onReady</span><span class="tk-punc">: (</span>api<span class="tk-punc">) =&gt;</span> <span class="tk-fn">setApi</span><span class="tk-punc">(</span>api<span class="tk-punc">),</span>
+        <span class="tk-prop">onEditCommit</span><span class="tk-punc">: (</span>id<span class="tk-punc">,</span> field<span class="tk-punc">,</span> val<span class="tk-punc">) =&gt;</span> <span class="tk-fn">save</span><span class="tk-punc">(</span>id<span class="tk-punc">,</span> field<span class="tk-punc">,</span> val<span class="tk-punc">)</span>
+      <span class="tk-punc">}}</span>
+    <span class="tk-punc">/&gt;</span>
+  <span class="tk-punc">)</span>
+<span class="tk-punc">}</span>` };
+
+    const gridDemo = this.renderGridDemo();
+    return { codeInner, gridDemo };
+  }
+
+  renderGridDemo() {
+    const DEMO_DATA = [
+      { id:1,  name:'Aria Chen',     role:'Senior Engineer',    dept:'Engineering',    location:'San Francisco', salary:148000, status:'Active'   },
+      { id:2,  name:'Marcus Webb',   role:'Product Manager',    dept:'Product',        location:'New York',      salary:132000, status:'Active'   },
+      { id:3,  name:'Priya Sharma',  role:'UX Designer',        dept:'Design',         location:'London',        salary:98000,  status:'Remote'   },
+      { id:4,  name:'Jake Morrison', role:'DevOps Engineer',    dept:'Infrastructure', location:'Austin',        salary:125000, status:'Active'   },
+      { id:5,  name:'Sofia Alvarez', role:'Data Scientist',     dept:'Analytics',      location:'Chicago',       salary:138000, status:'Active'   },
+      { id:6,  name:'Liam O\'Brien', role:'Frontend Engineer',  dept:'Engineering',    location:'Dublin',        salary:112000, status:'Remote'   },
+      { id:7,  name:'Yuki Tanaka',   role:'Backend Engineer',   dept:'Engineering',    location:'Tokyo',         salary:118000, status:'Active'   },
+      { id:8,  name:'Nina Petrov',   role:'QA Engineer',        dept:'Quality',        location:'Berlin',        salary:94000,  status:'On Leave' },
+      { id:9,  name:'Carlos Ruiz',   role:'Eng Manager',        dept:'Engineering',    location:'Madrid',        salary:162000, status:'Active'   },
+      { id:10, name:'Aisha Kamara',  role:'Security Engineer',  dept:'Security',       location:'Lagos',         salary:128000, status:'Remote'   },
+      { id:11, name:'Tom Bradley',   role:'Staff Engineer',     dept:'Engineering',    location:'Seattle',       salary:178000, status:'Active'   },
+      { id:12, name:'Min-Ji Park',   role:'iOS Engineer',       dept:'Mobile',         location:'Seoul',         salary:122000, status:'Active'   },
+      { id:13, name:'Elena Kozlov',  role:'ML Engineer',        dept:'AI/ML',          location:'Berlin',        salary:144000, status:'Remote'   },
+      { id:14, name:'Diego Santos',  role:'Android Engineer',   dept:'Mobile',         location:'São Paulo',     salary:108000, status:'Active'   },
+      { id:15, name:'Fiona Walsh',   role:'Tech Writer',        dept:'Docs',           location:'Dublin',        salary:86000,  status:'Active'   },
+      { id:16, name:'Omar Hassan',   role:'Site Reliability',   dept:'Infrastructure', location:'Cairo',         salary:132000, status:'Active'   },
+      { id:17, name:'Grace Kim',     role:'Frontend Engineer',  dept:'Engineering',    location:'Vancouver',     salary:116000, status:'On Leave' },
+      { id:18, name:'Raj Patel',     role:'Principal Engineer', dept:'Engineering',    location:'Mumbai',        salary:168000, status:'Active'   },
+      { id:19, name:'Lisa Huang',    role:'Product Designer',   dept:'Design',         location:'Singapore',     salary:104000, status:'Remote'   },
+      { id:20, name:'Noah Wilson',   role:'CTO',                dept:'Leadership',     location:'San Francisco', salary:240000, status:'Active'   },
+    ];
+
+    if (!this.state.demoSort) {
+      this.state.demoSort = { col: null, dir: 'asc' };
+      this.state.demoFilter = '';
+      this.state.demoSelected = [];
+      this.state.demoPage = 0;
+    }
+
+    const { demoSort, demoFilter, demoSelected, demoPage } = this.state;
+    const PAGE_SIZE = 8;
+    const root = document.getElementById('eg-root');
+    const isDark = root && root.classList.contains('dark');
+    const cs = getComputedStyle(document.documentElement);
+    const t1     = cs.getPropertyValue('--t1').trim()      || '#7c3aed';
+    const accRgb = cs.getPropertyValue('--acc-rgb').trim() || '91,33,182';
+
+    const COLS = [
+      { key:'name',     label:'Name',       w:'185px' },
+      { key:'role',     label:'Role',       w:'160px' },
+      { key:'dept',     label:'Department', w:'130px' },
+      { key:'location', label:'Location',   w:'130px' },
+      { key:'status',   label:'Status',     w:'105px' },
+      { key:'salary',   label:'Salary',     w:'105px', align:'right' },
+    ];
+
+    let rows = DEMO_DATA;
+    if (demoFilter) {
+      const q = demoFilter.toLowerCase();
+      rows = rows.filter(r => COLS.some(c => String(r[c.key]).toLowerCase().includes(q)));
+    }
+    if (demoSort.col) {
+      rows = [...rows].sort((a, b) => {
+        const av = a[demoSort.col], bv = b[demoSort.col];
+        const cmp = typeof av === 'number' ? av - bv : String(av).localeCompare(String(bv));
+        return demoSort.dir === 'asc' ? cmp : -cmp;
+      });
+    }
+
+    const totalRows  = rows.length;
+    const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
+    const safePage   = Math.min(demoPage, totalPages - 1);
+    const pageRows   = rows.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
+    const isAllSel   = pageRows.length > 0 && pageRows.every(r => demoSelected.includes(r.id));
+    const isSomeSel  = pageRows.some(r => demoSelected.includes(r.id)) && !isAllSel;
+
+    const toggleSort = (key) => {
+      const ds = this.state.demoSort;
+      if (ds.col !== key)        this.setState({ demoSort: { col: key, dir: 'asc'  } });
+      else if (ds.dir === 'asc') this.setState({ demoSort: { col: key, dir: 'desc' } });
+      else                       this.setState({ demoSort: { col: null, dir: 'asc' } });
+    };
+    const toggleRow = (id) => this.setState(s => ({
+      demoSelected: s.demoSelected.includes(id)
+        ? s.demoSelected.filter(x => x !== id)
+        : [...s.demoSelected, id]
+    }));
+    const toggleAll = () => {
+      if (isAllSel) this.setState(s => ({ demoSelected: s.demoSelected.filter(id => !pageRows.find(r => r.id === id)) }));
+      else this.setState(s => ({ demoSelected: [...new Set([...s.demoSelected, ...pageRows.map(r => r.id)])] }));
+    };
+
+    const bg      = isDark ? '#0e0e17'                    : '#ffffff';
+    const bgAlt   = isDark ? 'rgba(255,255,255,0.015)'    : 'rgba(0,0,0,0.012)';
+    const bd      = isDark ? 'rgba(255,255,255,0.07)'     : 'rgba(0,0,0,0.08)';
+    const text1   = isDark ? '#edf0fa'                    : '#18181b';
+    const text2   = isDark ? '#7a8399'                    : '#525252';
+    const text3   = isDark ? '#374151'                    : '#a3a3a3';
+    const thBg    = isDark ? 'rgba(255,255,255,0.03)'     : 'rgba(0,0,0,0.025)';
+    const inBg    = isDark ? 'rgba(255,255,255,0.05)'     : 'rgba(0,0,0,0.04)';
+    const selBg   = 'rgba(' + accRgb + ',0.07)';
+    const shadow  = isDark ? '0 24px 60px rgba(0,0,0,0.5)' : '0 8px 40px rgba(0,0,0,0.09)';
+
+    const ce = React.createElement;
+
+    const statusBadge = (s) => {
+      const m = {
+        'Active':   ['rgba(22,163,74,0.1)',  'rgba(22,163,74,0.25)',  '#16a34a'],
+        'Remote':   ['rgba(59,130,246,0.1)', 'rgba(59,130,246,0.25)', '#2563eb'],
+        'On Leave': ['rgba(217,119,6,0.1)',  'rgba(217,119,6,0.25)',  '#d97706'],
+      };
+      const [bg2, brd, clr] = m[s] || m['Active'];
+      return ce('span', { style: { background:bg2, border:'1px solid '+brd, color:clr, fontSize:'11px', fontWeight:600, padding:'2px 8px', borderRadius:'100px', whiteSpace:'nowrap', fontFamily:"'DM Sans',sans-serif" } }, s);
+    };
+
+    const avatar = (row) => ce('div', {
+      style: { width:'26px', height:'26px', borderRadius:'50%', background:'hsl('+(row.id*53%360)+',45%,'+(isDark?'28%':'72%')+')', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color:isDark?'rgba(255,255,255,0.8)':'rgba(0,0,0,0.55)', flexShrink:0 }
+    }, row.name.split(' ').map(n => n[0]).join(''));
+
+    return ce('div', { style: { background:bg, border:'1px solid '+bd, borderRadius:'14px', overflow:'hidden', boxShadow:shadow } },
+
+      // ── Toolbar ──
+      ce('div', { style: { padding:'11px 16px', borderBottom:'1px solid '+bd, display:'flex', alignItems:'center', gap:'10px', background:thBg, flexWrap:'wrap' } },
+        ce('div', { style: { position:'relative', flex:'1', minWidth:'160px', maxWidth:'250px' } },
+          ce('svg', { width:13, height:13, viewBox:'0 0 16 16', fill:'none', style:{ position:'absolute', left:'9px', top:'50%', transform:'translateY(-50%)', opacity:0.3, pointerEvents:'none' } },
+            ce('circle', { cx:6.5, cy:6.5, r:5, stroke:text1, strokeWidth:1.5 }),
+            ce('path',   { d:'M10.5 10.5l3.5 3.5', stroke:text1, strokeWidth:1.5, strokeLinecap:'round' })
+          ),
+          ce('input', {
+            type:'text', placeholder:'Filter all columns…', value:demoFilter,
+            onChange: e => this.setState({ demoFilter:e.target.value, demoPage:0 }),
+            style: { width:'100%', background:inBg, border:'1px solid '+bd, borderRadius:'7px', padding:'7px 10px 7px 28px', fontSize:'13px', color:text1, fontFamily:"'DM Sans',sans-serif", outline:'none' }
+          })
+        ),
+        demoSelected.length > 0 && ce('span', { style:{ fontSize:'12px', color:t1, fontWeight:600, whiteSpace:'nowrap' } }, demoSelected.length+' selected'),
+        ce('span', { style:{ fontSize:'12px', color:text3, marginLeft:'auto', whiteSpace:'nowrap' } }, totalRows+' rows'),
+        ce('button', {
+          onClick: () => { const lines = ['Name,Role,Department,Location,Status,Salary', ...rows.map(r => [r.name,r.role,r.dept,r.location,r.status,r.salary].join(','))].join('\n'); const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(lines); a.download = 'elitegrid-export.csv'; a.click(); },
+          style: { display:'flex', alignItems:'center', gap:'5px', background:'transparent', border:'1px solid '+bd, borderRadius:'7px', padding:'6px 11px', fontSize:'12px', color:text2, cursor:'pointer', fontFamily:"'DM Sans',sans-serif", whiteSpace:'nowrap', flexShrink:0 }
+        },
+          ce('svg', { width:11, height:11, viewBox:'0 0 12 12', fill:'none' },
+            ce('path', { d:'M6 1v7M3 5.5l3 3 3-3M1.5 10h9', stroke:'currentColor', strokeWidth:1.4, strokeLinecap:'round', strokeLinejoin:'round' })
+          ),
+          'Export CSV'
+        )
+      ),
+
+      // ── Table ──
+      ce('div', { style:{ overflowX:'auto' } },
+        ce('table', { style:{ width:'100%', borderCollapse:'collapse', fontSize:'13px', tableLayout:'fixed' } },
+          ce('thead', null,
+            ce('tr', null,
+              ce('th', { style:{ width:'44px', padding:'10px 12px', textAlign:'center', background:thBg, borderBottom:'1px solid '+bd } },
+                ce('input', { type:'checkbox', checked:isAllSel, ref: el => { if (el) el.indeterminate = isSomeSel; }, onChange:toggleAll, style:{ accentColor:t1, cursor:'pointer', width:'14px', height:'14px' } })
+              ),
+              ...COLS.map(col =>
+                ce('th', { key:col.key, onClick:()=>toggleSort(col.key),
+                  style:{ width:col.w, padding:'10px 14px', background:thBg, borderBottom:'1px solid '+bd, textAlign:col.align||'left', fontFamily:"'DM Sans',sans-serif", fontSize:'11px', fontWeight:600, letterSpacing:'0.05em', textTransform:'uppercase', color:demoSort.col===col.key?t1:text3, cursor:'pointer', userSelect:'none', whiteSpace:'nowrap', transition:'color 0.2s' } },
+                  ce('span', { style:{ display:'inline-flex', alignItems:'center', gap:'4px' } },
+                    col.label,
+                    ce('span', { style:{ opacity:demoSort.col===col.key?1:0.3, fontSize:'10px' } }, demoSort.col===col.key?(demoSort.dir==='asc'?'↑':'↓'):'↕')
+                  )
+                )
+              )
+            )
+          ),
+          ce('tbody', null,
+            ...(pageRows.length === 0
+              ? [ce('tr', {key:'empty'}, ce('td', { colSpan:COLS.length+1, style:{ padding:'48px', textAlign:'center', color:text3, fontSize:'14px' } }, 'No rows match your filter.'))]
+              : pageRows.map((row, i) => {
+                  const isSel = demoSelected.includes(row.id);
+                  return ce('tr', { key:row.id, onClick:()=>toggleRow(row.id),
+                    style:{ background:isSel?selBg:i%2===0?bg:bgAlt, borderLeft:isSel?'2px solid '+t1:'2px solid transparent', cursor:'pointer', transition:'background 0.12s' } },
+                    ce('td', { style:{ padding:'9px 12px', textAlign:'center', borderBottom:'1px solid '+bd } },
+                      ce('input', { type:'checkbox', checked:isSel, onChange:()=>toggleRow(row.id), onClick:e=>e.stopPropagation(), style:{ accentColor:t1, cursor:'pointer', width:'14px', height:'14px' } })
+                    ),
+                    ce('td', { style:{ padding:'9px 14px', borderBottom:'1px solid '+bd, color:text1, fontWeight:500 } },
+                      ce('div', { style:{ display:'flex', alignItems:'center', gap:'9px' } }, avatar(row), ce('span', null, row.name))
+                    ),
+                    ce('td', { style:{ padding:'9px 14px', borderBottom:'1px solid '+bd, color:text2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' } }, row.role),
+                    ce('td', { style:{ padding:'9px 14px', borderBottom:'1px solid '+bd, color:text2 } }, row.dept),
+                    ce('td', { style:{ padding:'9px 14px', borderBottom:'1px solid '+bd, color:text2 } }, row.location),
+                    ce('td', { style:{ padding:'9px 14px', borderBottom:'1px solid '+bd } }, statusBadge(row.status)),
+                    ce('td', { style:{ padding:'9px 14px', borderBottom:'1px solid '+bd, color:text1, fontFamily:"'JetBrains Mono',monospace", fontSize:'12px', textAlign:'right', fontWeight:500 } },
+                      '$' + row.salary.toLocaleString()
+                    )
+                  );
+                })
+            )
+          )
+        )
+      ),
+
+      // ── Pagination footer ──
+      ce('div', { style:{ padding:'10px 16px', borderTop:'1px solid '+bd, display:'flex', alignItems:'center', justifyContent:'space-between', background:thBg, flexWrap:'wrap', gap:'8px' } },
+        ce('span', { style:{ fontSize:'12px', color:text3 } },
+          totalRows===0 ? 'No results' : 'Showing '+(safePage*PAGE_SIZE+1)+'–'+Math.min((safePage+1)*PAGE_SIZE, totalRows)+' of '+totalRows+' rows'
+        ),
+        ce('div', { style:{ display:'flex', alignItems:'center', gap:'5px' } },
+          ce('button', { onClick: e => { e.stopPropagation(); if (safePage>0) this.setState({demoPage:safePage-1}); },
+            style:{ background:'transparent', border:'1px solid '+bd, borderRadius:'6px', padding:'5px 10px', fontSize:'12px', color:safePage===0?text3:text2, cursor:safePage===0?'not-allowed':'pointer', fontFamily:"'DM Sans',sans-serif", opacity:safePage===0?0.4:1 } }, '← Prev'),
+          ce('span', { style:{ fontSize:'12px', color:text2, padding:'0 8px' } }, (safePage+1)+' / '+totalPages),
+          ce('button', { onClick: e => { e.stopPropagation(); if (safePage<totalPages-1) this.setState({demoPage:safePage+1}); },
+            style:{ background:'transparent', border:'1px solid '+bd, borderRadius:'6px', padding:'5px 10px', fontSize:'12px', color:safePage>=totalPages-1?text3:text2, cursor:safePage>=totalPages-1?'not-allowed':'pointer', fontFamily:"'DM Sans',sans-serif", opacity:safePage>=totalPages-1?0.4:1 } }, 'Next →')
+        )
+      )
+    );
+  }
+}
+</script>
+</body>
+</html>

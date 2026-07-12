@@ -44,35 +44,43 @@ export default function WaitlistForm() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-3 w-full">
-      <div className="flex gap-2 flex-wrap justify-center w-full">
+    <div className="w-full">
+      <div className="flex gap-2.5 max-w-[440px] mx-auto">
         <input
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-          placeholder="you@company.com"
+          placeholder="your@email.com"
           disabled={status === 'loading' || status === 'success'}
-          className="font-mono text-sm px-5 py-3.5 rounded-xl border border-white/8 bg-[#111113] text-[#f4f4f5] placeholder:text-[#52525b] outline-none focus:border-[#e8ff47]/40 focus:ring-2 focus:ring-[#e8ff47]/10 transition-all w-72 disabled:opacity-50"
+          className="flex-1 min-w-0 bg-white/[0.07] border border-white/[0.12] rounded-[9px] px-[18px] py-3 text-[18px] font-body text-[#edf0fa] placeholder:text-white/20 outline-none focus:border-[rgba(124,58,237,0.55)] transition-colors disabled:opacity-50"
         />
         <button
           onClick={handleSubmit}
           disabled={status === 'loading' || status === 'success'}
-          className="font-bold text-sm px-7 py-3.5 rounded-xl bg-[#e8ff47] text-[#09090b] hover:bg-[#d4eb3a] active:scale-95 transition-all disabled:opacity-50 whitespace-nowrap"
+          className="shrink-0 inline-flex items-center gap-2 bg-[#7c3aed] text-white text-[17px] font-semibold px-6 py-3 rounded-[9px] transition-all hover:bg-[#6d28d9] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(91,33,182,0.35)] disabled:opacity-50 disabled:hover:translate-y-0 whitespace-nowrap"
         >
-          {status === 'loading' ? 'Joining...' : status === 'success' ? '✓ Joined!' : 'Join Waitlist →'}
+          {status === 'loading' ? 'Joining…' : status === 'success' ? '✓ Joined!' : 'Join Waitlist'}
         </button>
       </div>
 
-      {message && (
-        <p className={`font-mono text-xs ${
-          status === 'success' ? 'text-[#e8ff47]' :
-          status === 'duplicate' ? 'text-[#facc15]' :
-          'text-[#f87171]'
-        }`}>
-          {message}
-        </p>
-      )}
+      <p className="text-[16px] text-[#374151] mt-3.5 mb-0">
+        {message ? (
+          <span
+            className={
+              status === 'success'
+                ? 'text-[#22c55e]'
+                : status === 'duplicate'
+                ? 'text-[#facc15]'
+                : 'text-[#f87171]'
+            }
+          >
+            {message}
+          </span>
+        ) : (
+          'No spam. One email at launch.'
+        )}
+      </p>
     </div>
   )
 }
