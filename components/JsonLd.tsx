@@ -16,7 +16,7 @@ export default function JsonLd() {
               '@type': 'Offer',
               price: '0',
               priceCurrency: 'USD',
-              description: 'Community version — free and open source',
+              description: 'Free to use — see license for terms',
             },
             creator: {
               '@type': 'Organization',
@@ -25,13 +25,13 @@ export default function JsonLd() {
               sameAs: [
                 'https://github.com/elitegrid',
                 'https://x.com/elitegridhq',
-                'https://npmjs.com/package/@elitegrid/core',
+                'https://npmjs.com/package/@elitegrid/react',
               ],
             },
             keywords:
               'typescript data grid, react data grid, vue data grid, ag grid alternative, tanstack table alternative, accessible data grid',
             softwareVersion: '0.1.0',
-            releaseNotes: 'Pre-launch — core engine complete, React and Vue adapters in development.',
+            releaseNotes: 'Public launch — React, Vue, and vanilla JS adapters live on npm.',
             featureList: [
               'Grouped namespaced config API',
               'React and Vue adapters',
@@ -47,7 +47,6 @@ export default function JsonLd() {
               'Light, dark, and auto themes',
             ],
             isAccessibleForFree: true,
-            license: 'https://opensource.org/licenses/MIT',
           }),
         }}
       />

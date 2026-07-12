@@ -137,7 +137,7 @@ export default function OGImage() {
         {/* Bottom: Stats */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '48px', position: 'relative' }}>
           {[
-            { value: '662', label: 'passing tests' },
+            { value: '1,000', label: 'passing tests' },
             { value: '13', label: 'core plugins' },
             { value: '0', label: 'dependencies' },
             { value: '100%', label: 'TypeScript' },

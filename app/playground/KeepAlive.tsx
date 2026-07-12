@@ -22,7 +22,7 @@ export default function KeepAlivePlayground() {
       style={{
         position: 'fixed', inset: 0, zIndex: 50,
         display: 'flex', flexDirection: 'column',
-        background: '#09090b',
+        background: 'var(--pg-bg)',
         // visibility:hidden keeps Monaco's DOM layout intact (it retains its
         // calculated dimensions). display:none removes the element from layout —
         // Monaco measures a 0-size container and re-triggers loading on re-show.

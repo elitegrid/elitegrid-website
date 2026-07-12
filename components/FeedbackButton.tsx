@@ -17,28 +17,13 @@ export default function FeedbackButton() {
       <button
         onClick={() => setOpen(true)}
         aria-label="Report an issue or send feedback"
-        style={{
-          position: 'fixed', bottom: 20, right: 20, zIndex: 100,
-          display: 'flex', alignItems: 'center', gap: 7,
-          padding: '8px 14px', borderRadius: 999,
-          background: '#111113', border: '1px solid rgba(255,255,255,0.1)',
-          color: '#71717a', fontFamily: 'monospace', fontSize: '0.75rem',
-          fontWeight: 600, cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-          transition: 'all 0.15s',
-        }}
-        onMouseEnter={e => {
-          const el = e.currentTarget
-          el.style.borderColor = 'rgba(232,255,71,0.3)'
-          el.style.color = '#e8ff47'
-        }}
-        onMouseLeave={e => {
-          const el = e.currentTarget
-          el.style.borderColor = 'rgba(255,255,255,0.1)'
-          el.style.color = '#71717a'
-        }}
+        className="fixed bottom-5 right-5 z-[100] flex items-center gap-1.5 px-3.5 py-2 rounded-full
+          bg-white dark:bg-[#18181b] border border-black/[0.1] dark:border-white/[0.12]
+          text-[#525252] dark:text-[#a3a3a3] font-code text-[12px] font-semibold cursor-pointer
+          shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.45)]
+          transition-colors hover:border-[rgba(124,58,237,0.4)] hover:text-[#7c3aed]"
       >
-        <span style={{ fontSize: '0.85rem' }}>⚑</span>
+        <span className="text-[13px]">⚑</span>
         Report / Feedback
       </button>
 

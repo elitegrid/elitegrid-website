@@ -1,9 +1,15 @@
-<svg width="100%" viewBox="0 0 680 680" role="img" xmlns="http://www.w3.org/2000/svg" style="">
-  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">EliteGrid logo</title>
-  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Yellow rounded square with a dark grid icon made of four rectangles</desc>
-  <rect x="190" y="190" width="300" height="300" rx="48" fill="#e8ff47" style="fill:rgb(232, 255, 71);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-  <rect x="232" y="232" width="98" height="98" rx="10" fill="#09090b" style="fill:rgb(9, 9, 11);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-  <rect x="350" y="232" width="98" height="98" rx="10" fill="#09090b" style="fill:rgb(9, 9, 11);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-  <rect x="232" y="350" width="98" height="98" rx="10" fill="#09090b" style="fill:rgb(9, 9, 11);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-  <rect x="350" y="350" width="98" height="48" rx="10" fill="#09090b" style="fill:rgb(9, 9, 11);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<svg width="100%" viewBox="0 0 680 680" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>EliteGrid logo</title>
+  <desc>Violet gradient rounded square with the Pinnacle mark — three ascending columns and a summit dot</desc>
+  <defs>
+    <linearGradient id="eliteGridBrandGradient" x1="190" y1="190" x2="490" y2="490" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5b21b6"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+  </defs>
+  <rect x="190" y="190" width="300" height="300" rx="48" fill="url(#eliteGridBrandGradient)"/>
+  <rect x="240" y="365" width="50" height="75" rx="12.5" fill="white" fill-opacity="0.3"/>
+  <rect x="311.875" y="321.25" width="50" height="118.75" rx="12.5" fill="white" fill-opacity="0.6"/>
+  <rect x="383.75" y="271.25" width="50" height="168.75" rx="12.5" fill="white"/>
+  <circle cx="408.75" cy="258.75" r="15.625" fill="#c4b5fd"/>
 </svg>
