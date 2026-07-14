@@ -32,6 +32,7 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://elitegrid.dev'),
   title: 'EliteGrid — TypeScript Data Grid Built for Developer Experience',
   description: 'EliteGrid is a high-performance TypeScript data grid with a grouped config API, React & Vue adapters, full WCAG 2.1 AA accessibility, and documentation so clear you won\'t need AI to integrate it.',
   verification: {

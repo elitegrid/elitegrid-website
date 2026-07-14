@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       html: `
         <div style="font-family:monospace;max-width:560px;margin:0 auto;padding:40px 24px;background:#09090b;color:#f4f4f5;">
           <div style="margin-bottom:24px;">
-            <span style="background:#e8ff47;color:#09090b;padding:4px 12px;border-radius:4px;font-weight:700;font-size:14px;">EliteGrid</span>
+            <span style="background:#7c3aed;color:#ffffff;padding:4px 12px;border-radius:4px;font-weight:700;font-size:14px;">EliteGrid</span>
           </div>
           <h2 style="font-size:20px;font-weight:700;margin-bottom:20px;color:#f4f4f5;">${reportType}</h2>
           <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         html: `
           <div style="font-family:monospace;max-width:560px;margin:0 auto;padding:40px 24px;background:#09090b;color:#f4f4f5;">
             <div style="margin-bottom:32px;">
-              <span style="background:#e8ff47;color:#09090b;padding:4px 12px;border-radius:4px;font-weight:700;font-size:14px;">EliteGrid</span>
+              <span style="background:#7c3aed;color:#ffffff;padding:4px 12px;border-radius:4px;font-weight:700;font-size:14px;">EliteGrid</span>
             </div>
             <h1 style="font-size:24px;font-weight:800;margin-bottom:16px;color:#f4f4f5;">We got your message. 👋</h1>
             <p style="color:#a1a1aa;line-height:1.7;margin-bottom:24px;">
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
             </div>
             <p style="color:#71717a;font-size:13px;">
               — The EliteGrid Team<br/>
-              <a href="https://elitegrid.dev" style="color:#e8ff47;">elitegrid.dev</a>
+              <a href="https://elitegrid.dev" style="color:#7c3aed;">elitegrid.dev</a>
             </p>
           </div>
         `,
