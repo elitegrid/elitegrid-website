@@ -24,11 +24,13 @@ export async function generateMetadata({
   params: Promise<{ framework: string; slug: string }>
 }): Promise<Metadata> {
   const { framework, slug } = await params
+  const manual = getManual(framework)
   const chapter = getChapter(framework, slug)
   if (!chapter) return {}
+  const frameworkLabel = manual ? `${manual.label} ` : ''
   return {
-    title: `${chapter.title} — EliteGrid Docs`,
-    description: chapter.blurb,
+    title: `${chapter.title} | EliteGrid ${frameworkLabel}Grid Library Docs`,
+    description: `${chapter.blurb} Learn about ${chapter.title.toLowerCase()} in the EliteGrid ${framework} data grid and table library documentation.`,
   }
 }
 

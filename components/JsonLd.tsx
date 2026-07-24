@@ -11,7 +11,7 @@ export default function JsonLd() {
             operatingSystem: 'Web',
             url: 'https://elitegrid.dev',
             description:
-              'High-performance TypeScript data grid with grouped config API, React & Vue adapters, full WCAG 2.1 AA accessibility, and zero dependencies.',
+              'EliteGrid is a high-performance TypeScript data grid and table library. Features a grouped config API, React & Vue adapters, full WCAG 2.1 AA accessibility, and zero dependencies.',
             offers: {
               '@type': 'Offer',
               price: '0',
@@ -29,7 +29,7 @@ export default function JsonLd() {
               ],
             },
             keywords:
-              'typescript data grid, react data grid, vue data grid, ag grid alternative, tanstack table alternative, accessible data grid',
+              'typescript data grid, react data grid, vue data grid, grid library, data grid library, react grid library, vue grid library, typescript grid library, elitegrid, elite grid, ag grid alternative, tanstack table alternative, accessible data grid',
             softwareVersion: '0.1.0',
             releaseNotes: 'Public launch — React, Vue, and vanilla JS adapters live on npm.',
             featureList: [
