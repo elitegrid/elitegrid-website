@@ -18,8 +18,8 @@ export async function generateMetadata({
   const manual = getManual(framework)
   if (!manual) return {}
   return {
-    title: `${manual.label} Docs — EliteGrid`,
-    description: manual.overview.blurb,
+    title: `${manual.label} Grid Library Documentation — EliteGrid`,
+    description: `${manual.label} data grid and table library manual. ${manual.overview.blurb}`,
   }
 }
 
