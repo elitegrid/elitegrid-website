@@ -20,6 +20,7 @@ Every edit moves through the same three stages. Knowing their names makes the ev
 
 ```ts
 const grid = createGrid<Employee>({
+  modules: [EditModule],
   columns,
   data,
   editing: {
@@ -121,6 +122,103 @@ A boolean editor toggles the value on a single click — no extra UI:
 ```ts
 { field: 'active', header: 'Active', edit: { enabled: true, type: 'boolean' } }
 ```
+
+---
+
+### Textarea editor (multi-line)
+
+```ts
+{
+  field: 'notes',
+  header: 'Notes',
+  edit: { enabled: true, type: 'textarea', maxLength: 500 },
+}
+```
+
+**It commits on `Ctrl`/`Cmd`+`Enter`, not plain `Enter`** — plain `Enter` has to insert a newline. `Escape` still cancels.
+
+Pair it with `display: { wrap: true }` if you want the committed text to be readable in the cell afterwards. See [Row Features](/docs/vue/row-features#rows-that-size-themselves).
+
+---
+
+## Custom editors
+
+When none of the six built-in types fits — a colour picker, an autocomplete, a currency control with a symbol — supply your own:
+
+```ts
+import type { CellEditor } from '@elitegrid/vue'
+
+const CurrencyEditor: CellEditor<Invoice> = defineComponent({
+  // Declare only the params you use — they arrive as props.
+  props: ['value', 'row', 'onChange', 'commit', 'cancel', 'isValid', 'validationError', 'colWidth'],
+  setup(props) {
+    return () =>
+      h('div', { style: { width: `${props.colWidth}px` } }, [
+        h('input', {
+          value: String(props.value ?? ''),
+          'aria-invalid': !props.isValid,
+          onInput: (e: Event) =>
+            props.onChange!(Number((e.target as HTMLInputElement).value)),
+          onKeydown: (e: KeyboardEvent) => {
+            if (e.key === 'Enter') props.commit!()
+            if (e.key === 'Escape') props.cancel!()
+          },
+        }),
+        props.validationError &&
+          h('span', { role: 'alert' }, [props.validationError]),
+      ])
+  },
+})
+
+{
+  field: 'amount',
+  header: 'Amount',
+  edit: { enabled: true, type: 'number', min: 0, editor: CurrencyEditor },
+}
+```
+
+### Pass the component, not a string
+
+`editor` takes the component itself. Rename it and the compiler follows you.
+
+### Keep `type` set
+
+**`type` keeps governing validation; it stops deciding what is rendered.** A custom numeric editor should still set `type: 'number'` to inherit the `min`/`max` checks. Leave it unset and it falls back to `'text'`, where those never run.
+
+### What the editor receives
+
+| `params` | What it is |
+| --- | --- |
+| `value` | The live value — changes as the user types |
+| `row` | The row being edited. Plain `TData` — no `._id` or `._data` to unwrap |
+| `cell` | The cell's position |
+| `isValid` / `validationError` | Validation state, owned by the grid |
+| `colWidth` / `rowHeight` | Geometry of the cell being replaced, so you can size to it |
+| `onChange(value)` | Push a new value into the engine. Triggers validation |
+| `commit()` | Save and close |
+| `cancel()` | Discard and close |
+| `moveFocus('next' \| 'prev')` | Commit, then move the edit to the adjacent editable cell |
+
+### The grid keeps the traps
+
+`commit()` and `cancel()` are **no-ops if this edit session already committed**, and that guard lives in the grid rather than in your editor — so a custom editor cannot double-commit on blur-after-Tab. Tab traversal is handled for you too.
+
+Calling `onChange` runs the same validator chain a built-in editor would, so `edit.validator` keeps working unchanged against your editor:
+
+```ts
+{
+  field: 'amount',
+  header: 'Amount',
+  edit: {
+    enabled: true,
+    type: 'number',
+    editor: CurrencyEditor,
+    validator: (value) => (Number(value) > 1_000_000 ? 'Too large' : null),
+  },
+}
+```
+
+> A validator may return a promise, so an async uniqueness check is a `validator`, not something you wire into the editor yourself.
 
 ---
 
@@ -232,7 +330,7 @@ Double-click a cell to edit it. `salary` has a `validator` that rejects negative
 
 ```ts
 import { defineComponent, h } from 'vue'
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, EditModule, Grid } from '@elitegrid/vue'
 
 interface Employee {
   id: number
@@ -255,6 +353,7 @@ const employees: Employee[] = [
 ]
 
 const grid = createGrid<Employee>({
+  modules: [EditModule],
   columns: [
     { field: 'name', header: 'Name', size: { flex: 1.5 }, edit: { enabled: true, type: 'text' } },
     {

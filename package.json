@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "docs:build": "node scripts/generate-docs.mjs"
+    "docs:build": "node scripts/generate-docs.mjs",
+    "demos:verify": "node --experimental-strip-types scripts/verify-demos.mjs",
+    "demos:posters": "node --experimental-strip-types scripts/capture-posters.mjs"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",

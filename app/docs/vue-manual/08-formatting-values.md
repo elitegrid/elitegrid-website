@@ -190,4 +190,4 @@ For one cell, the grid runs these in order:
 
 ---
 
-Next: [09 · Appearance & Theming](/docs/vue/appearance)
+Next: [Row Grouping & Aggregation](/docs/vue/grouping)

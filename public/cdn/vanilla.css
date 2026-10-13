@@ -1,0 +1,1356 @@
+/*
+ * EliteGrid — styles.css
+ * @elitegrid/adapter-react
+ *
+ * Import this once at your app root:
+ *   import '@elitegrid/adapter-react/styles.css'
+ *
+ * All visual properties are exposed as CSS variables.
+ * Override any variable on :root or a parent element to theme the grid.
+ *
+ * Example — custom brand color:
+ *   :root { --eg-primary: #0ea5e9; --eg-primary-light: #e0f2fe; }
+ *
+ * Example — dark mode (class-based):
+ *   .dark { --eg-row-bg: #1e1e2e; ... }
+ *
+ * The grid ships with a [data-theme="dark"] block below.
+ * Swap in your preferred dark-mode strategy.
+ */
+
+/* ─────────────────────────────────────────────────────────────
+   LIGHT THEME (default)
+   All variables defined on :root so they cascade into the grid
+   regardless of where <Grid> is mounted in the DOM.
+───────────────────────────────────────────────────────────────── */
+:root {
+  /* ── Brand ──────────────────────────────── */
+  --eg-primary: #5a5ded; /* accent — sort indicators, focus rings, active states. NOT #6366f1: white on that was 4.47:1 against the 4.5 AA needs, and white is already the highest-contrast label possible, so the only lever was the accent itself. 4.97:1, and every other surface it paints improved with it — as a graphic on white 4.47→4.97, on the header 4.27→4.76, the selected-row border 3.99→4.45. */
+  --eg-primary-light: #eef2ff; /* light tint — filtered column header bg */
+  --eg-primary-text: #ffffff; /* text on primary bg — active page btn, apply filter btn */
+
+  /* ── Text ───────────────────────────────── */
+  --eg-text: #111827; /* primary cell text */
+  --eg-cell-text: #111827; /* alias — cell content text */
+  --eg-header-text: #374151; /* column header label text */
+  --eg-muted-text: #6b7280; /* secondary text — empty state descriptions, placeholders, set filter counts; 4.90:1 on --eg-surface, so AA holds at the 12px sizes it is used at (was #9ca3af, 2.54:1 — BUG-5) */
+
+  /* ── Backgrounds ────────────────────────── */
+  --eg-row-bg: #ffffff; /* default row background */
+  --eg-row-striped-bg: #f9fafb; /* alternate row background when rowStriping is enabled */
+  --eg-pinned-row-bg: #f9fafb; /* E1 — pinned top/bottom band rows; must be OPAQUE, the band overlays scrolling content */
+  --eg-pinned-row-border: 1px solid #e5e7eb; /* the band's edge facing the scrolling rows */
+  --eg-header-bg: #f9fafb; /* column header background */
+  --eg-header-active-bg: #f3f4f6; /* header cell background on sort/hover */
+  --eg-toolbar-bg: #ffffff; /* toolbar (export button row) background */
+  --eg-surface: #ffffff; /* popover and floating UI backgrounds */
+  --eg-hover-bg: #f3f4f6; /* hover highlight on rows and icon buttons */
+  --eg-overlay-bg: rgba(
+    255,
+    255,
+    255,
+    0.85
+  ); /* loading/empty overlay backdrop */
+
+  /* ── Selected row ───────────────────────── */
+  /* ── Row grouping, the section metaphor (B5-UX §7.3) ────
+     A group is a SECTION, not a row: a heading, a banded block of content
+     beneath it, and a rail marking where that block ends. Override these six
+     and the whole metaphor re-themes without replacing the group cell
+     through `grouping.cellRenderer`. */
+  --eg-group-band-1: #ffffff; /* one of the two alternating section tints — top-level siblings alternate */
+  --eg-group-band-2: #f5f7fa; /* the other; a whole section at every depth takes one of the two */
+  --eg-group-heading-tint: rgba(17, 24, 39, 0.05); /* layered OVER the band, so a heading is always a half-step darker than its own leaves */
+  --eg-group-hover-bg: rgba(90, 93, 237, 0.09); /* the heading acknowledging the pointer it has had a click handler for since B5 */
+  --eg-group-rail: #dfe3ea; /* the hairline dropping from a chevron down its section's left edge */
+  --eg-group-share-bar: rgba(90, 93, 237, 0.16); /* the collapsed group's proportion bar (§6) — faint enough to read the label through */
+  --eg-group-row-bg: var(
+    --eg-group-band-1
+  ); /* a heading on an unbanded row — NOT --eg-row-striped-bg, which is what made a heading wear the stripe colour of half the body */
+
+  --eg-row-selected-bg: #eef2ff; /* selected row background */
+  /* ── Change highlighting (A9) ────────── */
+  --eg-flash-bg: #fde68a; /* neutral flash — a value changed */
+  --eg-flash-up-bg: #bbf7d0; /* display.flash: 'up-down', value rose */
+  --eg-flash-down-bg: #fecaca; /* display.flash: 'up-down', value fell */
+  --eg-row-selected-border: #5a5ded; /* left border on selected rows */
+  --eg-row-selected-outline: rgba(
+    99,
+    102,
+    241,
+    0.15
+  ); /* focus ring on selected row */
+
+  /* ── Borders ────────────────────────────── */
+  --eg-border: #e5e7eb; /* general border color */
+  --eg-border-color: #e5e7eb; /* alias — some components use this name */
+  --eg-border-hover: #d1d5db; /* border color on hover */
+  --eg-header-border: 1px solid #e5e7eb; /* full border shorthand for header bottom */
+  --eg-row-border: #f3f4f6; /* row bottom border (lighter than --eg-border) */
+  --eg-cell-border: 1px solid #e5e7eb; /* full border shorthand for cell right border */
+
+  /* ── Sort ───────────────────────────────── */
+  --eg-sort-icon-color: #8b919d; /* sort icon in unsorted state — 3.03:1 on --eg-header-bg. #9ca3af here was 2.43:1 against the 3:1 a UI graphic needs, so the one hint that a column sorts was invisible to some readers. Deliberately only just over the line: this arrow sits on every header of every grid and is meant to stay a hint. #6b7280 would reach 4.63:1 and compete with the column name. */
+  --eg-sort-active-color: #5a5ded; /* sort icon when column is sorted */
+
+  /* ── Buttons ────────────────────────────── */
+  --eg-btn-bg: #ffffff; /* button background — pagination, toolbar */
+  --eg-btn-text: #374151; /* button text color */
+
+  /* ── Error state ────────────────────────── */
+  --eg-error: #dc2626; /* error color — validation borders, error text */
+  --eg-error-bg: #fee2e2; /* error overlay/badge background */
+  --eg-error-text: #ffffff; /* text on error background (validation tooltip) */
+
+  /* ── Empty state ────────────────────────── */
+  --eg-empty-icon-bg: #f3f4f6; /* background circle behind empty/filtered state icon */
+
+  /* ── Skeleton loader ────────────────────── */
+  --eg-skeleton-base: #e5e7eb; /* skeleton shimmer base color */
+  --eg-skeleton-highlight: #f3f4f6; /* skeleton shimmer moving highlight */
+
+  /* ── Tooltip (A5) ─────────────────────── */
+  /* The reference shape for a floating surface: geometry is tokenised as well
+     as colour, so a tooltip can be rethemed without reaching past the token
+     API into a class name. These six were read by GridTooltip through inline
+     `var(--x, fallback)` fallbacks and declared nowhere, which made them
+     undiscoverable and unreachable from the dark block below.
+     See docs/design-theming-tokens.md §3. */
+  --eg-tooltip-bg: #1f2937; /* tooltip surface — deliberately NOT --eg-surface: a tooltip is an inversion of the grid, not another panel of it */
+  --eg-tooltip-text: #f9fafb; /* tooltip text */
+  --eg-tooltip-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); /* tooltip drop shadow */
+  --eg-tooltip-radius: 4px; /* tooltip corner radius */
+  --eg-tooltip-padding: 6px 8px; /* tooltip inner spacing */
+  --eg-tooltip-font-size: 0.75rem; /* tooltip text size */
+
+  /* ── Row detail panel (D8) ────────────── */
+  --eg-row-detail-bg: var(
+    --eg-row-bg
+  ); /* the expanded panel's surface — follows the row by default, so the panel reads as part of the row it belongs to */
+
+  /* ── Row numbers strip (A11) ──────────── */
+  --eg-row-number-color: var(
+    --eg-muted-text
+  ); /* the ordinal's text colour — the strip is chrome, not data */
+
+  /* ── Sticky group headings (B5-UX) ────── */
+  --eg-group-sticky-shadow: 0 2px 4px -2px rgba(0, 0, 0, 0.18); /* the shadow a stuck heading casts over the rows scrolling under it */
+
+  /* ── Elevation ────────────────────── */
+  /* Two steps, not five: a surface either floats over the grid (a menu, a
+     popover) or sits just above it (an open editor, a drag ghost). These were
+     five inline rgba(0, 0, 0, 0.12–0.18) literals — the last hardcoded colours
+     in the adapter, and the reason a dark theme could not soften a shadow.
+     See docs/design-theming-tokens.md §2. */
+  --eg-shadow-popover: 0 4px 16px rgba(0, 0, 0, 0.12); /* column + context menu, filter popover */
+  --eg-shadow-float: 0 2px 8px rgba(0, 0, 0, 0.15); /* open cell editor, validation message, row-drag ghost */
+
+  /* ── Corner radius ───────────────── */
+  /* Three steps covering 26 inline literals. A circle stays `50%` inline: that
+     is a SHAPE, not a scale a theme shifts. */
+  --eg-radius-sm: 4px; /* inputs, icon buttons, chips, validation badges */
+  --eg-radius-md: 6px; /* buttons, search + filter inputs, list rows */
+  --eg-radius-lg: 8px; /* floating surfaces — menus, popovers */
+
+  /* ── Floating surfaces (D5, D4, A4/B3, B2) ─ */
+  /* Step 4 of docs/design-theming-tokens.md. Every one of these defaults to
+     the generic token the surface BORROWED before this step, so nothing moves
+     a pixel and `--eg-surface` / `--eg-border` / `--eg-hover-bg` keep working
+     as the one-line "theme all floating UI" knobs. What changes is that a
+     menu can now be restyled without the filter popover following it, which
+     is the defect A this closes — see §1.
+     The chain is deliberately visible: a reader can break it at either end. */
+  --eg-menu-bg: var(--eg-surface); /* column menu (D5) + context menu (D4) surface */
+  --eg-menu-border: var(--eg-border); /* the menu's own edge */
+  --eg-menu-shadow: var(--eg-shadow-popover); /* its elevation */
+  --eg-menu-radius: var(--eg-radius-lg); /* its corners */
+  --eg-menu-text: var(--eg-text); /* item label colour — was --eg-text, i.e. CELL text painting menu chrome */
+  --eg-menu-item-hover-bg: var(--eg-hover-bg); /* the active/hovered item; also the keyboard cursor */
+  --eg-menu-item-padding: 0 12px; /* item inset. NOT the item HEIGHT: GridMenu's ITEM_HEIGHT also feeds the placement budget it hands placePopoverAtRect, and CSS the JS cannot read would desync the two — see §4.1 */
+  --eg-menu-separator: var(--eg-cell-border); /* the rule a `separator: true` item draws — was --eg-cell-border, a CELL border on a menu */
+  --eg-menu-font-size: 0.875rem; /* one of the handful of sizes a theme shifts as a SET (§2 part 2) */
+
+  --eg-popover-bg: var(--eg-surface); /* filter popover (A4/B3) surface, its inputs and its Clear button */
+  --eg-popover-border: var(--eg-border); /* its edge, its header rule, its input and list borders */
+  --eg-popover-shadow: var(--eg-shadow-popover); /* its elevation */
+  --eg-popover-radius: var(--eg-radius-lg); /* its corners */
+  --eg-popover-padding: 12px; /* its inner gutter */
+  --eg-popover-font-size: 0.875rem; /* title, inputs and action buttons */
+
+  --eg-set-filter-search-bg: var(--eg-popover-bg); /* B2's search box — its own token so a recessed search field is possible without recolouring the popover */
+  --eg-set-filter-count-color: var(--eg-muted-text); /* the per-value count and the "showing n of m" footer */
+  --eg-set-filter-font-size: 0.8125rem; /* B2 runs a step smaller than the popover it sits in, deliberately */
+
+  /* ── Chrome bars (core, B1) ────────── */
+  /* Step 5. The pagination bar is §1's headline defect: it painted itself
+     with --eg-header-bg and --eg-header-border, so restyling the COLUMN
+     HEADER silently restyled the FOOTER and no override could separate them.
+     Its default is still the header, so nothing moves. */
+  --eg-pagination-bg: var(--eg-header-bg); /* the footer band — was --eg-header-bg, shared with the column header */
+  --eg-pagination-border: var(--eg-header-border); /* its top edge — was --eg-header-border, likewise */
+  --eg-pagination-text: var(--eg-muted-text); /* "1–25 of 300" and the page-size label */
+  --eg-pagination-btn-bg: var(--eg-btn-bg); /* a page button at rest */
+  --eg-pagination-btn-border: var(--eg-border); /* its edge */
+  --eg-pagination-btn-text: var(--eg-btn-text); /* its digit */
+  --eg-pagination-active-bg: var(--eg-primary); /* the current page. One of the two surfaces §3.2 had to re-contrast for dark — keep any override's label legible */
+  --eg-pagination-active-text: var(--eg-primary-text); /* the current page's digit */
+  --eg-pagination-font-size: 0.875rem; /* the bar's text scale, buttons included */
+
+  --eg-toolbar-border: var(--eg-border-color); /* the export/search bar's bottom edge (--eg-toolbar-bg already existed) */
+  --eg-toolbar-padding: 6px 8px; /* its gutter */
+  --eg-toolbar-btn-bg: var(--eg-btn-bg); /* the export button */
+  --eg-toolbar-btn-border: var(--eg-border);
+  --eg-toolbar-btn-text: var(--eg-btn-text);
+
+  --eg-search-bg: var(--eg-btn-bg); /* B1's input — note the default is the BUTTON background, which is what it borrowed: a text field wearing button colours */
+  --eg-search-border: var(--eg-border);
+  --eg-search-text: var(--eg-btn-text); /* likewise button text, by inheritance from that borrow */
+  --eg-search-icon-color: var(--eg-muted-text); /* the magnifier and the clear × */
+  --eg-search-font-size: 0.8125rem;
+
+  /* ── Floating filters (B3) ──────────── */
+  --eg-floating-filter-bg: var(--eg-surface); /* the always-visible filter input under a header */
+  --eg-floating-filter-border: var(--eg-border);
+  --eg-floating-filter-text: var(--eg-text);
+  --eg-floating-filter-icon-color: var(--eg-muted-text); /* its clear × */
+  --eg-floating-filter-font-size: 0.8125rem;
+
+  /* ── Cell editor (A2/A12) ───────────── */
+  --eg-editor-bg: var(--eg-row-bg); /* the open editor's field — defaults to the row so an editor reads as the cell it replaced */
+  --eg-editor-text: var(--eg-cell-text);
+  --eg-editor-focus-ring: var(--eg-primary); /* the 2px ring while the value is valid */
+  --eg-editor-invalid-ring: var(--eg-error); /* and while it is not */
+  --eg-editor-font-size: 0.875rem;
+  --eg-editor-error-bg: var(--eg-error); /* the validation message's badge */
+  --eg-editor-error-text: var(--eg-error-text); /* its text. This PAIR was 1.91:1 in dark before §3.2 — override both or neither */
+  --eg-editor-error-font-size: 0.75rem;
+
+  /* ── Overlays — empty, no-results, error ─ */
+  /* The error branch keeps its OWN three sizes rather than sharing the empty
+     state's, because they differ today (1.25 vs 1.5rem icon, 0.875 vs
+     0.9375rem title, 0.8 vs 0.8125rem description) and unifying them would
+     have made step 5 move pixels. Whether that difference is deliberate is
+     an open question — see §5's note. */
+  --eg-overlay-icon-size: 1.5rem; /* the glyph in the empty/no-results circle */
+  --eg-overlay-title-size: 0.9375rem;
+  --eg-overlay-title-color: var(--eg-text);
+  --eg-overlay-desc-size: 0.8125rem;
+  --eg-overlay-desc-color: var(--eg-muted-text);
+  --eg-overlay-error-icon-size: 1.25rem;
+  --eg-overlay-error-title-size: 0.875rem;
+  --eg-overlay-error-desc-size: var(--eg-overlay-desc-size); /* was a literal 0.8rem — 0.2px off the empty state's 0.8125rem at a 16px root, which nobody picks on purpose. Kept as its own name so the error panel stays independently sizeable; see design-theming-tokens.md §5.2 */
+
+  /* ── Row drag (D6) ──────────────────── */
+  --eg-drag-handle-color: var(--eg-muted-text); /* the grip in the row prefix */
+  --eg-drag-ghost-bg: var(--eg-row-bg); /* the preview that follows the pointer */
+  --eg-drag-ghost-border: var(--eg-primary);
+  --eg-drag-ghost-text: var(--eg-cell-text);
+  --eg-drag-ghost-shadow: var(--eg-shadow-float);
+  --eg-drag-indicator-color: var(--eg-primary); /* the 2px drop line */
+
+  /* ── Column group bands (B4) ────────── */
+  --eg-band-bg: var(--eg-header-bg); /* a group band row — its own token, so a two-tone header is possible */
+  --eg-band-text: var(--eg-header-text);
+  --eg-band-border: var(--eg-header-border);
+  --eg-band-toggle-hover-bg: var(--eg-hover-bg); /* the collapse chevron under the pointer */
+  --eg-band-collapsed-color: var(--eg-primary); /* the one state a reader must spot without reading the chevron */
+
+  /* ── Grouping panel (B5-UX) ─────────── */
+  /* The broadest borrow in §1: the chip's background was --eg-group-band-2,
+     which is also the alternating SECTION tint for the whole grid body, so
+     recolouring a chip repainted half the rows. */
+  --eg-group-panel-bg: var(--eg-toolbar-bg);
+  --eg-group-panel-border: var(--eg-border-color);
+  --eg-group-panel-text: var(--eg-text);
+  --eg-group-panel-label-color: var(--eg-muted-text); /* the "Group by" caption and the empty hint */
+  --eg-group-panel-chip-bg: var(--eg-group-band-2); /* see above — this is the one worth overriding first */
+  --eg-group-panel-chip-border: var(--eg-border);
+  --eg-group-panel-chip-hover-bg: var(--eg-group-hover-bg); /* the remove × under the pointer — was the body's heading-hover tint */
+
+  /* ── Row detail panel (D8) ──────────── */
+  --eg-row-detail-border: var(--eg-row-border); /* the panel's top edge (--eg-row-detail-bg was declared in step 1) */
+
+  /* ── Step 6: inline GEOMETRY (design-theming-tokens.md §2 part 2) ─────
+     The font sizes and paddings that were inline literals, so no stylesheet
+     — ours or a user's — could reach them. Tokenised rather than moved to
+     rules on `yg-*` classes: 30 of the 54 sites have no class to hang a rule
+     on, so that route would have minted ~30 permanent public class names to
+     avoid naming ~45 tokens. It relocates the naming cost to the more
+     expensive kind of name and churns markup besides.
+
+     None of these carries a colour, so none needs a dark-block counterpart
+     (§4.2's reasoning, unchanged). Each defaults to the exact literal it
+     replaced, so this block moves no pixel — the two deliberate exceptions
+     are noted at their declarations and in §2. */
+
+  /* Toolbar export button (A-side chrome) */
+  --eg-toolbar-btn-padding: 4px 12px;
+  --eg-toolbar-btn-font-size: 0.75rem;
+
+  /* Header cell and the B4 group band */
+  --eg-header-cell-padding: 0 12px; /* also the inner `yg-header-cell__main` under a filter band — one inset by design */
+  --eg-band-padding: 0 12px;
+  --eg-band-font-size: 0.8125rem;
+  --eg-band-collapse-font-size: 0.7rem; /* the ‹ › chevron */
+  --eg-filter-icon-font-size: 0.75rem;
+  --eg-sort-indicator-font-size: 0.75rem;
+  --eg-sort-index-font-size: 0.65rem; /* the small ordinal beside a multi-sort arrow */
+
+  /* Row-number strip (A11) — header and body must stay equal or the digits
+     sit off the column they number. */
+  --eg-row-number-padding-right: 8px;
+
+  /* Body: skeleton, the C2 loading-more line, the D6 drag ghost */
+  --eg-loading-more-font-size: 0.8125rem;
+  --eg-drag-ghost-padding: 4px 10px;
+  --eg-drag-ghost-font-size: 12px;
+
+  /* Cell editor (A2/A12) */
+  --eg-editor-padding: 0 8px;
+  --eg-editor-textarea-padding: 4px 8px;
+  --eg-editor-error-padding: 3px 8px; /* read by BOTH the inline message and the portalled one — equal by design, as the two font sizes already are */
+
+  /* Filter popover */
+  --eg-popover-input-padding: 0 8px;
+  --eg-popover-label-font-size: 0.75rem;
+  --eg-popover-header-padding-bottom: 8px;
+  --eg-popover-close-font-size: 1rem; /* the ✕ glyph */
+  --eg-popover-close-padding: 0;
+  --eg-popover-actions-padding-top: 4px;
+  --eg-popover-error-font-size: 0.75rem;
+  --eg-popover-error-padding: 4px 0;
+
+  /* Floating filters (B3) */
+  --eg-floating-filter-padding: 0 6px 6px 12px;
+  --eg-floating-filter-control-padding: 0 6px;
+  --eg-floating-filter-button-padding: 0;
+
+  /* Menus (D4/D5) — the item inset is --eg-menu-item-padding from step 4 */
+  --eg-menu-padding: 4px 0;
+  --eg-menu-checkable-item-padding: 0 12px 0 24px; /* the extra left inset that clears a checkmark */
+
+  /* Pagination */
+  --eg-pagination-padding: 8px 12px;
+  --eg-pagination-btn-padding: 0 8px;
+  --eg-pagination-select-padding: var(--eg-pagination-btn-padding); /* the rows-per-page select matches the buttons beside it */
+  --eg-pagination-ellipsis-padding: 0 4px;
+
+  /* Set filter (B2) */
+  --eg-set-filter-search-padding: 0 8px;
+  --eg-set-filter-list-padding: 4px;
+  --eg-set-filter-empty-padding: 6px 4px; /* the "no matches" line */
+  --eg-set-filter-option-padding: 3px 4px;
+  --eg-set-filter-count-font-size: 0.75rem; /* the per-value count and the "+N more" line */
+
+  /* Row prefix controls (D8 toggle, D6 handle) — `0` is the UA button reset,
+     and inline it was the single most hostile value in this defect: a user
+     adding padding to either control could not win against it. */
+  --eg-row-detail-toggle-padding: 0;
+  --eg-drag-handle-padding: 0;
+  --eg-search-clear-padding: 0;
+
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK THEME
+   Applied when data-theme="dark" is set on the grid or any ancestor, or
+   when .yg-theme-dark is on the grid (which the adapter always sets).
+
+   Usage:
+     <html data-theme="dark">   (entire app)
+     <div data-theme="dark">    (just this grid)
+
+   Or wire to prefers-color-scheme:
+     @media (prefers-color-scheme: dark) { :root { --eg-row-bg: #1e1e2e; ... } }
+───────────────────────────────────────────────────────────────── */
+/* [data-theme='dark'] .yg-grid — ancestor attribute with descendant combinator gives
+   specificity (0,2,0) which beats the plain .yg-grid (0,1,0) rule below, so dark
+   variables correctly override the light defaults even though .yg-grid re-declares them. */
+[data-theme='dark'] .yg-grid,
+.yg-grid[data-theme='dark'],
+.yg-theme-dark {
+  /* ── Brand ──────────────────────────────── */
+  --eg-primary: #818cf8;
+  --eg-primary-light: #1e1b4b;
+  --eg-primary-text: #1e1b4b; /* NOT #ffffff: --eg-primary is lightened to #818cf8 here, and white on it is 2.98:1 — an AA failure on the active page button and the apply-filter button, the same class of bug as BUG-5. Dark ink on a light accent is 5.36:1. */
+
+  /* ── Text ───────────────────────────────── */
+  --eg-text: #f9fafb;
+  --eg-cell-text: #f9fafb;
+  --eg-header-text: #e5e7eb;
+  --eg-muted-text: #9ca3af; /* 6.52:1 on --eg-surface; #6b7280 here was 3.39:1 — BUG-5 */
+
+  /* ── Backgrounds ────────────────────────── */
+  --eg-row-bg: #1e1e2e;
+  --eg-row-striped-bg: #262636;
+  --eg-pinned-row-bg: #262636;
+  --eg-pinned-row-border: 1px solid #374151;
+  --eg-header-bg: #16162a;
+  --eg-header-active-bg: #2a2a3e;
+  --eg-toolbar-bg: #16162a;
+  --eg-surface: #1e1e2e;
+  --eg-hover-bg: #2a2a3e;
+  --eg-overlay-bg: rgba(30, 30, 46, 0.85);
+
+  /* ── Selected row ───────────────────────── */
+  /* ── Row grouping (B5-UX §7.3) ────────── */
+  --eg-group-band-1: #1e1e2e;
+  --eg-group-band-2: #23233a;
+  --eg-group-heading-tint: rgba(255, 255, 255, 0.07);
+  --eg-group-hover-bg: rgba(129, 140, 248, 0.16);
+  --eg-group-rail: #3a3a52;
+  --eg-group-share-bar: rgba(129, 140, 248, 0.22);
+  --eg-group-row-bg: var(--eg-group-band-1);
+
+  --eg-row-selected-bg: #1e1b4b;
+  --eg-row-selected-border: #818cf8;
+  --eg-row-selected-outline: rgba(129, 140, 248, 0.2);
+  /* ── Change highlighting (A9) ────────── */
+  --eg-flash-bg: #78350f;
+  --eg-flash-up-bg: #14532d;
+  --eg-flash-down-bg: #7f1d1d;
+
+  /* ── Borders ────────────────────────────── */
+  --eg-border: #374151;
+  --eg-border-color: #374151;
+  --eg-border-hover: #4b5563;
+  --eg-header-border: 1px solid #374151;
+  --eg-row-border: #2d2d3e;
+  --eg-cell-border: 1px solid #374151;
+
+  /* ── Sort ───────────────────────────────── */
+  --eg-sort-icon-color: #6b7280;
+  --eg-sort-active-color: #818cf8;
+
+  /* ── Buttons ────────────────────────────── */
+  --eg-btn-bg: #2a2a3e;
+  --eg-btn-text: #e5e7eb;
+
+  /* ── Error state ────────────────────────── */
+  --eg-error: #f87171;
+  --eg-error-bg: #450a0a;
+  --eg-error-text: #450a0a; /* NOT #fecaca: on --eg-error (#f87171) that was 1.91:1 — a validation message all but unreadable. 5.84:1. */
+
+  /* ── Empty state ────────────────────────── */
+  --eg-empty-icon-bg: #2a2a3e;
+
+  /* ── Skeleton loader ────────────────────── */
+  --eg-skeleton-base: #374151;
+  --eg-skeleton-highlight: #4b5563;
+
+  /* ── Tooltip (A5) ────────────────────── */
+  /* The light value (#1f2937) was 1.12:1 against dark --eg-surface (#1e1e2e):
+     a tooltip with no border and no visible shadow, so its edges simply were
+     not there. An elevated surface goes LIGHTER on dark, not darker.
+     2.17:1 against the surface and 7.23:1 for its text. The separation is
+     deliberately below 3:1 — WCAG 1.4.11 governs identifiable UI CONTROLS,
+     and a tooltip is a passive label whose text contrast is what is
+     regulated. #6b7280 would give 3.39:1 if that call is ever revisited. */
+  --eg-tooltip-bg: #4b5563;
+  --eg-tooltip-text: #f9fafb;
+  --eg-tooltip-shadow: 0 2px 10px rgba(0, 0, 0, 0.6); /* 0.25 black cast nothing on a dark backdrop */
+
+  /* ── Elevation ────────────────────── */
+  /* A shadow is occlusion, and there is far less light to occlude here, so
+     every one of these needs roughly 4× the alpha to read as the same
+     elevation. The light values are invisible on a dark grid. */
+  --eg-shadow-popover: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --eg-shadow-float: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --eg-group-sticky-shadow: 0 2px 4px -2px rgba(0, 0, 0, 0.55);
+}
+
+/* ─────────────────────────────────────────────────────────────
+    AUTO THEME — appearance.theme: 'auto'
+
+    The dark palette above, applied only while the OS asks for dark. It is a
+    copy because CSS has no way to add `.yg-theme-auto` to that rule's
+    selector list from inside a media query, and the alternative — resolving
+    the media query in JS — would put `matchMedia` in core, which compiles
+    with lib: ["ES2020"] and names no DOM API.
+
+    KEEP IN SYNC with the dark block above. A token added there and not here
+    is an auto grid that is dark everywhere except the one thing you added.
+ ───────────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  .yg-theme-auto {
+
+    /* ── Brand ──────────────────────────────── */
+    --eg-primary: #818cf8;
+    --eg-primary-light: #1e1b4b;
+    --eg-primary-text: #1e1b4b; /* NOT #ffffff: --eg-primary is lightened to #818cf8 here, and white on it is 2.98:1 — an AA failure on the active page button and the apply-filter button, the same class of bug as BUG-5. Dark ink on a light accent is 5.36:1. */
+
+    /* ── Text ───────────────────────────────── */
+    --eg-text: #f9fafb;
+    --eg-cell-text: #f9fafb;
+    --eg-header-text: #e5e7eb;
+    --eg-muted-text: #9ca3af; /* 6.52:1 on --eg-surface; #6b7280 here was 3.39:1 — BUG-5 */
+
+    /* ── Backgrounds ────────────────────────── */
+    --eg-row-bg: #1e1e2e;
+    --eg-row-striped-bg: #262636;
+    --eg-pinned-row-bg: #262636;
+    --eg-pinned-row-border: 1px solid #374151;
+    --eg-header-bg: #16162a;
+    --eg-header-active-bg: #2a2a3e;
+    --eg-toolbar-bg: #16162a;
+    --eg-surface: #1e1e2e;
+    --eg-hover-bg: #2a2a3e;
+    --eg-overlay-bg: rgba(30, 30, 46, 0.85);
+
+    /* ── Selected row ───────────────────────── */
+    /* ── Row grouping (B5-UX §7.3) ────────── */
+    --eg-group-band-1: #1e1e2e;
+    --eg-group-band-2: #23233a;
+    --eg-group-heading-tint: rgba(255, 255, 255, 0.07);
+    --eg-group-hover-bg: rgba(129, 140, 248, 0.16);
+    --eg-group-rail: #3a3a52;
+    --eg-group-share-bar: rgba(129, 140, 248, 0.22);
+    --eg-group-row-bg: var(--eg-group-band-1);
+
+    --eg-row-selected-bg: #1e1b4b;
+    --eg-row-selected-border: #818cf8;
+    --eg-row-selected-outline: rgba(129, 140, 248, 0.2);
+    /* ── Change highlighting (A9) ────────── */
+    --eg-flash-bg: #78350f;
+    --eg-flash-up-bg: #14532d;
+    --eg-flash-down-bg: #7f1d1d;
+
+    /* ── Borders ────────────────────────────── */
+    --eg-border: #374151;
+    --eg-border-color: #374151;
+    --eg-border-hover: #4b5563;
+    --eg-header-border: 1px solid #374151;
+    --eg-row-border: #2d2d3e;
+    --eg-cell-border: 1px solid #374151;
+
+    /* ── Sort ───────────────────────────────── */
+    --eg-sort-icon-color: #6b7280;
+    --eg-sort-active-color: #818cf8;
+
+    /* ── Buttons ────────────────────────────── */
+    --eg-btn-bg: #2a2a3e;
+    --eg-btn-text: #e5e7eb;
+
+    /* ── Error state ────────────────────────── */
+    --eg-error: #f87171;
+    --eg-error-bg: #450a0a;
+    --eg-error-text: #450a0a; /* NOT #fecaca: on --eg-error (#f87171) that was 1.91:1 — a validation message all but unreadable. 5.84:1. */
+
+    /* ── Empty state ────────────────────────── */
+    --eg-empty-icon-bg: #2a2a3e;
+
+    /* ── Skeleton loader ────────────────────── */
+    --eg-skeleton-base: #374151;
+    --eg-skeleton-highlight: #4b5563;
+
+    /* ── Tooltip (A5) ────────────────────── */
+    /* The light value (#1f2937) was 1.12:1 against dark --eg-surface (#1e1e2e):
+       a tooltip with no border and no visible shadow, so its edges simply were
+       not there. An elevated surface goes LIGHTER on dark, not darker.
+       2.17:1 against the surface and 7.23:1 for its text. The separation is
+       deliberately below 3:1 — WCAG 1.4.11 governs identifiable UI CONTROLS,
+       and a tooltip is a passive label whose text contrast is what is
+       regulated. #6b7280 would give 3.39:1 if that call is ever revisited. */
+    --eg-tooltip-bg: #4b5563;
+    --eg-tooltip-text: #f9fafb;
+    --eg-tooltip-shadow: 0 2px 10px rgba(0, 0, 0, 0.6); /* 0.25 black cast nothing on a dark backdrop */
+
+    /* ── Elevation ────────────────────── */
+    /* A shadow is occlusion, and there is far less light to occlude here, so
+       every one of these needs roughly 4× the alpha to read as the same
+       elevation. The light values are invisible on a dark grid. */
+    --eg-shadow-popover: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --eg-shadow-float: 0 2px 8px rgba(0, 0, 0, 0.45);
+    --eg-group-sticky-shadow: 0 2px 4px -2px rgba(0, 0, 0, 0.55);
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   DENSITY VARIANTS
+   Set via appearance.density in GridOptions.
+   The <Grid> component sets a data-density attribute on the
+   grid container based on this option.
+
+   Usage (automatic via GridOptions):
+     createGrid({ appearance: { density: 'compact' } })
+
+   Or override manually:
+     <div data-density="compact"> ... </div>
+───────────────────────────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────────────────────────
+   Grid surface
+   The container must PAINT the themed surface, not merely define the
+   colour tokens. Two things break when it is transparent:
+
+     1. The empty / loading / error overlays use a TRANSLUCENT backdrop
+        (--eg-overlay-bg is rgba). With nothing behind them they composite
+        against the host page, so a dark-theme empty state on a white page
+        rendered as a washed mid-grey (~#404050) instead of ~#1e1e2e.
+     2. Any area not covered by rows — right of the last column, below the
+        last row — showed the host page through, so a dark grid on a light
+        page had white gaps around its own content.
+
+   --eg-row-bg is the correct token: the surface is conceptually the same
+   sheet the rows are drawn on, so they stay seamless in every theme.
+ ───────────────────────────────────────────────────────────────── */
+.yg-grid {
+  background-color: var(--eg-row-bg);
+}
+
+/* Compact — smaller text, tighter cell inset. NOT shorter rows: row height
+   is `appearance.rowHeight` (default 40) at every density, because the
+   virtualizer needs it as a number in JS. Two tokens here used to claim
+   otherwise — see design-theming-tokens.md §5.3. */
+.yg-density-compact,
+[data-density='compact'] .yg-grid,
+.yg-grid[data-density='compact'] {
+  --eg-cell-font-size: 0.8125rem;
+  --eg-cell-padding: 0 8px;
+  --eg-header-font-size: 0.8125rem;
+}
+
+/* Normal — default */
+.yg-density-normal,
+[data-density='normal'] .yg-grid,
+.yg-grid[data-density='normal'] {
+  --eg-cell-font-size: 0.875rem;
+  --eg-cell-padding: 0 12px;
+  --eg-header-font-size: 0.875rem;
+}
+
+/* Comfortable — more breathing room horizontally; row height is unchanged */
+.yg-density-comfortable,
+[data-density='comfortable'] .yg-grid,
+.yg-grid[data-density='comfortable'] {
+  --eg-cell-font-size: 0.875rem;
+  --eg-cell-padding: 0 16px;
+  --eg-header-font-size: 0.875rem;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STATIC LAYOUT CLASSES — row and cell structural styles
+   Extracted from inline style objects to avoid per-render
+   object allocation in GridRow and GridCell.
+   Dynamic values (backgroundColor, width, transform) stay inline.
+───────────────────────────────────────────────────────────────── */
+
+/* Grid root — inherited typography the host must not decide.
+
+   `text-align` inherits, and a centred ancestor is not exotic: it is what
+   Vite's own React and Vue templates put on #root. Inherited into the grid
+   it centres every set-filter option label away from its checkbox while the
+   counts stay right-aligned, which reads as a broken list rather than as a
+   page style. The grid owns its own internal alignment, so it states it.
+   `start` rather than `left` keeps RTL working.
+
+   One rule covers every floating surface too: `gridThemeClasses()` puts
+   `yg-grid` on each one precisely so the tokens follow it out to
+   document.body, and this follows the same way. */
+.yg-grid,
+.yg-tooltip {
+  text-align: start;
+}
+
+/* Header row — structural layout (static)
+
+   E1-2: the sticky `top` that the pinned-top band and the state overlay are
+   placed at is `resolveStickyHeaderHeight()`, which sums the header BOXES —
+   `appearance.headerHeight`, B4 band rows, B3 floating filters. The header
+   paints a 1px bottom border on top of that, so under the browser default
+   content-box it rendered 45px for a declared 44 and the band stuck 1px
+   high: a 1px jump on the first scrolled pixel, and a hairline of the header
+   border showing through the band from then on. border-box makes the
+   rendered height the declared one, so every consumer of that helper lands
+   on the header's real bottom edge. */
+.yg-header {
+  box-sizing: border-box;
+}
+
+/* Header controls — revealed on interaction, not resident in the cell
+
+   The sort indicator, the filter icon and the ⋮ used to sit in the header
+   cell's flex flow at every width. At the default 150px they ate the label:
+   "Departm…", "Sala…", and the ID column's name entirely, leaving a header of
+   icons with nothing to name the column. They are an overlay on the cell's
+   trailing edge now, so the label gets the whole cell, and they fade in on
+   hover, on `:focus-within` (the keyboard route — a control nobody can see is
+   a control a Tab user cannot reach), and on coarse pointers where there is no
+   hover to reveal on.
+
+   Opacity only, never `display` and never a width change: the reveal must not
+   reflow, or the header jitters under the cursor as the pointer crosses it.
+
+   Reserving the space instead was the other option and it is the one that was
+   already there — it is what `showIconOnHover` did, and it is why the label
+   was short. The overlay is what frees the column. */
+.yg-header-cell__controls {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  /* 12px right keeps the ⋮ exactly where it has always been, against the
+     resize handle. The 16px left is the gradient's run-up over the label. */
+  padding: 0 12px 0 16px;
+  /* The group overlaps the label's tail whenever it shows, so it has to be
+     opaque — faded in from the left so the label does not cut off hard. */
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    var(--eg-header-bg) 16px
+  );
+  opacity: 0;
+  transition: opacity 0.15s;
+  /* The group covers the label's tail, and a click on the label SORTS. Without
+     this it swallowed every sort click that landed in the trailing ~100px of
+     a header — including the one Playwright aims at the label's own centre on
+     a narrow column. Only the two real buttons take pointer events back; the
+     sort arrow is `aria-hidden` decoration, so a click through it reaches the
+     cell and sorts, which is what it looks like it should do. */
+  pointer-events: none;
+}
+
+.yg-header-cell__filter-icon,
+.yg-header-cell__menu-button {
+  pointer-events: auto;
+}
+
+/* `filtering.iconPosition: 'left'` puts the filter icon on the other side, so
+   its group anchors — and fades — the other way. */
+.yg-header-cell__controls--start {
+  right: auto;
+  left: 0;
+  padding: 0 16px 0 12px;
+  background-image: linear-gradient(
+    to left,
+    transparent,
+    var(--eg-header-bg) 16px
+  );
+}
+
+/* Mid-resize the cell paints its own background, so the gradient has to land
+   on that one instead or the overlay reads as a lighter patch. */
+.yg-header-cell--resizing .yg-header-cell__controls {
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    var(--eg-header-active-bg) 16px
+  );
+}
+
+/* The four reveal conditions. Hover and focus-within are why this is CSS and
+   not the JS hover flag the adapters already had: that flag cannot see
+   focus-within and cannot see a touch device. The two state conditions read
+   classes the header cell already carried before this existed. */
+.yg-header-cell:hover .yg-header-cell__controls,
+.yg-header-cell:focus-within .yg-header-cell__controls,
+.yg-header-cell--sorted .yg-header-cell__controls,
+.yg-header-cell--filtered .yg-header-cell__controls,
+.yg-header-cell:has([aria-expanded='true']) .yg-header-cell__controls {
+  opacity: 1;
+}
+
+/* A control that is pure chrome hides even when the group is up for a state
+   reason: a sorted column shows its arrow, not its ⋮. */
+.yg-header-cell__control--reveal {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.yg-header-cell:hover .yg-header-cell__control--reveal,
+.yg-header-cell:focus-within .yg-header-cell__control--reveal,
+.yg-header-cell:has([aria-expanded='true']) .yg-header-cell__control--reveal {
+  opacity: 1;
+}
+
+/* The two controls that report STATE rather than offer an action always show
+   it. Two classes each, so they outrank `--reveal` above without !important
+   and without depending on rule order. The active filter icon is the only
+   indication a filter is on — hiding it would hide state, not chrome. */
+.yg-header-cell--sorted .yg-sort-indicator,
+.yg-header-cell--filtered .yg-header-cell__filter-icon {
+  opacity: 1;
+}
+
+/* No hover to reveal on, so nothing hides. `pointer: coarse` as well as
+   `hover: none`, because a hybrid touchscreen laptop reports both. */
+@media (hover: none), (pointer: coarse) {
+  .yg-header-cell__controls,
+  .yg-header-cell__control--reveal {
+    opacity: 1;
+  }
+}
+
+/* B3. With a floating filter the cell stacks and the label band is the
+   controls' containing block — otherwise the group would centre itself over
+   both bands and sit half over the filter box. */
+.yg-header-cell__main {
+  position: relative;
+}
+
+
+/* Row — structural layout (static) */
+.yg-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* Cell — structural layout (static) */
+.yg-cell {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--eg-cell-font-size, 0.875rem);
+  color: var(--eg-cell-text, #111827);
+  flex-shrink: 0;
+  padding: var(--eg-cell-padding, 0 12px);
+  position: relative;
+}
+
+/* Cell inner text span */
+.yg-cell__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* Checkbox cell — fixed 48px, centered */
+.yg-cell--checkbox {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+  height: 100%;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Column menu (D5) — structural only.
+   Colours stay inline, the same split GridFilterPopover already uses. These
+   class names are part of the shared DOM contract: the parity suite targets
+   them in all three adapters. */
+.yg-column-menu {
+  /* A menu that opens near the bottom of the window scrolls internally
+     rather than growing past the viewport. */
+  overscroll-behavior: contain;
+}
+
+.yg-column-menu__item:focus-visible,
+.yg-column-menu__column:focus-visible {
+  outline: 2px solid var(--eg-primary);
+  outline-offset: -2px;
+}
+
+/* The chooser's rows are indented under their disclosure, and the list gets
+   its own scroll so a 100-column grid does not make the menu unusable. */
+.yg-column-menu__columns {
+  max-height: 240px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ─────────────────────────────────────────────────────────────
+    ACCESSIBILITY — forced-colors (Windows High Contrast Mode)
+    When forced-colors is active the browser replaces all colours
+    with a system palette. Custom CSS colours are ignored unless
+    we explicitly use the system colour keywords here.
+
+    Same rules as React's and Vue's block — the B4 band rules
+    further down are an ADDITION to this, not a replacement.
+ ───────────────────────────────────────────────────────────────── */
+@media (forced-colors: active) {
+  /* Focus ring — must use system Highlight colour, not a CSS var */
+  .yg-cell:focus-visible,
+  .yg-cell[data-focused='true'],
+  .yg-column-menu__item:focus-visible,
+  .yg-column-menu__column:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  /* The menu's hover/active row is drawn with an inline background that
+     forced-colors discards, so the border is what keeps it legible. */
+  .yg-column-menu {
+    border: 1px solid ButtonText;
+  }
+
+  /* Selected row — use system Highlight + HighlightText */
+  .yg-row[aria-selected='true'] {
+    background-color: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+
+  /* Header sort indicators and borders must use ButtonText */
+  .yg-header-cell {
+    border-color: ButtonText;
+  }
+
+  /* Checkbox — browser renders natively in forced-colors; no override needed */
+
+  /* Ensure text is always readable against system background */
+  .yg-cell {
+    color: CanvasText;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+    ACCESSIBILITY — prefers-reduced-motion
+    The loading skeleton's shimmer is applied as an INLINE
+    `animation: yg-shimmer ...`, with the keyframes injected by
+    GridBody, so the attribute selector plus !important is what
+    reaches it. The flash and group-enter blocks further down
+    state their own rules; this one covers the shimmer.
+ ───────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .yg-shimmer,
+  [style*='yg-shimmer'] {
+    animation: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+    COLUMN GROUPS (B4) — banded header rows
+    Layout is inline (the widths and spans come from
+    resolveHeaderBands in core); this is theming only.
+ ───────────────────────────────────────────────────────────────── */
+.yg-header-band-cell--collapsible .yg-header-band-cell__toggle:hover {
+  background-color: var(--eg-band-toggle-hover-bg);
+  color: var(--eg-band-collapsed-color);
+}
+
+/* The toggle is a div with role="button", so it needs a visible focus ring of
+   its own — the browser draws none. Same treatment as the filter icon. */
+.yg-header-band-cell__toggle:focus-visible {
+  outline: 2px solid var(--eg-primary);
+  outline-offset: -2px;
+}
+
+/* A collapsed group is the one state a user has to be able to spot without
+   reading the chevron. */
+.yg-header-band-cell--collapsed {
+  color: var(--eg-band-collapsed-color);
+}
+
+@media (forced-colors: active) {
+  .yg-header-band-cell {
+    border-color: ButtonText;
+  }
+  .yg-header-band-cell__toggle {
+    forced-color-adjust: none;
+    color: ButtonText;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+    CHANGE HIGHLIGHTING (A9) — cell flash
+
+    ONE animation covering rise and fall, driven by one `duration`. AG Grid
+    splits this into cellFlashDuration (500ms) then cellFadeDuration (1000ms)
+    — 1.5s in total, whose two halves are separately configurable for no
+    reason a developer has an opinion about.
+
+    The duration is set inline from `appearance.flash.duration` so the CSS
+    and the registry's expiry cannot drift apart; the value here is only the
+    fallback for a stylesheet loaded without the grid.
+
+    Two classes, not one: `--flash` carries the overlay layer and
+    its animation, `--flash-*` only the colour. That is what lets the
+    reduced-motion block below drop the animation in a single rule instead of
+    restating every variant.
+ ────────────────────────────────────────────────────────── */
+@keyframes yg-cell-flash {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Byte-identical to the one above, and that is the point. A second change to
+   a cell that is still flashing has to RESTART the animation. Toggling the
+   class off and on inside one frame does not reliably do that, and extending
+   the registry's expiry alone painted nothing at all for the rest of the
+   first window (#37). Changing the animation NAME restarts it, so the
+   registry alternates a cycle flag and the adapter turns it into
+   `--flash-b`. */
+@keyframes yg-cell-flash-b {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The flash paints as an OVERLAY LAYER, never as the cell's own
+   background-color, and that is load-bearing for pinned columns. A pinned
+   cell carries an inline `backgroundColor: inherit` (see
+   core/src/utils/pinning.ts) so scrolling content cannot show through the
+   frozen cell. Animating the cell's own background-color broke that twice:
+   an animation outranks an inline style, so the fade towards `transparent`
+   turned the sticky cell see-through mid-flash; and under reduced motion the
+   static stylesheet rule LOST to that inline style, so a pinned cell never
+   flashed at all. A separate layer leaves `background-color` untouched, so
+   the opaque base always survives.
+
+   `z-index: -1` plus `isolation: isolate` on the cell is what puts the layer
+   ABOVE the cell's background and BELOW its text. The isolation is not
+   optional: with no stacking context on the cell itself, a negative z-index
+   child escapes to the nearest ancestor context and paints behind the row's
+   background — which is to say invisibly.
+
+   `opacity: 0` is the resting value, so dropping the animation leaves no
+   paint at all rather than a permanent block of colour. */
+.yg-cell--flash {
+  --yg-flash-color: var(--eg-flash-bg);
+  isolation: isolate;
+}
+
+.yg-cell--flash::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--yg-flash-color);
+  opacity: 0;
+  animation: yg-cell-flash var(--yg-flash-duration, 600ms) ease-out 1;
+  /* A NEGATIVE delay, written inline from the registry entry's elapsed time,
+     so a cell virtualized out and back resumes its fade instead of starting
+     a fresh full-length one that the original expiry then cut off at full
+     colour (#36). It must come AFTER the shorthand, which resets
+     animation-delay. */
+  animation-delay: var(--yg-flash-offset, 0ms);
+}
+
+.yg-cell--flash-b::before {
+  animation-name: yg-cell-flash-b;
+}
+
+.yg-cell--flash-up {
+  --yg-flash-color: var(--eg-flash-up-bg);
+}
+
+.yg-cell--flash-down {
+  --yg-flash-color: var(--eg-flash-down-bg);
+}
+
+/* A flash must not repaint over an editor or a focus ring — both mean the
+   user is looking at that exact cell already, and a pulse under a caret is
+   the kind of motion that makes people lose their place. With the animation
+   dropped the layer rests at `opacity: 0`, so this paints nothing. */
+.yg-cell--flash:focus-within::before {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* A STATIC hold, not nothing. The colour stays until the registry's sweep
+     removes the class, so the information survives and only the motion goes
+     — dropping the animation alone would make the flash invisible rather
+     than calm. It holds the same overlay layer, which is why a pinned cell
+     holds it too.
+
+     Both declarations are stated here rather than leaning on React's and
+     Vue's blanket `* { animation-duration: 0.01ms }` rule, which vanilla
+     deliberately does not carry.
+     Self-sufficient is the only version that behaves identically in all
+     three. */
+  .yg-cell--flash::before {
+    animation: none;
+    opacity: 1;
+  }
+
+  .yg-cell--flash:focus-within::before {
+    opacity: 0;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+    ROW GROUPING — the section metaphor (B5-UX §3)
+    Tier 1: no option turns any of this on. It paints only where
+    GroupPlugin published a decoration, which is why an ungrouped
+    grid carries none of it (§9, negative control 1).
+ ───────────────────────────────────────────────────────────────── */
+
+/* The heading's own tint, layered over whichever band the section took.
+   A gradient rather than a second colour token: the heading is then defined
+   as "a half-step darker than its OWN leaves" in one place, and a theme that
+   changes only the band colours keeps that relationship. */
+.yg-row--group {
+  background-image: linear-gradient(
+    var(--eg-group-heading-tint),
+    var(--eg-group-heading-tint)
+  );
+}
+
+/* It has had `cursor: pointer` and a click handler since B5 and has never
+   acknowledged the pointer (§3.7). Same layer as the tint, so hovering
+   REPLACES it rather than adding to it. */
+.yg-row--group:hover {
+  background-image: linear-gradient(
+    var(--eg-group-hover-bg),
+    var(--eg-group-hover-bg)
+  );
+}
+
+/* `tabIndex={-1}` with no focus style means a keyboard user moving between
+   sections sees nothing move. Inset, because a row is flush with the
+   viewport edge and an outward ring would be clipped by the scroll
+   container. */
+.yg-row--group:focus-visible {
+  outline: 2px solid var(--eg-primary);
+  outline-offset: -2px;
+}
+
+/* ── Indent rails (§3.3) ──────────────────────────────────────
+   One hairline per open level, down the left edge of the section's content,
+   terminating at its last row.
+
+   Two background layers and no DOM node, for the reason §11 gives: a real
+   element would land inside the [left-pinned][spacer][window] slicing that
+   GridGroupRow mirrors from GridRow, and one extra row child the header
+   lacks shifts the e2e column pairing for every column behind it.
+
+   Layer 1 — rails this row passes through, full height.
+   Layer 2 — rails this row TERMINATES, stopping at its midpoint. That stub
+   is the only mark of where a section ends (§1.3).
+
+   Both are set from --eg-rail-depth and --eg-rail-end, written inline as
+   unitless numbers by the adapter. */
+.yg-cell--group-rail,
+.yg-row--section [data-columnid='__group__'] {
+  --eg-rail-x: 16px; /* one step; matches INDENT_PER_LEVEL in the adapters */
+  --eg-rail-inset: 16px; /* where rail 0 sits, measured from the cell's left edge */
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--eg-group-rail) 0 1px,
+      transparent 1px var(--eg-rail-x)
+    ),
+    repeating-linear-gradient(
+      to right,
+      var(--eg-group-rail) 0 1px,
+      transparent 1px var(--eg-rail-x)
+    );
+  background-repeat: no-repeat, no-repeat;
+  background-position:
+    var(--eg-rail-inset) 0,
+    calc(var(--eg-rail-inset) + var(--eg-rail-end) * var(--eg-rail-x)) 0;
+  background-size:
+    calc(var(--eg-rail-end) * var(--eg-rail-x)) 100%,
+    calc((var(--eg-rail-depth) - var(--eg-rail-end)) * var(--eg-rail-x)) 50%;
+}
+
+/* ── Entry animation (§3.6) ───────────────────────────────────
+   Every competing grid snaps. Applied only to rows whose own section was
+   just opened — the adapter checks the toggle's freshness at render time, so
+   a leaf scrolled into view later mounts still.
+
+   Height is deliberately NOT animated: these rows are virtualized and their
+   y offsets come from the canvas, so animating height would fight the
+   geometry rather than decorate it. Opacity and a 4px rise read as the same
+   gesture and cost no layout. */
+@keyframes yg-group-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.yg-row--group-enter {
+  animation: yg-group-enter 140ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disabled entirely, not shortened. Stated here rather than left to the
+     blanket rule React and Vue carry, which vanilla deliberately does not —
+     so the three adapters behave identically. */
+  .yg-row--group-enter {
+    animation: none;
+  }
+
+  .yg-group-cell__toggle {
+    transition: none;
+  }
+}
+
+/* ── Leaf indentation (§3.4) ──────────────────────────────────
+   Content sits INSIDE its section rather than beside it, and the rail of
+   §3.3 occupies exactly the space this opens — which is why the two are one
+   change and not two.
+
+   Done by re-declaring --eg-cell-padding on the group column rather than by
+   a padding-left override, because GridCell writes `padding` inline as a
+   shorthand and an inline shorthand cannot be beaten from a stylesheet. The
+   cell resolves the variable it was already reading, so nothing about how
+   GridCell paints changes, and no prop has to be threaded through its memo
+   comparator to reach it.
+
+   The constraint from GridGroupRow.tsx:241-243 still holds and is the reason
+   it is padding at all: the cell must keep its full WIDTH, or the column
+   boundary stops matching the header. */
+.yg-row--section [data-columnid='__group__'] {
+  --eg-cell-padding: 0 12px 0
+    calc(12px + var(--eg-rail-depth, 0) * var(--eg-rail-x));
+}
+
+/* ── The group chip bar (B5-UX §5) ────────────────────────────
+   A strip above the column header naming the current model, outermost first.
+   OUTSIDE GridBody's scroll container: the chips name the whole model, not
+   the slice of it you happen to have scrolled to.
+
+   No option turns the rules below on. The bar is module-delivered UI, so a
+   grid without GroupModule has no element for any of them to match — the
+   same shape as the tier-1 rules above (§9, negative control 1). */
+.yg-group-panel {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 8px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--eg-group-panel-border);
+  background-color: var(--eg-group-panel-bg);
+  font-size: 0.75rem;
+}
+
+.yg-group-panel-label {
+  font-weight: 600;
+  color: var(--eg-group-panel-label-color);
+  margin-right: 2px;
+}
+
+.yg-group-panel-empty {
+  color: var(--eg-group-panel-label-color);
+  font-style: italic;
+}
+
+.yg-group-panel-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 2px 2px;
+  border: 1px solid var(--eg-group-panel-chip-border);
+  border-radius: 999px;
+  background: var(--eg-group-panel-chip-bg);
+  color: var(--eg-group-panel-text);
+  line-height: 1.5;
+  /* The whole chip is the drag source, so the grab cursor belongs on it and
+     not only on the grip — the grip is the KEYBOARD affordance. */
+  cursor: grab;
+}
+
+.yg-group-panel-chip:active {
+  cursor: grabbing;
+}
+
+.yg-group-panel-name {
+  font-weight: 500;
+}
+
+.yg-group-panel-grip,
+.yg-group-panel-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--eg-group-panel-label-color);
+  cursor: pointer;
+}
+
+.yg-group-panel-remove:hover {
+  background: var(--eg-group-panel-chip-hover-bg);
+  color: var(--eg-group-panel-text);
+}
+
+.yg-group-panel-grip:focus-visible,
+.yg-group-panel-remove:focus-visible {
+  outline: 2px solid var(--eg-primary);
+  outline-offset: 1px;
+}
+
+/* ── Collapsed-group preview (B5-UX §6) ───────────────────────
+   A faint proportion bar behind the heading's label — this section's leaves
+   against the FILTERED total, written inline as a unitless 0–1 number by the
+   adapter exactly as the rails' depth is.
+
+   A pseudo-element rather than a third background layer, because the rails
+   above already own this cell's `background-image` and a fourth layer whose
+   size means something different would make one property mean two things.
+   `isolation` keeps the negative z-index inside the cell, so the bar paints
+   over the section band and under the label rather than behind the row. */
+.yg-group-cell--share {
+  isolation: isolate;
+}
+
+.yg-group-cell--share::after {
+  /* Starts where the LABEL starts, not at the cell's left edge. The cell's
+     indent is `12px + level * 16px`, and the rails already publish that level
+     as --eg-rail-depth (unset, so 0, on a top-level heading). A bar pinned to
+     the edge instead spent its first pixels under the indent, so a small
+     share never reached the text it is supposed to sit behind and read as a
+     block in the gutter rather than as a proportion. */
+  --eg-share-start: calc(12px + var(--eg-rail-depth, 0) * var(--eg-rail-x, 16px));
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--eg-share-start);
+  /* Of the room the label actually has, so the same share is the same length
+     at every depth. */
+  width: calc(var(--eg-group-share, 0) * (100% - var(--eg-share-start)));
+  background: var(--eg-group-share-bar);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SET FILTER (B2) — the value list inside the filter popover
+
+   The only rules the set filter has: everything else about it is inline, the
+   way the rest of the popover is. These three cannot be, because a hover and a
+   focus ring are pseudo-classes (BUG-4 — the list had `cursor: pointer` and no
+   hover feedback whatsoever, so a 200-row value list highlighted nothing under
+   the pointer, and a focused option showed only the UA's default 1px outline
+   where every grid cell shows a 2px --eg-primary ring).
+───────────────────────────────────────────────────────────────── */
+
+.yg-set-filter__option:hover,
+.yg-set-filter__selectall:hover {
+  background: var(--eg-hover-bg);
+}
+
+/* :focus, not only :focus-visible — the options are reached by ArrowDown from
+   the search box and by .focus() from the list's own roving handler, and a ring
+   that only a keyboard-heuristic shows would leave that navigation invisible. */
+.yg-set-filter__option:focus {
+  /* Inset, because the option sits inside a 4px-padded scrolling box where an
+     outward ring is clipped on the first and last row. */
+  outline: 2px solid var(--eg-primary);
+  outline-offset: -2px;
+}

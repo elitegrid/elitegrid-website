@@ -22,9 +22,9 @@ Vanilla JS gives you two equally valid ways to get an API object for a `grid`, b
 `buildGridAPI(grid)` is a plain function: pass it the `GridInstance` from `createGrid()`, get an API object back, synchronously, any time — even before you've called `mount()`.
 
 ```ts
-import { createGrid, buildGridAPI, mount } from '@elitegrid/vanilla'
+import { createGrid, AllModules, buildGridAPI, mount } from '@elitegrid/vanilla'
 
-const grid = createGrid<User>({ columns, data })
+const grid = createGrid<User>({ columns, data, modules: [AllModules] })
 const api = buildGridAPI(grid)
 
 document.getElementById('export-btn')!.addEventListener('click', () => {
@@ -40,6 +40,7 @@ mount(grid, document.getElementById('grid-container'))
 
 ```ts
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   events: {
@@ -203,7 +204,7 @@ unsubscribe()
 An engine created with `createGrid()` lives until something explicitly tears it down — fine for a single grid that lives for the whole page. Three layers can be cleaned up independently, from lightest to heaviest:
 
 ```ts
-const grid = createGrid<User>({ columns, data })
+const grid = createGrid<User>({ columns, data, modules: [AllModules] })
 const dispose = mount(grid, container)
 
 // 1. Unmount the DOM only, keep the engine alive (rare — you'd remount later)
@@ -224,4 +225,4 @@ Any `unsubscribe()` functions you got from `grid.kernel.store.subscribe(...)` or
 
 ---
 
-Next: [13 · Accessibility](/docs/vanilla/accessibility)
+Next: [Localization & State](/docs/vanilla/localization-and-state)

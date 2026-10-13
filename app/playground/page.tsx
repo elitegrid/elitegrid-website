@@ -193,7 +193,7 @@ const REACT_EXAMPLES: Record<ExampleKey, ExampleDef> = {
     badge: '10K rows',
     desc: '10,000 rows rendered with virtual scrolling — buttery smooth at 60fps',
     filename: 'Performance.tsx',
-    code: `import { createGrid, Grid } from '@elitegrid/react'
+    code: `import { createGrid, Grid, AllModules } from '@elitegrid/react'
 
 const DEPTS     = ['Engineering','Design','Marketing','HR','Sales','Finance']
 const LOCATIONS = ['New York','London','Berlin','Tokyo','Sydney','Toronto']
@@ -201,6 +201,7 @@ const NAMES     = ['Alice','Bob','Carol','David','Eva','Frank','Grace','Henry',
                    'Isabel','Jack','Karen','Leo','Mia','Nate','Olivia','Pete']
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'id',       header: 'ID',         size: { width: 90 } },
     { field: 'name',     header: 'Name',       size: { flex: 1, minWidth: 140 },
@@ -239,9 +240,10 @@ export default function App() {
     badge: 'Live fetch',
     desc: 'Fetch from a real API — sort, filter and paginate live data instantly',
     filename: 'RealAPI.tsx',
-    code: `import { createGrid, Grid } from '@elitegrid/react'
+    code: `import { createGrid, Grid, AllModules } from '@elitegrid/react'
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'id',      header: 'ID',      size: { width: 80 } },
     { field: 'name',    header: 'Name',    size: { flex: 1, minWidth: 140 },
@@ -284,9 +286,10 @@ export default function App() {
     badge: 'Validated',
     desc: 'Double-click any cell to edit — type-safe validators, dropdowns, Tab/Enter nav',
     filename: 'Editable.tsx',
-    code: `import { createGrid, Grid } from '@elitegrid/react'
+    code: `import { createGrid, Grid, AllModules } from '@elitegrid/react'
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 },
       edit: { enabled: true, type: 'text',
@@ -342,11 +345,12 @@ export default function App() {
     badge: 'Multi-scope',
     desc: 'Export all, filtered, or selected rows — with separate export formatters',
     filename: 'Export.tsx',
-    code: `import { createGrid, Grid } from '@elitegrid/react'
+    code: `import { createGrid, Grid, AllModules } from '@elitegrid/react'
 
 let api: any = null
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'id',     header: 'ID',         size: { width: 80 } },
     { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 }, filter: { type: 'text' } },
@@ -406,7 +410,7 @@ const VUE_EXAMPLES: Record<ExampleKey, ExampleDef> = {
     desc: 'Identical config, Vue 3 render function — 10,000 rows, same 60fps performance',
     filename: 'Performance.ts',
     code: `import { defineComponent, h } from 'vue'
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, Grid, AllModules } from '@elitegrid/vue'
 
 const DEPTS     = ['Engineering','Design','Marketing','HR','Sales','Finance']
 const LOCATIONS = ['New York','London','Berlin','Tokyo','Sydney','Toronto']
@@ -414,6 +418,7 @@ const NAMES     = ['Alice','Bob','Carol','David','Eva','Frank','Grace','Henry',
                    'Isabel','Jack','Karen','Leo','Mia','Nate','Olivia','Pete']
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'id',       header: 'ID',         size: { width: 90 } },
     { field: 'name',     header: 'Name',       size: { flex: 1, minWidth: 140 },
@@ -455,9 +460,10 @@ export default defineComponent({
     desc: 'Fetch live API data in Vue 3 — same grouped config, same onReady callback',
     filename: 'RealAPI.ts',
     code: `import { defineComponent, h } from 'vue'
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, Grid, AllModules } from '@elitegrid/vue'
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'id',      header: 'ID',      size: { width: 80 } },
     { field: 'name',    header: 'Name',    size: { flex: 1, minWidth: 140 },
@@ -503,9 +509,10 @@ export default defineComponent({
     desc: 'Same type-safe inline editing in Vue 3 — identical validators and dropdown config',
     filename: 'Editable.ts',
     code: `import { defineComponent, h } from 'vue'
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, Grid, AllModules } from '@elitegrid/vue'
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 },
       edit: { enabled: true, type: 'text',
@@ -563,11 +570,12 @@ export default defineComponent({
     desc: 'Export all, filtered, or selected rows from a Vue 3 component via the Grid API',
     filename: 'Export.ts',
     code: `import { defineComponent, h } from 'vue'
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, Grid, AllModules } from '@elitegrid/vue'
 
 let api: any = null
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'id',     header: 'ID',         size: { width: 80 } },
     { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 }, filter: { type: 'text' } },
@@ -630,7 +638,7 @@ const VANILLA_EXAMPLES: Record<ExampleKey, ExampleDef> = {
     badge: '10K rows',
     desc: 'Identical config, zero framework — 10,000 rows, same 60fps performance',
     filename: 'performance.ts',
-    code: `import { createGrid, mount } from '@elitegrid/vanilla'
+    code: `import { createGrid, mount, AllModules } from '@elitegrid/vanilla'
 
 const DEPTS     = ['Engineering','Design','Marketing','HR','Sales','Finance']
 const LOCATIONS = ['New York','London','Berlin','Tokyo','Sydney','Toronto']
@@ -638,6 +646,7 @@ const NAMES     = ['Alice','Bob','Carol','David','Eva','Frank','Grace','Henry',
                    'Isabel','Jack','Karen','Leo','Mia','Nate','Olivia','Pete']
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'id',       header: 'ID',         size: { width: 90 } },
     { field: 'name',     header: 'Name',       size: { flex: 1, minWidth: 140 },
@@ -675,9 +684,10 @@ mount(grid, document.getElementById('grid-container'))`,
     badge: 'Live fetch',
     desc: 'Fetch from a real API — sort, filter and paginate live data, zero framework glue',
     filename: 'real-api.ts',
-    code: `import { createGrid, mount } from '@elitegrid/vanilla'
+    code: `import { createGrid, mount, AllModules } from '@elitegrid/vanilla'
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'id',      header: 'ID',      size: { width: 80 } },
     { field: 'name',    header: 'Name',    size: { flex: 1, minWidth: 140 },
@@ -718,9 +728,10 @@ mount(grid, document.getElementById('grid-container'))`,
     badge: 'Validated',
     desc: 'Double-click any cell to edit — type-safe validators, dropdowns, Tab/Enter nav',
     filename: 'editable.ts',
-    code: `import { createGrid, mount } from '@elitegrid/vanilla'
+    code: `import { createGrid, mount, AllModules } from '@elitegrid/vanilla'
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 },
       edit: { enabled: true, type: 'text',
@@ -781,11 +792,12 @@ mount(grid, gridEl)`,
     badge: 'Multi-scope',
     desc: 'Export all, filtered, or selected rows — with separate export formatters',
     filename: 'export.ts',
-    code: `import { createGrid, mount } from '@elitegrid/vanilla'
+    code: `import { createGrid, mount, AllModules } from '@elitegrid/vanilla'
 
 let api: any = null
 
 const grid = createGrid({
+  modules: [AllModules],
   columns: [
     { field: 'id',     header: 'ID',         size: { width: 80 } },
     { field: 'name',   header: 'Name',       size: { flex: 1, minWidth: 140 }, filter: { type: 'text' } },

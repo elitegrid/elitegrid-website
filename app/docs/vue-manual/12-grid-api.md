@@ -20,12 +20,13 @@ You receive it in the `onReady` event. The common pattern is to stash it in a `r
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, AllModules, Grid } from '@elitegrid/vue'
 import type { GridAPI } from '@elitegrid/vue'
 
 const api = ref<GridAPI<User> | null>(null)
 
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   events: {
@@ -216,4 +217,4 @@ const grid = useCreateGrid<User>({ columns, data }) // destroyed on unmount, for
 
 ---
 
-Next: [13 · Accessibility](/docs/vue/accessibility)
+Next: [Localization & State](/docs/vue/localization-and-state)

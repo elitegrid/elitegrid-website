@@ -28,6 +28,7 @@ The `scroll.bufferSize` controls how many extra rows are rendered just outside t
 
 ```tsx
 const grid = createGrid<Row>({
+  modules: [AllModules],
   columns,
   data: millionRows,
   scroll: { bufferSize: 30 }, // smoother fast-scroll for heavy datasets
@@ -48,7 +49,9 @@ You do **not** need pagination for performance — virtualization already handle
 
 So far we've assumed all your rows are already in the browser (the `data` array). That works wonderfully up to tens of thousands of rows. But some datasets are simply too big to download in one go — millions of records, or data that changes constantly on the server.
 
-For those cases, provide a `dataSource` instead of `data`. This flips the model: instead of you handing the grid everything, the grid asks **you** for one page at a time, and you fetch just that page from your server. Because the server only sends the rows currently needed, the browser stays light. Sorting, filtering, and paging then happen on the server (it has all the data), and the grid tells your `getRows` function the current sort/filter/page so your query can honour them.
+For those cases, provide a `dataSource` instead of `data`. This flips the model: instead of you handing the grid everything, the grid asks **you** for one page at a time, and you fetch just that page from your server. Because the server only sends the rows currently needed, the browser stays light. The grid tells your `getRows` function the current sort, filter and page, so your query decides **which rows** come back.
+
+> It decides which rows, not who orders them. The grid still sorts and filters the rows it currently holds, and there is no mode that turns that off. Honouring `sortModel` server-side is what keeps page 2 consistent with page 1 — a source that ignores it returns later pages from an unsorted set, which looks right inside a page and wrong across pages.
 
 > **`async` and `Promise` (used below).** Fetching from a server takes time, so `getRows` is marked `async` and returns a `Promise` — a placeholder for "a value that will arrive later". The `await` keyword pauses inside the function until the network response comes back. The grid shows its loading overlay (see [Chapter 09](/docs/react/appearance#loading-state)) while it waits.
 
@@ -77,6 +80,7 @@ const serverData: IDataSource<User> = {
 }
 
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   dataSource: serverData,   // ← use dataSource instead of data
   pagination: { enabled: true, pageSize: 50 },

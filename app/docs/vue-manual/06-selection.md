@@ -22,6 +22,7 @@ The `mode` option decides how many rows can be ticked at once:
 
 ```ts
 const grid = createGrid<User>({
+  modules: [SelectionModule],
   columns,
   data,
   selection: {
@@ -168,6 +169,7 @@ To open the grid with certain rows already selected (e.g. restoring a saved sele
 
 ```ts
 const grid = createGrid<User>({
+  modules: [SelectionModule],
   columns,
   data,
   selection: { mode: 'multiple' },
@@ -188,7 +190,7 @@ Checkbox multi-select with a live "N selected" readout, using the `useSelectionS
 
 ```ts
 import { defineComponent, h } from 'vue'
-import { createGrid, Grid, useSelectionState, type GridAPI } from '@elitegrid/vue'
+import { createGrid, SelectionModule, Grid, useSelectionState, type GridAPI } from '@elitegrid/vue'
 
 interface Employee {
   id: number
@@ -213,6 +215,7 @@ const employees: Employee[] = [
 let api: GridAPI<Employee> | null = null
 
 const grid = createGrid<Employee>({
+  modules: [SelectionModule],
   columns: [
     { field: 'name', header: 'Name', size: { flex: 2 } },
     { field: 'department', header: 'Department', size: { flex: 1.5 } },

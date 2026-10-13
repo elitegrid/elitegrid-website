@@ -1,4 +1,35 @@
+# Everything is open to every crawler, including the AI ones.
+# Spelled out rather than left to the wildcard: the wildcard already
+# allows these, but a future blanket Disallow would silently cut the
+# site out of AI answers, and an explicit block is harder to add by
+# accident. robots.txt is the mechanism OpenAI, Anthropic and Google
+# document for this — llms.txt is not a crawler-control file.
 User-agent: *
+Allow: /
+
+# OpenAI: GPTBot trains, OAI-SearchBot answers, ChatGPT-User fetches live.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+# Google AI Overviews and Gemini grounding
+User-agent: Google-Extended
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
 Allow: /
 
 Sitemap: https://elitegrid.dev/sitemap.xml

@@ -5,6 +5,8 @@ import { getManual, getChapter, getChapterNeighbors, frameworks, getGroupLabel }
 import DocsToc from '@/components/docs/DocsToc'
 import DocsProse from '@/components/docs/DocsProse'
 import DocsHelpful from '@/components/docs/DocsHelpful'
+import { pageMetadata } from '@/lib/seo'
+import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 
 export async function generateStaticParams() {
   const params: { framework: string; slug: string }[] = []
@@ -28,10 +30,11 @@ export async function generateMetadata({
   const chapter = getChapter(framework, slug)
   if (!chapter) return {}
   const frameworkLabel = manual ? `${manual.label} ` : ''
-  return {
+  return pageMetadata({
     title: `${chapter.title} | EliteGrid ${frameworkLabel}Grid Library Docs`,
     description: `${chapter.blurb} Learn about ${chapter.title.toLowerCase()} in the EliteGrid ${framework} data grid and table library documentation.`,
-  }
+    path: `/docs/${framework}/${slug}`,
+  })
 }
 
 export default async function DocsChapterPage({
@@ -48,6 +51,13 @@ export default async function DocsChapterPage({
 
   return (
     <div className="flex min-w-0">
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Docs', path: '/docs' },
+          { name: manual.label, path: `/docs/${framework}` },
+          { name: chapter.title, path: `/docs/${framework}/${slug}` },
+        ]}
+      />
       <main className="flex-1 min-w-0 max-w-[740px] px-5 md:px-10 pt-8 md:pt-12 pb-[60px] md:pb-20 mx-auto xl:mx-0">
         {/* Breadcrumb */}
         <div className="flex items-center gap-1.5 text-[12.5px] text-[#a3a3a3] dark:text-[#374151] mb-6 flex-wrap">

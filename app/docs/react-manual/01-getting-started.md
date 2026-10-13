@@ -75,9 +75,10 @@ const products: Product[] = [
 Call `createGrid()` **outside** your component. Pass it two things to start: `columns` (how to display each field) and `data` (your rows).
 
 ```tsx
-import { createGrid } from '@elitegrid/react'
+import { createGrid, AllModules } from '@elitegrid/react'
 
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Product' },
     { field: 'price', header: 'Price' },
@@ -117,7 +118,7 @@ export default function App() {
 ## The complete first example
 
 ```tsx
-import { createGrid, Grid } from '@elitegrid/react'
+import { createGrid, AllModules, Grid } from '@elitegrid/react'
 import '@elitegrid/react/styles.css'
 
 interface Product {
@@ -134,6 +135,7 @@ const products: Product[] = [
 ]
 
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Product' },
     { field: 'price', header: 'Price' },
@@ -167,7 +169,7 @@ By declaring `const grid = createGrid(...)` at module scope (outside any compone
 
 ```tsx
 // ✅ Module scope — built once
-const grid = createGrid<Product>({ columns, data })
+const grid = createGrid<Product>({ columns, data, modules: [AllModules] })
 
 export default function App() {
   return <Grid grid={grid} />   // re-renders reuse the same engine
@@ -186,6 +188,7 @@ If your unique field is named something else, tell the grid:
 
 ```tsx
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [...],
   data: products,
   rowId: 'sku',          // a different field name
@@ -196,6 +199,7 @@ You can also pass a function if the ID is computed:
 
 ```tsx
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [...],
   data: products,
   rowId: (row) => `${row.category}-${row.name}`,
@@ -217,4 +221,4 @@ const grid = createGrid<Product>({
 
 ---
 
-Next: [02 · Columns](/docs/react/columns)
+Next: [Modules](/docs/react/modules)

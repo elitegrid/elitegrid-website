@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ThemeToggle from './ThemeToggle'
+import Brand from '../Brand'
 
 const navLinkClass =
   'text-[14px] font-medium text-[#525252] dark:text-[#7a8399] hover:text-[#18181b] dark:hover:text-[#edf0fa] transition-colors inline-flex items-center gap-1.5'
@@ -26,21 +27,12 @@ export default function Nav() {
           : 'bg-transparent border-transparent',
       ].join(' ')}
     >
-      <a href="#" className="flex items-center gap-2.5 shrink-0">
-        <div className="w-[30px] h-[30px] rounded-lg flex items-center justify-center bg-gradient-to-br from-[#5b21b6] dark:from-[#7c3aed] to-[#a855f7] shadow-[0_0_14px_rgba(91,33,182,0.3)]">
-          <svg width="19" height="19" viewBox="0 0 48 48" fill="none">
-            <rect x="8" y="28" width="8" height="12" rx="2" fill="white" fillOpacity="0.3" />
-            <rect x="19.5" y="21" width="8" height="19" rx="2" fill="white" fillOpacity="0.6" />
-            <rect x="31" y="13" width="8" height="27" rx="2" fill="white" />
-            <circle cx="35" cy="11" r="2.5" fill="#c4b5fd" />
-          </svg>
-        </div>
-        <span className="font-heading font-bold text-[17px] tracking-[-0.02em] text-[#18181b] dark:text-[#edf0fa]">
-          EliteGrid
-        </span>
-      </a>
+      <Brand href="#" />
 
       <div className="hidden min-[900px]:flex items-center gap-8">
+        <Link href="/demos" className={navLinkClass}>
+          Demos
+        </Link>
         <Link href="/docs" className={navLinkClass}>
           Docs
         </Link>

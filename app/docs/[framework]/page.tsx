@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { getManual, frameworks } from '@/lib/docs'
 import DocsToc from '@/components/docs/DocsToc'
 import DocsProse from '@/components/docs/DocsProse'
+import { pageMetadata } from '@/lib/seo'
 
 export async function generateStaticParams() {
   return frameworks.map((f) => ({ framework: f.framework }))
@@ -17,10 +18,11 @@ export async function generateMetadata({
   const { framework } = await params
   const manual = getManual(framework)
   if (!manual) return {}
-  return {
+  return pageMetadata({
     title: `${manual.label} Grid Library Documentation — EliteGrid`,
     description: `${manual.label} data grid and table library manual. ${manual.overview.blurb}`,
-  }
+    path: `/docs/${framework}`,
+  })
 }
 
 export default async function DocsOverviewPage({

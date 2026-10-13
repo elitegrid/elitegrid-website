@@ -24,6 +24,7 @@ Leave it **off** (the default) when an endless, smooth scroll feels more natural
 
 ```ts
 const grid = createGrid<User>({
+  modules: [PaginationModule],
   columns,
   data,
   pagination: {
@@ -115,6 +116,7 @@ events: {
 
 ```ts
 const grid = createGrid<User>({
+  modules: [PaginationModule],
   columns: [
     { field: 'name', header: 'Name' },
     { field: 'email', header: 'Email' },
@@ -198,7 +200,7 @@ const pagination = usePaginationState(props.grid)
 
 ```ts
 import { defineComponent, h } from 'vue'
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, PaginationModule, Grid } from '@elitegrid/vue'
 
 interface Contact {
   id: number
@@ -219,6 +221,7 @@ const contacts: Contact[] = Array.from({ length: 42 }, (_, i) => ({
 }))
 
 const grid = createGrid<Contact>({
+  modules: [PaginationModule],
   columns: [
     { field: 'name', header: 'Name', size: { flex: 1.5 } },
     { field: 'company', header: 'Company', size: { flex: 1.5 } },

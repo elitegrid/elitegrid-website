@@ -8,6 +8,7 @@ Events are callbacks the grid calls when something happens — a row is clicked,
 
 ```tsx
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   events: {
@@ -79,6 +80,7 @@ const grid = createGrid<User>({
 
 ```tsx
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   selection: { mode: 'multiple' },

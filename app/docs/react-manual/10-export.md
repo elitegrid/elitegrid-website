@@ -20,6 +20,7 @@ EliteGrid can download the grid's data as a CSV file. You set defaults in the `e
 
 ```tsx
 const grid = createGrid<Employee>({
+  modules: [ExportModule],
   columns,
   data,
   export: {
@@ -144,4 +145,4 @@ If names or text with accents (`é`, `ü`, `ñ`…) show up as garbled symbols a
 
 ---
 
-Next: [11 · Events](/docs/react/events)
+Next: [Menus & Clipboard](/docs/react/menus-and-clipboard)
