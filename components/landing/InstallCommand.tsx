@@ -54,7 +54,7 @@ export function InstallButton({ className }: { className?: string }) {
         </>
       ) : (
         <>
-          npm install @elitegrid/react <CopyIcon />
+          npm i @elitegrid/react <CopyIcon />
         </>
       )}
     </button>

@@ -76,9 +76,10 @@ Call `createGrid()` inside `<script setup>`. Pass it two things to start: `colum
 
 ```vue
 <script setup lang="ts">
-import { createGrid } from '@elitegrid/vue'
+import { createGrid, AllModules } from '@elitegrid/vue'
 
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Product' },
     { field: 'price', header: 'Price' },
@@ -120,7 +121,7 @@ import { Grid } from '@elitegrid/vue'
 
 ```vue
 <script setup lang="ts">
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, AllModules, Grid } from '@elitegrid/vue'
 import '@elitegrid/vue/styles.css'
 
 interface Product {
@@ -137,6 +138,7 @@ const products: Product[] = [
 ]
 
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Product' },
     { field: 'price', header: 'Price' },
@@ -161,7 +163,7 @@ The same example, runnable right here in the page. Browser sandboxes can't compi
 
 ```ts
 import { defineComponent, h } from 'vue'
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, AllModules, Grid } from '@elitegrid/vue'
 
 interface Product {
   id: number
@@ -177,6 +179,7 @@ const products: Product[] = [
 ]
 
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Product' },
     { field: 'price', header: 'Price' },
@@ -205,7 +208,7 @@ A Vue `<script setup>` block runs **once** — when the component instance is cr
 ```vue
 <script setup lang="ts">
 // ✅ Runs once per component instance — no special handling needed
-const grid = createGrid<Product>({ columns, data })
+const grid = createGrid<Product>({ columns, data, modules: [AllModules] })
 </script>
 
 <template>
@@ -233,6 +236,7 @@ If your unique field is named something else, tell the grid:
 
 ```ts
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [...],
   data: products,
   rowId: 'sku',          // a different field name
@@ -243,6 +247,7 @@ You can also pass a function if the ID is computed:
 
 ```ts
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [...],
   data: products,
   rowId: (row) => `${row.category}-${row.name}`,
@@ -265,4 +270,4 @@ const grid = createGrid<Product>({
 
 ---
 
-Next: [02 · Columns](/docs/vue/columns)
+Next: [Modules](/docs/vue/modules)

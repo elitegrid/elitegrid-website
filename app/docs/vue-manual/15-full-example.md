@@ -7,7 +7,7 @@ The same code lives as a runnable file in [`examples/EmployeeGrid.vue`](/docs/vu
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { createGrid, Grid, useSelectionState } from '@elitegrid/vue'
+import { createGrid, AllModules, Grid, useSelectionState } from '@elitegrid/vue'
 import type { GridAPI } from '@elitegrid/vue'
 import '@elitegrid/vue/styles.css'
 
@@ -36,6 +36,7 @@ const employees: Employee[] = Array.from({ length: 200 }, (_, i) => ({
 const api = ref<GridAPI<Employee> | null>(null)
 
 const grid = createGrid<Employee>({
+  modules: [AllModules],
   // unique ID field — `id` is the default, shown here for clarity
   rowId: 'id',
 

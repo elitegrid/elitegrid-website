@@ -8,6 +8,7 @@ Events are callbacks the grid calls when something happens — a row is clicked,
 
 ```ts
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   events: {
@@ -78,9 +79,10 @@ const grid = createGrid<User>({
 ## A worked example
 
 ```ts
-import { createGrid, mount } from '@elitegrid/vanilla'
+import { createGrid, AllModules, mount } from '@elitegrid/vanilla'
 
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   selection: { mode: 'multiple' },
@@ -118,6 +120,7 @@ mount(grid, document.getElementById('grid-container'))
 let count = 0
 
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   events: {

@@ -6,7 +6,7 @@ The same code lives as a runnable file in [`examples/EmployeeGrid.tsx`](/docs/re
 
 ```tsx
 import { useEffect, useState } from 'react'
-import { createGrid, Grid } from '@elitegrid/react'
+import { createGrid, AllModules, Grid } from '@elitegrid/react'
 import type { GridAPI } from '@elitegrid/react'
 import '@elitegrid/react/styles.css'
 
@@ -33,6 +33,7 @@ const employees: Employee[] = Array.from({ length: 200 }, (_, i) => ({
 
 // ── 2. Create the grid ONCE, outside the component ───────────────────
 const grid = createGrid<Employee>({
+  modules: [AllModules],
   // unique ID field — `id` is the default, shown here for clarity
   rowId: 'id',
 

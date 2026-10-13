@@ -36,6 +36,7 @@ EliteGrid is built to work with keyboards and screen readers out of the box. The
 
 ```ts
 const grid = createGrid<Employee>({
+  modules: [AllModules],
   columns,
   data,
   accessibility: {

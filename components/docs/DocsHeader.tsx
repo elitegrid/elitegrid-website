@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import ThemeToggle from '@/components/landing/ThemeToggle'
+import Brand from '@/components/Brand'
 
 interface SearchEntry {
   slug: string
@@ -62,22 +63,7 @@ export default function DocsHeader({
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-[200] h-[60px] bg-[rgba(245,244,239,0.9)] dark:bg-[rgba(9,9,14,0.9)] border-b border-black/[0.08] dark:border-white/[0.07] backdrop-blur-xl flex items-center px-4 min-[900px]:px-7 gap-0">
-      <Link href="/" className="flex items-center gap-2.5 shrink-0 w-auto min-[900px]:w-[300px]">
-        <div className="w-7 h-7 rounded-[7px] flex items-center justify-center bg-gradient-to-br from-[#5b21b6] dark:from-[#7c3aed] to-[#a855f7] shrink-0">
-          <svg width="17" height="17" viewBox="0 0 48 48" fill="none">
-            <rect x="8" y="28" width="8" height="12" rx="2" fill="white" fillOpacity="0.3" />
-            <rect x="19.5" y="21" width="8" height="19" rx="2" fill="white" fillOpacity="0.6" />
-            <rect x="31" y="13" width="8" height="27" rx="2" fill="white" />
-            <circle cx="35" cy="11" r="2.5" fill="#c4b5fd" />
-          </svg>
-        </div>
-        <span className="font-heading font-bold text-[18px] tracking-[-0.02em] text-[#18181b] dark:text-[#edf0fa]">
-          EliteGrid
-        </span>
-        <span className="font-code text-[10px] font-bold text-[#a3a3a3] dark:text-[#374151] bg-black/[0.025] dark:bg-white/[0.025] border border-black/[0.08] dark:border-white/[0.07] px-1.5 py-0.5 rounded ml-0.5">
-          Docs
-        </span>
-      </Link>
+      <Brand badge="Docs" className="w-auto min-[900px]:w-[300px]" />
 
       <div className="hidden min-[900px]:block w-px h-5 bg-black/[0.12] dark:bg-white/[0.11] mx-6 shrink-0" />
 

@@ -1,6 +1,8 @@
 # 03 · Sorting
 
-Sorting is **on by default**. Click a column header to sort ascending, click again for descending, click a third time to clear. This chapter shows how to configure it.
+Sorting arrives with **`SortModule`**. Register it and sorting is then on by default — click a column header to sort ascending, click again for descending, click a third time to clear. This chapter shows how to configure it.
+
+> **Register the module first.** A grid that never names `SortModule` (or `AllModules`, which contains it) has no sort behaviour at all: headers render, but clicking one does nothing and no sort arrow appears. That is deliberate — a feature you do not register is not in your bundle. See [Chapter 02 · Modules](/docs/react/modules).
 
 > **Jargon check — "ascending" vs "descending":** *Ascending* (`asc`) goes small → large: A→Z for text, 0→9 for numbers, oldest → newest for dates. *Descending* (`desc`) is the reverse. The little arrow in the header shows which way the column is currently sorted.
 
@@ -24,6 +26,7 @@ These go in the `sorting` group of `createGrid`:
 
 ```tsx
 const grid = createGrid<User>({
+  modules: [SortModule],
   columns,
   data,
   sorting: {
@@ -152,6 +155,7 @@ Pass an `onSortChange` callback in `events` to run code whenever the sort change
 
 ```tsx
 const grid = createGrid<User>({
+  modules: [SortModule],
   columns,
   data,
   events: {
@@ -194,6 +198,7 @@ A sort the user picked usually shouldn't reset every time they refresh the page.
 const SORT_KEY = 'usersGrid.sort'
 
 const grid = createGrid<User>({
+  modules: [SortModule],
   columns,
   data,
   events: {
@@ -217,7 +222,7 @@ const grid = createGrid<User>({
 Multi-column sort (hold **Shift** and click a second header) plus the custom `priority` comparator from earlier in this chapter, so `high → medium → low` sorts correctly instead of alphabetically. The button demonstrates the Grid API's `clearSort()`.
 
 ```tsx
-import { createGrid, Grid, type GridAPI } from '@elitegrid/react'
+import { createGrid, SortModule, Grid, type GridAPI } from '@elitegrid/react'
 import '@elitegrid/react/styles.css'
 
 interface Task {
@@ -246,6 +251,7 @@ const tasks: Task[] = [
 let api: GridAPI<Task> | null = null
 
 const grid = createGrid<Task>({
+  modules: [SortModule],
   columns: [
     { field: 'title', header: 'Task', size: { flex: 2 } },
     {

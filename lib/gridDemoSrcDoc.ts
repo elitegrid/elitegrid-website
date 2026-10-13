@@ -11,10 +11,22 @@ export interface GridDemoOptions {
   rowCount?: number
   pageSize?: number
   pageSizeOptions?: number[]
+  /**
+   * 'full' — every column, flat. The standalone demo.
+   * 'hero' — five columns, grouped by department with a grand total, and
+   *   renderers on three of them. The hero column is ~440px wide, so seven
+   *   flat text columns there showed Name, Department, Role and a scrollbar.
+   */
+  variant?: 'full' | 'hero'
 }
 
 export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): string {
-  const { rowCount = 500, pageSize = 25, pageSizeOptions = [10, 25, 50, 100] } = opts
+  const { pageSize = 25, pageSizeOptions = [10, 25, 50, 100], variant = 'full' } = opts
+  // The hero's job is to prove scale, so it gets 100k rows rather than 500.
+  // They cost ~8 MB and a few hundred ms to generate, which is why only the
+  // hero asks for them — the standalone demo stays at 500 so the page that
+  // embeds several of them is not generating a million rows.
+  const rowCount = opts.rowCount ?? (variant === 'hero' ? 100000 : 500)
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -23,6 +35,14 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <!-- The library's real stylesheet, shipped beside the bundles by
+       \`pnpm build:cdn\`. Required, not optional: the column menu, context menu,
+       filter popovers and cell editors are styled only here, and without it
+       they render as unstyled text dropped into the document flow. Hand-rolling
+       the rules below was survivable while the CDN bundle contained none of
+       those surfaces; it stopped being survivable the moment it contained all
+       of them. -->
+  <link rel="stylesheet" href="${origin}/cdn/react.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body, #root { height: 100%; }
@@ -44,6 +64,23 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
       --eg-empty-icon-bg: #f3f4f6; --eg-overlay-bg: rgba(255,255,255,0.95);
       --eg-btn-bg: #f3f4f6; --eg-btn-text: #374151;
     }
+
+    .cell-person { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .cell-person .avatar {
+      width: 26px; height: 26px; border-radius: 999px; flex: none; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.625rem; font-weight: 600;
+    }
+    .cell-person .person-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+    .cell-person .person-name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cell-person .person-mail { font-size: 0.6875rem; color: var(--eg-muted-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .cell-score { display: flex; align-items: center; gap: 8px; width: 100%; }
+    .cell-score .score-track { flex: 1; height: 5px; border-radius: 999px; background: var(--eg-skeleton-base); overflow: hidden; }
+    .cell-score .score-fill { display: block; height: 5px; border-radius: 999px; }
+    .cell-score .score-num { font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; color: var(--eg-muted-text); }
+
+    .cell-spark { width: 100%; height: 26px; display: block; }
 
     .yg-cell.cell-status-active span   { background: rgba(22,163,74,0.12); color: #16a34a; border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; }
     .yg-cell.cell-status-remote span   { background: rgba(37,99,235,0.12); color: #2563eb; border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; }
@@ -107,7 +144,7 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
   <script type="module">
     import React from 'react'
     import { createRoot } from 'react-dom/client'
-    import { createGrid, Grid } from '@elitegrid/react'
+    import { createGrid, Grid, AllModules } from '@elitegrid/react'
 
     // ── Data generation ───────────────────────────────────────────
     const DEPTS = ['Engineering','Design','Product','Marketing','Sales','HR','Finance','Support']
@@ -141,6 +178,8 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
           joinDate:   (2019 + (i % 6)) + '-' +
                       String(1 + (i * 7)  % 12).padStart(2, '0') + '-' +
                       String(1 + (i * 13) % 28).padStart(2, '0'),
+          email:      (FN[i % FN.length] + '.' + LN[Math.floor(i / FN.length) % LN.length]).toLowerCase() + '@elitegrid.dev',
+          score:      38 + (i * 29) % 60,
         }
       })
     }
@@ -260,7 +299,11 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
         field: 'salary', header: 'Salary',
         size:    { flex: 1, minWidth: 110 },
         filter:  { type: 'number' },
-        display: { formatter: v => '$' + Number(v).toLocaleString(), cellClass: 'cell-salary' },
+        // 'en-US' explicitly — a bare toLocaleString() follows the VISITOR's
+        // locale, so a US salary rendered as "$1,20,000" for anyone browsing
+        // from an en-IN machine. Demo data is US data; the formatting has to
+        // say so rather than follow whoever is looking.
+        display: { formatter: v => '$' + Number(v).toLocaleString('en-US'), cellClass: 'cell-salary' },
         edit:    { enabled: true, type: 'number', min: 0, max: 500000, parser: raw => Number(raw) },
       },
       {
@@ -287,6 +330,113 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
       },
     ]
 
+    // ── Hero columns ──────────────────────────────────────────────
+    // Fewer columns, three of them rendered rather than formatted. This is
+    // the shape the landing page shows: what the grid can draw, not just
+    // what it can lay out.
+    const HUES = [265, 199, 38, 160, 330, 243, 174]
+    const h = React.createElement
+
+    function avatarCell(value, row) {
+      const initials = String(value).split(' ').map(w => w[0]).join('')
+      const hue = HUES[(row.id - 1) % HUES.length]
+      return h('div', { className: 'cell-person' },
+        h('span', { className: 'avatar', style: { background: 'hsl(' + hue + ' 62% 48%)' } }, initials),
+        h('span', { className: 'person-text' },
+          h('span', { className: 'person-name' }, value),
+          h('span', { className: 'person-mail' }, row.email),
+        ),
+      )
+    }
+
+    function scoreCell(value) {
+      const n = Number(value)
+      const colour = n >= 70 ? '#16a34a' : n >= 55 ? '#d97706' : '#dc2626'
+      return h('div', { className: 'cell-score' },
+        h('span', { className: 'score-track' },
+          h('span', { className: 'score-fill', style: { width: n + '%', background: colour } }),
+        ),
+        h('span', { className: 'score-num' }, n),
+      )
+    }
+
+    // The sparkline's twelve points are derived from the row id rather than
+    // stored on the row. The walk is seeded, so the same row always draws the
+    // same line — which was the reason it used to be generated up front — and
+    // 100k rows x 12 numbers is 1.2M numbers not held in memory.
+    function trendPoints(id) {
+      const i = id - 1
+      return Array.from({ length: 12 }, (_, k) => 30 + ((i * 17 + k * 23) % 55))
+    }
+
+    function trendCell(_value, row) {
+      const pts = trendPoints(row.id)
+      if (!pts) return null
+      const rising = pts[pts.length - 1] >= pts[0]
+      const d = pts.map((p, k) => (k * (92 / (pts.length - 1))).toFixed(1) + ',' + (26 - (p / 100) * 22).toFixed(1)).join(' ')
+      return h('svg', { className: 'cell-spark', viewBox: '0 0 92 26', preserveAspectRatio: 'none', role: 'img', 'aria-label': rising ? 'trending up' : 'trending down' },
+        h('polyline', { points: d, fill: 'none', stroke: rising ? '#16a34a' : '#dc2626', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' }),
+      )
+    }
+
+    // The hero is a full-width stack now, not a 538px right column, so these
+    // widths are set for ~1190px: the old minWidths summed to 552 and the
+    // panel was 538, which is what clipped Trend and put a scrollbar in the
+    // hero. Any column added here has to keep that sum under the container.
+    const HERO_COLUMNS = [
+      {
+        field: 'name', header: 'Employee',
+        size:   { flex: 1.9, minWidth: 220 },
+        filter: { type: 'text' },
+        display: { cellRenderer: avatarCell },
+        edit:   { enabled: true, type: 'text' },
+      },
+      {
+        // Defined but never drawn: keepGroupedColumns is false by default, so
+        // the grid hides it the moment it becomes the group. Dropping the
+        // definition instead left the group row with a count and no name.
+        field: 'department', header: 'Department',
+        size:   { flex: 1, minWidth: 110 },
+        filter: { type: 'text' },
+      },
+      {
+        field: 'role', header: 'Role',
+        size:   { flex: 1.2, minWidth: 130 },
+        filter: { type: 'text' },
+        edit:   { enabled: true, type: 'text' },
+      },
+      {
+        field: 'location', header: 'Location',
+        size:   { flex: 1, minWidth: 120 },
+        filter: { type: 'text' },
+        edit:   { enabled: true, type: 'dropdown', options: ['San Francisco','New York','Austin','Seattle','Chicago','London','Berlin','Toronto','Bangalore','Remote'] },
+      },
+      {
+        field: 'salary', header: 'Salary',
+        size:    { flex: 1.1, minWidth: 125 },
+        filter:  { type: 'number' },
+        display: { formatter: v => '$' + Number(v).toLocaleString('en-US'), cellClass: 'cell-salary' },
+        value:   {
+          aggregate: values => '$' + values.reduce((a, b) => a + Number(b), 0).toLocaleString('en-US'),
+        },
+        edit:    { enabled: true, type: 'number', min: 0, max: 500000, parser: raw => Number(raw) },
+      },
+      {
+        field: 'score', header: 'Score',
+        size:    { flex: 1, minWidth: 120 },
+        filter:  { type: 'number' },
+        display: { cellRenderer: scoreCell },
+        value:   {
+          aggregate: values => Math.round(values.reduce((a, b) => a + Number(b), 0) / values.length),
+        },
+      },
+      {
+        field: 'trend', header: 'Trend',
+        size:    { flex: 0.85, minWidth: 95 },
+        display: { cellRenderer: trendCell },
+      },
+    ]
+
     // Density is an appearance option baked in at createGrid() time — the
     // Grid component has no reactive setter for it, so changing density
     // means tearing down and rebuilding the grid instance + React root.
@@ -308,20 +458,52 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
 
       const sizes = DENSITY_SIZES[density] || DENSITY_SIZES.normal
 
+      const HERO = ${JSON.stringify(variant === 'hero')}
+
+      // What the strip under the grid reports. It covers createGrid plus
+      // React's first commit, read back after the browser has painted —
+      // timing createGrid alone would flatter the number by leaving the
+      // render out. Row generation sits outside it, the same way the
+      // benchmark harness measures mount rather than data setup.
+      // No self-timing here any more. The strip under the grid carries
+      // labels rather than measurements, so nothing needs a stopwatch.
+
       grid = createGrid({
-        columns: COLUMNS,
+        columns: HERO ? HERO_COLUMNS : COLUMNS,
+        modules: [AllModules],
         data,
         sorting:    { enabled: true, multiSort: true },
+        // Grouping is the hero's job: one glance should show a group row, its
+        // aggregates and a grand total, which a flat table cannot.
+        grouping:   HERO
+          ? {
+              model: ['department'],
+              expandedByDefault: 1,
+              grandTotal: 'bottom',
+              panel: false,
+              // 220 is the default and was half the old hero panel. The stacked
+              // hero is ~1190px wide, so the group column can hold the real
+              // header rather than an abbreviation.
+              groupColumn: { header: 'Department', width: 170, minWidth: 150 },
+            }
+          : undefined,
         filtering:  { enabled: true },
-        pagination: { enabled: true, pageSize: ${pageSize}, pageSizeOptions: ${JSON.stringify(pageSizeOptions)} },
-        selection:  { mode: 'multiple', showCheckboxes: true, selectOnRowClick: false },
+        // No pagination in the hero. Its bar took two lines and a third of the
+        // card's height, and its row count included group rows — "of 508"
+        // beside a "Total (500)" row reads as a bug. Scrolling 500 virtualized
+        // rows is also the better demo of what the grid actually does.
+        pagination: HERO
+          ? { enabled: false }
+          : { enabled: true, pageSize: ${pageSize}, pageSizeOptions: ${JSON.stringify(pageSizeOptions)} },
+        selection:  HERO
+          ? { mode: 'none' }
+          : { mode: 'multiple', showCheckboxes: true, selectOnRowClick: false },
         editing:    { enabled: true, trigger: 'doubleClick', confirmOnEnter: true, cancelOnEscape: true, moveOnTab: true },
         export:     { filename: 'elitegrid-demo', scope: 'filtered' },
         appearance: { rowStriping: true, showHoverHighlight: true, density, rowHeight: sizes.rowHeight, headerHeight: sizes.headerHeight },
         events: {
           onReady: api => {
             gridApi = api
-            window.parent.postMessage({ type: 'GRID_READY', totalCount: data.length }, '*')
           },
           onSelectionChange: rows => {
             window.parent.postMessage({ type: 'SELECTION_CHANGED', count: rows.length }, '*')
@@ -338,6 +520,10 @@ export function buildDemoSrcDoc(origin: string, opts: GridDemoOptions = {}): str
 
       root = createRoot(document.getElementById('grid-mount'))
       root.render(React.createElement(Grid, { grid }))
+
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        window.parent.postMessage({ type: 'GRID_READY', totalCount: data.length }, '*')
+      }))
     }
 
     mountGrid('normal')

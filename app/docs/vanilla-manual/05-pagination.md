@@ -24,6 +24,7 @@ Leave it **off** (the default) when an endless, smooth scroll feels more natural
 
 ```ts
 const grid = createGrid<User>({
+  modules: [PaginationModule],
   columns,
   data,
   pagination: {
@@ -115,6 +116,7 @@ events: {
 
 ```ts
 const grid = createGrid<User>({
+  modules: [PaginationModule],
   columns: [
     { field: 'name', header: 'Name' },
     { field: 'email', header: 'Email' },
@@ -197,7 +199,7 @@ nextBtn.addEventListener('click', () => grid.plugins.pagination.nextPage())
 42 rows with a custom `pageSize` and `pageSizeOptions` — use the page-size dropdown and prev/next controls at the bottom of the grid.
 
 ```ts
-import { createGrid, mount } from '@elitegrid/vanilla'
+import { createGrid, PaginationModule, mount } from '@elitegrid/vanilla'
 import '@elitegrid/vanilla/styles.css'
 
 interface Contact {
@@ -219,6 +221,7 @@ const contacts: Contact[] = Array.from({ length: 42 }, (_, i) => ({
 }))
 
 const grid = createGrid<Contact>({
+  modules: [PaginationModule],
   columns: [
     { field: 'name', header: 'Name', size: { flex: 1.5 } },
     { field: 'company', header: 'Company', size: { flex: 1.5 } },

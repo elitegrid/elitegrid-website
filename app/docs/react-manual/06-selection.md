@@ -22,6 +22,7 @@ The `mode` option decides how many rows can be ticked at once:
 
 ```tsx
 const grid = createGrid<User>({
+  modules: [SelectionModule],
   columns,
   data,
   selection: {
@@ -152,6 +153,7 @@ To open the grid with certain rows already selected (e.g. restoring a saved sele
 
 ```tsx
 const grid = createGrid<User>({
+  modules: [SelectionModule],
   columns,
   data,
   selection: { mode: 'multiple' },
@@ -172,7 +174,7 @@ Checkbox multi-select with a live "N selected" readout — `onSelectionChange` f
 
 ```tsx
 import { useEffect, useState } from 'react'
-import { createGrid, Grid, type GridAPI } from '@elitegrid/react'
+import { createGrid, SelectionModule, Grid, type GridAPI } from '@elitegrid/react'
 import '@elitegrid/react/styles.css'
 
 interface Employee {
@@ -199,6 +201,7 @@ let api: GridAPI<Employee> | null = null
 let onSelectionChanged: ((rows: Employee[]) => void) | null = null
 
 const grid = createGrid<Employee>({
+  modules: [SelectionModule],
   columns: [
     { field: 'name', header: 'Name', size: { flex: 2 } },
     { field: 'department', header: 'Department', size: { flex: 1.5 } },

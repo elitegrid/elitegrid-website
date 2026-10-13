@@ -17,7 +17,24 @@ const FEATURES = [
   'Virtual Scroll',
 ]
 
-export default function GridDemo() {
+export default function GridDemo({
+  /** Iframe height. The hero gets a shorter grid than the standalone section. */
+  height = 520,
+  /** The badge strip under the grid — off in the hero, where space is the constraint. */
+  showFeatures = true,
+  /** The density switch and row-count strip. Off in the hero for the same reason. */
+  showControls = true,
+  /** 'hero' asks the iframe for the grouped, rendered five-column shape. */
+  variant = 'full',
+  /** The measured strip under the grid: row count, mount time, column count. */
+  showStats = false,
+}: {
+  height?: number
+  showFeatures?: boolean
+  showControls?: boolean
+  variant?: 'full' | 'hero'
+  showStats?: boolean
+} = {}) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [density, setDensity] = useState<Density>('normal')
   const [selectedCount, setSelectedCount] = useState(0)
@@ -26,8 +43,8 @@ export default function GridDemo() {
   const [srcDoc, setSrcDoc] = useState(LOADING_DOC)
 
   useEffect(() => {
-    setSrcDoc(buildDemoSrcDoc(window.location.origin))
-  }, [])
+    setSrcDoc(buildDemoSrcDoc(window.location.origin, { variant }))
+  }, [variant])
 
   const send = useCallback((msg: object) => {
     iframeRef.current?.contentWindow?.postMessage(msg, '*')
@@ -67,12 +84,15 @@ export default function GridDemo() {
     setDensity(d)
     send({ type: 'SET_DENSITY', density: d })
   }
-  const handleExport = () => send({ type: 'EXPORT_CSV' })
+  // No handleExport: the grid renders its own export button (see the toolbar
+  // note below). The iframe still answers EXPORT_CSV, so nothing breaks if a
+  // caller is added back later.
 
   return (
     <div className="rounded-[14px] border border-black/[0.08] dark:border-white/[0.07] overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.09)] dark:shadow-[0_24px_60px_rgba(0,0,0,0.5)]">
 
       {/* ── Controls bar ─────────────────────────────────────────── */}
+      {showControls && (
       <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-black/[0.025] dark:bg-white/[0.025] border-b border-black/[0.08] dark:border-white/[0.07] flex-wrap">
 
         {/* Density */}
@@ -93,21 +113,21 @@ export default function GridDemo() {
           ))}
         </div>
 
+        {/* No Export button here any more. Configuring `export` makes the grid
+            render its OWN export button in its toolbar, so this wrapper's copy
+            put two "Export CSV" buttons on screen a few pixels apart. The
+            grid's own is the one to keep — it is the actual feature, and a
+            visitor should see where it really lives. */}
         <div className="flex items-center gap-2">
-          {/* Export */}
-          <button
-            onClick={handleExport}
-            className="px-3 py-1.5 rounded-lg text-[15px] font-bold font-body bg-[rgba(91,33,182,0.1)] text-[#7c3aed] border border-[rgba(91,33,182,0.25)] hover:bg-[rgba(91,33,182,0.18)] transition-all"
-          >
-            Export CSV
-          </button>
         </div>
       </div>
+      )}
 
       {/* ── Stats strip ──────────────────────────────────────────── */}
+      {showControls && (
       <div className="flex items-center gap-3 px-4 py-1.5 bg-black/[0.015] dark:bg-white/[0.015] border-b border-black/[0.06] dark:border-white/[0.04] font-code text-[14px] text-[#a3a3a3] dark:text-[#374151]">
         <span className={ready ? 'text-[#525252] dark:text-[#7a8399]' : ''}>
-          {filteredCount.toLocaleString()} rows
+          {filteredCount.toLocaleString('en-US')} rows
         </span>
         {selectedCount > 0 && (
           <span className="text-[#7c3aed]">{selectedCount} selected</span>
@@ -119,18 +139,41 @@ export default function GridDemo() {
           </span>
         )}
       </div>
+      )}
 
       {/* ── Grid iframe ───────────────────────────────────────────── */}
       <iframe
         ref={iframeRef}
         srcDoc={srcDoc}
         className="w-full block"
-        style={{ height: 520, border: 'none' }}
+        style={{ height, border: 'none' }}
         sandbox="allow-scripts allow-same-origin allow-downloads allow-forms"
         title="EliteGrid live demo"
       />
 
+
+      {/* ── Capability strip ─────────────────────────────────────── */}
+      {/* Labels, not measurements. Live timings were tried here and taken
+          out: a number that moves with the visitor's machine invites them
+          to judge the library by their worst tab, and a slow reading does
+          more damage than a fast one does good. */}
+      {showStats && (
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 px-4 py-2.5 bg-black/[0.015] dark:bg-white/[0.015] border-t border-black/[0.06] dark:border-white/[0.04] text-[12px] text-[#71717a] dark:text-[#7a8399]">
+        <span>
+          <strong className="font-code font-semibold text-[#18181b] dark:text-[#edf0fa]">100,000</strong> rows, all in the browser
+        </span>
+        <span className="w-px h-3 bg-black/[0.12] dark:bg-white/[0.12]" />
+        <span>grouped, with live totals</span>
+        <span className="w-px h-3 bg-black/[0.12] dark:bg-white/[0.12]" />
+        <span>row <em>and</em> column virtualization</span>
+        <span className="w-px h-3 bg-black/[0.12] dark:bg-white/[0.12]" />
+        <span className="hidden sm:inline">sort, filter and edit any cell</span>
+        <span className="hidden sm:inline w-px h-3 bg-black/[0.12] dark:bg-white/[0.12]" />
+        <span className="hidden md:inline">no pagination — that scrollbar is real</span>
+      </div>
+      )}
       {/* ── Feature badges ───────────────────────────────────────── */}
+      {showFeatures && (
       <div className="flex flex-wrap items-center gap-2 px-4 py-3 bg-black/[0.015] dark:bg-white/[0.015] border-t border-black/[0.06] dark:border-white/[0.04]">
         {FEATURES.map(f => (
           <span
@@ -142,6 +185,7 @@ export default function GridDemo() {
           </span>
         ))}
       </div>
+      )}
     </div>
   )
 }

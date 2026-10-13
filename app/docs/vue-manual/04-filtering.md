@@ -1,6 +1,8 @@
 # 04 · Filtering
 
-Filtering is **on by default**. Each column header shows a small funnel icon; clicking it opens a popover where the user picks an operator (like *contains*, *greater than*, *between*) and types a value. This chapter explains how to configure filter types and behaviour.
+Filtering arrives with **`FilterModule`**. Register it and each column header shows a small funnel icon; clicking it opens a popover where the user picks an operator (like *contains*, *greater than*, *between*) and types a value. This chapter explains how to configure filter types and behaviour.
+
+> **Register the module first.** Without `FilterModule` (or `AllModules`, which contains it) no funnel icon is rendered and no filter popover exists — the module is what puts the filter UI and the filter pipeline stage in your bundle. See [Chapter 02 · Modules](/docs/vue/modules).
 
 > **Jargon check — three words you'll see throughout this chapter:**
 >
@@ -27,6 +29,7 @@ These go in the `filtering` group:
 
 ```ts
 const grid = createGrid<User>({
+  modules: [FilterModule],
   columns,
   data,
   filtering: {
@@ -124,6 +127,223 @@ filtering: {
 
 ---
 
+## Global search
+
+One query matched across every searchable column at once — a quick filter, also known as a global filter.
+
+> **Requires `SearchModule`**, which is in `AllModules`. It composes with column filters as **AND**: a searched *and* filtered grid shows rows matching both.
+
+```ts
+import { createGrid, SearchModule, Grid } from '@elitegrid/vue'
+
+const grid = createGrid<Invoice>({
+  modules: [SearchModule],
+  columns,
+  data,
+  filtering: {
+    searchBar: true,            // render the built-in input
+    searchPlaceholder: 'Search invoices…',
+    search: '',                 // initial query
+  },
+})
+```
+
+`searchBar` is `false` by default. Pass `true` for an input that already handles debounce, clearing and the match announcement — or leave it off and drive the API from your own input:
+
+```ts
+<input @input="api.setSearch(($event.target as HTMLInputElement).value)" />
+```
+
+```ts
+api.setSearch('acme')
+api.getSearch() // '' when nothing is searched — never undefined, so `.length` is the check
+```
+
+`api.setSearch()` is applied **immediately, with no internal debounce**. The built-in bar debounces its own input before calling it, and a method that silently defers cannot be driven from a controlled component.
+
+```ts
+events: {
+  onSearchChange: (text, matchCount) => setStatus(`${matchCount} matches`),
+}
+```
+
+### Which columns are searched
+
+```ts
+{ field: 'id', header: 'ID', filter: { searchable: false } } // skip noise
+```
+
+Every column is searchable by default. Turn it off for an id, a base64 blob, anything whose matches would be noise.
+
+Hidden columns are **not** searched by default:
+
+```ts
+filtering: { searchHiddenColumns: true } // default false
+```
+
+A row matching on a column the user cannot see looks like a bug, which is worse than hiding a column changing the result count.
+
+### What text a column contributes
+
+The default is the column's **displayed** text — `display.formatter` if set, otherwise the raw value — so a column shown as `$1,234` matches a search for `1,234` with nothing written.
+
+The one case the default gets wrong is a `cellRenderer` column: a node has no text to read, so a status badge searches its underlying value (`'in_progress'`) rather than its label (`'In Progress'`). That is what `searchText` is for, and the grid warns when it spots the combination:
+
+```ts
+{
+  field: 'status',
+  header: 'Status',
+  display: { cellRenderer: (v) => h(Badge, null, [STATUS_LABEL[v as string]]) },
+  filter: { searchText: (value) => STATUS_LABEL[value as string] },
+}
+```
+
+### Custom matching
+
+```ts
+filtering: {
+  searchMatcher: (row, terms) => terms.every((t) => fuzzy(row.name, t)),
+}
+```
+
+`terms` arrives pre-split and pre-cased. This replaces term splitting **and** matching in one hook.
+
+> One hook rather than a parser/matcher pair: a developer who needs fuzzy or OR semantics needs the whole decision, not half of it.
+
+---
+
+## Floating filters
+
+A filter control under every filterable column's header:
+
+```ts
+filtering: {
+  floatingFilters: true,      // default false
+  floatingFilterButton: true, // default true — the ⌄ that opens the popover
+}
+```
+
+**The popover stays.** The floating row applies **one** operator per column and hands anything more complicated to the popover it sits under.
+
+Which operator? `filter.defaultOperator` — one key governing both surfaces:
+
+```ts
+{
+  field: 'amount',
+  header: 'Amount',
+  filter: { type: 'number', defaultOperator: 'greaterThan' },
+}
+```
+
+Defaults are `'contains'` for text and `'equals'` for number, date and boolean.
+
+> One key rather than a separate `floatingOperator`: two knobs would disagree, and the user would watch the operator change the moment they opened the popover on a column they had already filtered from the row.
+
+### Per-column control
+
+```ts
+{ field: 'notes', header: 'Notes', filter: { floating: false } }
+{ field: 'amount', header: 'Amount', filter: { floatingPlaceholder: 'Min…' } }
+```
+
+`floating` follows `filtering.floatingFilters` unless set. A column with `filter.enabled: false` never gets a control — but it still gets an **empty band**, because a missing band would break the row's alignment with its column.
+
+`floatingPlaceholder` is a narrow per-string option, so it beats the locale key.
+
+Height is `appearance.floatingFilterHeight` (default 34); the header's total becomes `headerHeight + floatingFilterHeight` when the row is on.
+
+> `floatingFilterButton` is stated positively, so hiding it is not a double negative. And floating filters are a grid-level switch, so turning them on everywhere is one line rather than one line per column.
+
+### Your own floating control
+
+```ts
+const MyRangeFilter: FloatingFilter = defineComponent({
+  props: ['columnId', 'filterType', 'filter', 'placeholder'],
+  emits: [],
+  setup(props) {
+    // …your control. setFilter / clearFilter / openPopover arrive on props too.
+  },
+})
+
+{ field: 'amount', header: 'Amount', filter: { floatingFilter: MyRangeFilter } }
+```
+
+A **mounted component**, not a node factory — it holds state (a query, a debounce, an in-flight request), so it needs somewhere to keep it.
+
+| `params` | What it is |
+| --- | --- |
+| `columnId` | This column |
+| `filterType` | `'text' \| 'number' \| 'date' \| 'boolean' \| 'set'` |
+| `filter` | The column's current entry in the filter model, or `null` |
+| `placeholder` | Already resolved from the column option and the locale |
+| `setFilter(filter)` | Apply. **Never debounced by the grid** |
+| `clearFilter()` | Remove this column's entry |
+| `openPopover()` | Hand over to the full popover |
+
+`params.filter` is the **only** source of truth. A component holding its own applied state drifts the first time someone uses the popover, the column menu or `setFilterModel()`.
+
+---
+
+## The set filter — a checkbox list of values
+
+```ts
+{
+  field: 'status',
+  header: 'Status',
+  filter: { type: 'set' },
+}
+```
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `values` | derived from the rows | Supply the list instead |
+| `valueGetter(row)` | the display value | What one row contributes, and what the matcher compares |
+| `valueComparator(a, b)` | blanks first, then locale-aware numeric compare | Order the list |
+| `showSearch` | `true` | The search box above the list |
+| `showCounts` | `true` | `Paid (12)` beside each value |
+
+The default key is the column's **display** value, so a column shown as `$1,234` lists and matches `$1,234`, and a formatter mapping `2 → 'Overdue'` lists `'Overdue'`.
+
+A `display.cellRenderer` column has no text to read, so it needs `valueGetter` — and the grid warns when a set-filtered column has a renderer and no getter:
+
+```ts
+{
+  field: 'status',
+  header: 'Status',
+  display: { cellRenderer: (v) => h(Badge, null, [STATUS_LABEL[v as string]]) },
+  filter: { type: 'set', valueGetter: (row) => STATUS_LABEL[row.status] },
+}
+```
+
+### Supplying the values
+
+```ts
+filter: { type: 'set', values: ['draft', 'sent', 'paid', 'overdue'] }
+filter: { type: 'set', values: () => fetch('/api/statuses').then((r) => r.json()) }
+```
+
+An array for a known domain; a function — which may return a promise — for a server-backed one. **Required for a `dataSource` grid**, where the browser holds one page and cannot know the column's domain.
+
+When set, the list is exactly these values in exactly this order. Counts still come from the loaded rows, so an entry nothing matches shows `(0)` rather than vanishing — a domain the user picks from should not shrink as they pick.
+
+### Where the list comes from
+
+```ts
+filtering: {
+  setFilterScope: 'unfilteredByThisColumn', // default
+  setFilterListLimit: 500,                  // default
+}
+```
+
+- `'unfilteredByThisColumn'` — rows surviving every **other** column's filter and the global search. Unchecking a value keeps it in the list, so the choice is reversible, while other columns still narrow what is offered and the counts answer "how many rows would this add".
+- `'all'` — every loaded row, always. Cheaper, and the right answer when the list is a domain the user picks from rather than a summary of what is present.
+
+`setFilterListLimit` caps the first **paint**, not what is reachable — the full set is always computed, or counts and "Select All" would lie.
+
+> `type: 'set'` is one union member, so a typo is a compile error rather than a filter that silently never opens.
+
+---
+
 ## Controlling filters from code (the API)
 
 The active filters are described by a **filter model** — an object keyed by column `field`, where each value is `{ type, operator, value }` (plus `valueTo` for *between*). Reading or setting this object is how you save, restore, or preset filters from code.
@@ -176,6 +396,7 @@ To open the grid already filtered — from a saved view, a URL, or a "My active 
 
 ```ts
 const grid = createGrid<User>({
+  modules: [FilterModule],
   columns,
   data,
   events: {
@@ -235,7 +456,7 @@ A text filter, a number filter, and a date filter on three different columns —
 
 ```ts
 import { defineComponent, h } from 'vue'
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, FilterModule, Grid } from '@elitegrid/vue'
 
 interface Book {
   id: number
@@ -259,6 +480,7 @@ const books: Book[] = [
 ]
 
 const grid = createGrid<Book>({
+  modules: [FilterModule],
   columns: [
     { field: 'title', header: 'Title', size: { flex: 2 }, filter: { type: 'text' } },
     { field: 'author', header: 'Author', size: { flex: 1.5 }, filter: { type: 'text' } },

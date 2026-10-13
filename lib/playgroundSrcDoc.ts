@@ -58,6 +58,15 @@ const IFRAME_CSS = `
     --eg-sort-icon-color: var(--pgf-muted2); --eg-btn-bg: rgba(124,58,237,0.08);
     --eg-btn-text: #7c3aed; --eg-skeleton-base: var(--pgf-skel-base);
     --eg-skeleton-highlight: var(--pgf-skel-hi); --eg-empty-icon-bg: var(--pgf-skel-base);
+    /* The adapters read these three but declare no inline fallback, unlike
+       --eg-cell-padding / --eg-cell-font-size. Leaving them unset made the
+       whole declaration invalid, so the export toolbar rendered with no
+       background and no bottom border, and the filter icon lost its
+       open-popover highlight. lib/gridDemoSrcDoc.ts already declares all
+       three — the two sandboxes share this contract, so keep them in step. */
+    --eg-border-color: var(--pgf-border);
+    --eg-toolbar-bg: var(--pgf-header-bg);
+    --eg-hover-bg: var(--pgf-active-bg);
   }
   .yg-header { font-size:.6875rem!important; font-weight:600!important;
     letter-spacing:.09em!important; text-transform:uppercase!important; color: var(--pgf-muted2) !important; }
@@ -128,6 +137,13 @@ export function buildReactIframeSrcDoc(origin: string): string {
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <!-- The library stylesheet, shipped beside the bundles by the build:cdn script.
+       Every floating surface the grid owns - column and context menus, filter
+       popovers, the floating filter row, the set-filter list, the cell editors -
+       is styled only here. The import map stubs the package's own styles.css
+       import (the CDN bundles are built with the css loader set to empty), so
+       this link is what supplies it. -->
+  <link rel="stylesheet" href="${origin}/cdn/react.css"/>
   <style>${IFRAME_CSS}</style>
   <script type="importmap">{
     "imports":{
@@ -209,6 +225,13 @@ export function buildVueIframeSrcDoc(origin: string): string {
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <!-- The library stylesheet, shipped beside the bundles by the build:cdn script.
+       Every floating surface the grid owns - column and context menus, filter
+       popovers, the floating filter row, the set-filter list, the cell editors -
+       is styled only here. The import map stubs the package's own styles.css
+       import (the CDN bundles are built with the css loader set to empty), so
+       this link is what supplies it. -->
+  <link rel="stylesheet" href="${origin}/cdn/vue.css"/>
   <style>${IFRAME_CSS}</style>
   <script type="importmap">{
     "imports":{
@@ -293,6 +316,13 @@ export function buildVanillaIframeSrcDoc(origin: string): string {
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <!-- The library stylesheet, shipped beside the bundles by the build:cdn script.
+       Every floating surface the grid owns - column and context menus, filter
+       popovers, the floating filter row, the set-filter list, the cell editors -
+       is styled only here. The import map stubs the package's own styles.css
+       import (the CDN bundles are built with the css loader set to empty), so
+       this link is what supplies it. -->
+  <link rel="stylesheet" href="${origin}/cdn/vanilla.css"/>
   <style>${IFRAME_CSS}</style>
   <script type="importmap">{
     "imports":{

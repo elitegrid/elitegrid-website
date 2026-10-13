@@ -517,10 +517,9 @@ body {
   50% { transform: scale(1.5); opacity: 0.5; }
 }
 
-@keyframes landing-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(7px); }
-}
+/* No tilt on the hero grid. It was tried and removed: the grid is live, and a
+   transformed hit area plus a moving transition made the real thing harder to
+   use than a flat panel. */
 
 /* ==========================================================================
    Playground — IDE-style tool chrome, theme-aware (light-first / dark twin).
@@ -550,4 +549,19 @@ body {
   --pg-text-4:       #3f3f46;
   --pg-text-5:       #27272a;
   --pg-accent:       #7c3aed;
+}
+
+/* Demo source panels (/demos/[slug]) --------------------------------------- */
+.demo-code pre {
+  margin: 0;
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+.demo-code pre code {
+  font-family: var(--font-code), 'JetBrains Mono', ui-monospace, monospace;
+  display: block;
+  width: fit-content;
+  min-width: 100%;
 }

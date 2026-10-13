@@ -2,7 +2,9 @@
 
 > A friendly, step-by-step guide to using **`@elitegrid/vanilla`** with no framework at all. Written so a junior developer can read it top-to-bottom and ship a working data grid in a plain HTML page or any bundler-based project — no prior experience with the library required.
 
-EliteGrid is a fast, fully-typed data table that works anywhere JavaScript runs. You describe your columns and data once, `mount()` the grid into a container element, and you get sorting, filtering, pagination, row selection, inline editing, CSV export, keyboard navigation, and screen-reader support — all out of the box, with zero framework dependency.
+EliteGrid is a fast, fully-typed data table that works anywhere JavaScript runs. You describe your columns and data once, `mount()` the grid into a container element, and you get sorting, filtering, pagination, row selection, inline editing and CSV export — with zero framework dependency.
+
+Each of those six is a **module** you register — a feature you never name never reaches your bundle. Keyboard navigation, focus management and screen-reader announcements are not modules: they are mandatory, so every grid has them whether it asks or not. [Chapter 02 · Modules](/docs/vanilla/modules) explains the trade.
 
 > **Already using React or Vue?** Skip this manual and read the [React Manual](/docs/react) or [Vue Manual](/docs/vue) instead — `@elitegrid/react` and `@elitegrid/vue` wrap the same underlying engine as `@elitegrid/vanilla`, just with a `<Grid>` component and framework-native hooks/composables instead of `mount()`. This manual is for everyone else: plain HTML pages, Svelte, Angular, jQuery-era codebases, or anywhere you'd rather talk to the DOM directly.
 
@@ -15,6 +17,7 @@ Each chapter is self-contained and builds on the previous one. If you are brand 
 | # | Chapter | What you'll learn |
 | --- | --- | --- |
 | 01 | [Getting Started](./01-getting-started.md) | Install, render your first grid, the 3 core concepts |
+| — | [Modules](./17-modules.md) | Which features are opt-in, and what reaches your bundle |
 | 02 | [Columns](./02-columns.md) | Defining columns, width, pinning, visibility |
 | 03 | [Sorting](./03-sorting.md) | Single & multi-column sort, custom comparators |
 | 04 | [Filtering](./04-filtering.md) | Text/number/date/boolean filters, custom filters |
@@ -22,6 +25,11 @@ Each chapter is self-contained and builds on the previous one. If you are brand 
 | 06 | [Row Selection](./06-selection.md) | Single/multiple selection, checkboxes |
 | 07 | [Inline Editing](./07-editing.md) | Editable cells, validation, editor types |
 | 08 | [Formatting Cell Values](./08-formatting-values.md) | Formatters, getters/setters, computed columns |
+| — | [Row Grouping & Aggregation](./18-grouping.md) | Sections, aggregates, grand totals, sticky headings |
+| — | [Row Features](./19-row-features.md) | Pinned rows, row numbers, auto-height, detail rows, drag to reorder |
+| — | [Menus & Clipboard](./20-menus-and-clipboard.md) | The column menu, right-click menu, and copy to clipboard |
+| — | [Live & Streaming Data](./21-live-data.md) | Transactions, infinite scroll, cell flash |
+| — | [Localization & State](./22-localization-and-state.md) | Translating every string; saving and restoring a view |
 | 09 | [Appearance & Theming](./09-appearance.md) | Theme, density, row height, empty/loading states |
 | 10 | [Exporting to CSV](./10-export.md) | Download data as a CSV file |
 | 11 | [Events](./11-events.md) | Reacting to clicks, edits, sorts, selection… |
@@ -49,7 +57,7 @@ There is also an [`examples/`](/docs/vanilla/getting-started) folder with a comp
     <div id="grid-container" style="height: 400px"></div>
 
     <script type="module">
-      import { createGrid, mount } from '@elitegrid/vanilla'
+      import { createGrid, AllModules, mount } from '@elitegrid/vanilla'
 
       // 1. Define your data
       const users = [
@@ -59,6 +67,7 @@ There is also an [`examples/`](/docs/vanilla/getting-started) folder with a comp
 
       // 2. Create the grid — a plain object, no framework involved
       const grid = createGrid({
+        modules: [AllModules],
         columns: [
           { field: 'name', header: 'Name' },
           { field: 'email', header: 'Email' },
@@ -87,9 +96,9 @@ These three ideas explain almost everything in this library.
 `createGrid()` creates the "engine" that holds your data and runs all the logic — sorting, filtering, pagination, selection, editing. It is a **plain function that returns a plain object**. It doesn't touch the DOM and has no idea what a component or a re-render is, because in vanilla JS there is no framework re-running your code — you just call it once, wherever your script starts.
 
 ```ts
-import { createGrid } from '@elitegrid/vanilla'
+import { createGrid, AllModules } from '@elitegrid/vanilla'
 
-const grid = createGrid({ columns, data })
+const grid = createGrid({ columns, data, modules: [AllModules] })
 ```
 
 > **Why is this simpler than the React/Vue version?** In React and Vue, `createGrid()` has to be called carefully (outside a component, or via a special hook) to avoid rebuilding the engine on every re-render. Vanilla JS has no re-render cycle at all — your `<script>` runs top to bottom, once. So the rule is trivially satisfied: call `createGrid()` once, and hang on to the `grid` variable for as long as you need it.
@@ -118,6 +127,7 @@ const api = buildGridAPI(grid)
 
 // Option B — receive it once the grid has finished its first render
 const grid = createGrid({
+  modules: [AllModules],
   columns,
   data,
   events: {

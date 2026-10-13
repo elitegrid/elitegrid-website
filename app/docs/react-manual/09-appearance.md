@@ -11,6 +11,7 @@ The `appearance` group controls how the grid looks: theme, row height, density, 
 
 ```tsx
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   appearance: {
@@ -216,7 +217,7 @@ The "follow the site's own theme toggle" pattern from above, live: a button flip
 
 ```tsx
 import { useState } from 'react'
-import { createGrid, Grid } from '@elitegrid/react'
+import { createGrid, AllModules, Grid } from '@elitegrid/react'
 import '@elitegrid/react/styles.css'
 
 interface Employee {
@@ -240,6 +241,7 @@ const employees: Employee[] = [
 ]
 
 const grid = createGrid<Employee>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Name', size: { flex: 2 } },
     { field: 'department', header: 'Department', size: { flex: 1.5 } },

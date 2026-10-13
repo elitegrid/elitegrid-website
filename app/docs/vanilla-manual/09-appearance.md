@@ -11,6 +11,7 @@ The `appearance` group controls how the grid looks: theme, row height, density, 
 
 ```ts
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   appearance: {
@@ -227,7 +228,7 @@ Set `appearance: { theme: 'light' }` (or leave the default) in `createGrid` so t
 The theme toggle from above, live: a button flips `data-theme` on the grid's wrapper element, which re-cascades the `--eg-*` variables scoped to `.my-grid` — no grid re-creation.
 
 ```ts
-import { createGrid, mount } from '@elitegrid/vanilla'
+import { createGrid, AllModules, mount } from '@elitegrid/vanilla'
 import '@elitegrid/vanilla/styles.css'
 
 interface Employee {
@@ -251,6 +252,7 @@ const employees: Employee[] = [
 ]
 
 const grid = createGrid<Employee>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Name', size: { flex: 2 } },
     { field: 'department', header: 'Department', size: { flex: 1.5 } },

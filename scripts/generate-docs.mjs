@@ -80,9 +80,14 @@ async function renderMarkdown(md) {
 }
 
 // Pull "| 01 | [Title](./01-x.md) | blurb |" rows from the README for nav blurbs.
+// The number cell also accepts an em dash: the Modules chapter is deliberately
+// unnumbered (it sits second in the sidebar but last in file order, so any
+// number it carried would contradict one of the two), and it still needs its
+// nav blurb. The `./NN-slug.md` link is what keeps this anchored to a real
+// chapter row rather than matching any two-column table.
 function parseBlurbs(readme) {
   const map = {}
-  const re = /\|\s*\d+\s*\|\s*\[[^\]]+\]\(\.\/\d+-([a-z0-9-]+)\.md\)\s*\|\s*([^|]+?)\s*\|/gi
+  const re = /\|\s*(?:\d+|—)\s*\|\s*\[[^\]]+\]\(\.\/\d+-([a-z0-9-]+)\.md\)\s*\|\s*([^|]+?)\s*\|/gi
   let m
   while ((m = re.exec(readme))) map[m[1]] = m[2].trim()
   return map

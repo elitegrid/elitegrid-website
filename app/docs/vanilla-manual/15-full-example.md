@@ -29,7 +29,7 @@ The same code lives as a runnable file in [`examples/employee-grid.html`](/docs/
     <div id="grid-container" class="grid-wrap"></div>
 
     <script type="module">
-      import { createGrid, mount, buildGridAPI } from '@elitegrid/vanilla'
+      import { createGrid, AllModules, mount, buildGridAPI } from '@elitegrid/vanilla'
 
       // ── 1. The data shape ────────────────────────────────────────────────
       // interface Employee {
@@ -54,6 +54,7 @@ The same code lives as a runnable file in [`examples/employee-grid.html`](/docs/
 
       // ── 2. Create the grid ─────────────────────────────────────────────
       const grid = createGrid({
+        modules: [AllModules],
         // unique ID field — `id` is the default, shown here for clarity
         rowId: 'id',
 

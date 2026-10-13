@@ -138,6 +138,234 @@ A **CSS class** is a name you attach to an element so a matching rule in your st
 
 ---
 
+### Custom cell content with `cellRenderer`
+
+`formatter` returns a **string**. When you need a real node — a badge, a link, an avatar, a progress bar — use `cellRenderer`:
+
+```ts
+{
+  field: 'status',
+  header: 'Status',
+  display: {
+    cellRenderer: (value, row) =>
+      h(Badge, { tone: value === 'overdue' ? 'danger' : 'neutral' }, [
+        `${String(value)} ${row.escalated ? '⚠' : ''}`,
+      ]),
+  },
+}
+```
+
+It takes over rendering entirely, replacing the auto-generated text span.
+
+> **`formatter` still governs CSV export.** Export never runs through `cellRenderer` — a node is not a cell value. Keep `formatter` (or `exportFormatter`) on a column that has both, or its CSV column will hold raw values.
+>
+> **You own the rendered node's accessibility.** The grid cannot inspect what you returned, so a tooltip or an `aria-label` is yours to add.
+
+### Custom header content with `headerRenderer`
+
+```ts
+{
+  field: 'amount',
+  header: 'Amount',
+  display: {
+    headerRenderer: (column) =>
+      h('span', null, [column.header, ' ', h(InfoIcon, { title: 'Net of tax' })]),
+  },
+}
+```
+
+The header cell keeps `aria-label` pinned to the plain `header` string, so a screen reader still gets the real name even when your node carries no text of its own.
+
+---
+
+## Tooltips
+
+```ts
+{ field: 'notes', header: 'Notes' }                          // truncated text only
+{ field: 'notes', header: 'Notes', display: { tooltip: true } }  // always
+{ field: 'notes', header: 'Notes', display: { tooltip: false } } // never
+```
+
+| `display.tooltip` | Behaviour |
+| --- | --- |
+| unset | The display value, shown **only when the text is truncated** |
+| `false` | Never |
+| `true` | The display value, always — even when it already fits |
+| a function | Your own content, always |
+
+The default text is the **displayed** text — `display.formatter` if set, otherwise the raw value — so a column shown as `$1,234` tooltips as `$1,234` with nothing written.
+
+```ts
+{
+  field: 'amount',
+  header: 'Amount',
+  display: {
+    tooltip: (value, row) =>
+      row.overdue ? `${value} — overdue since ${row.dueDate}` : String(value),
+  },
+}
+```
+
+Because the function already receives the row, "a different tooltip for overdue invoices" is an `if` inside it.
+
+Header tooltips take the same ladder minus the row:
+
+```ts
+{ field: 'ltv', header: 'LTV', display: { headerTooltip: 'Lifetime value' } }
+```
+
+Two things worth knowing:
+
+- An **explicit** tooltip (`true` or a function) always shows, ignoring `appearance.tooltip.mode` — "only when clipped" is meaningless for content that is not the cell's own text.
+- A **`cellRenderer` column with no explicit tooltip gets none.** A node has no text to fall back to and nothing to measure.
+
+---
+
+## Auto-sizing columns to their content
+
+```ts
+api.autoSizeColumns()                                  // every eligible column
+api.autoSizeColumns({ columns: ['name', 'email'] })    // just these
+api.autoSizeColumns({ includeHeader: false })          // ignore the header label
+api.autoSizeColumns({ sample: 'rendered' })            // cheap, viewport only
+```
+
+Users get it too: double-click a column's resize handle to fit that column, or use "Auto-size" in the [column menu](/docs/vue/menus-and-clipboard#the-column-menu).
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `columns` | every visible column whose `size.autoSize` is not `false` | Which columns |
+| `includeHeader` | `true` | Include the header label and room for its affordances |
+| `sample` | `'all'` | `'all'` measures every row in the current view model — filtered and searched, before pagination. `'rendered'` measures only the viewport window |
+
+`sample: 'all'` is the default because a display string does not need its row to be on screen to be measured, so the correct answer is also the available one. `'rendered'` is the escape hatch for a row count where the one-shot pass is measurably too slow.
+
+> `includeHeader` defaults to `true` because a column narrower than its own header is a visible defect.
+
+### Opting a column out
+
+```ts
+{
+  field: 'description',
+  header: 'Description',
+  size: { width: 200, autoSize: false },
+}
+```
+
+The case this exists for is a column whose content is deliberately clipped — a long description that should stay 200px wide regardless of what is in it. It can still be dragged by the user, and still sized with `api.setColumnWidth()`.
+
+> Stated positively, so opting in is not a double negative.
+
+---
+
+## Wrapping text instead of clipping it
+
+```ts
+{ field: 'description', header: 'Description', display: { wrap: true } }
+```
+
+One flag: the text wraps **and** the row grows to fit. See [Row Features](/docs/vue/row-features#rows-that-size-themselves) for capping the result.
+
+> One flag rather than two, because wrapping text and growing the row to fit it are never useful apart.
+
+A `cellRenderer` column can set it too; its height comes from measuring what it actually rendered.
+
+---
+
+## Multi-level column groups
+
+Banded header rows above the normal header row:
+
+```
+|          | Amounts               | Dates            |
+| Customer | Net   | Tax   | Gross | Issued | Due     |
+```
+
+`columns` accepts a group anywhere it accepts a column:
+
+```ts
+const columns: ColumnDefInput<Invoice>[] = [
+  { field: 'customer', header: 'Customer' },
+  {
+    header: 'Amounts',
+    children: [
+      { field: 'net', header: 'Net' },
+      { field: 'tax', header: 'Tax' },
+      { field: 'gross', header: 'Gross' },
+    ],
+  },
+]
+```
+
+A group holds the **real column objects**, not string references to their fields — so renaming a column is a rename the compiler follows, rather than a column silently dropping out of its band.
+
+Groups nest, and `children` is the discriminant — there is no tag field to remember.
+
+| Field | Meaning |
+| --- | --- |
+| `header` | The band label |
+| `children` | Columns and nested groups, in display order |
+| `id` | Stable id for `api.setColumnGroupCollapsed()` and saved views. Defaults to a slug of `header` |
+| `headerClass` | CSS class on the band cell |
+| `collapsible` | Let the user fold this group. Default `false` |
+| `collapsed` | Start folded. Default `false`; ignored unless `collapsible` |
+| `headerRenderer` | Replace the band label with your own node |
+
+> Set `id` explicitly when two groups share a label, or when the label is translated and a saved view must survive the translation.
+
+### Collapsible groups
+
+```ts
+{
+  header: 'Amounts',
+  collapsible: true,
+  collapsed: true,
+  children: [
+    { field: 'gross', header: 'Gross', display: { groupShow: 'always' } },
+    { field: 'net', header: 'Net', display: { groupShow: 'expanded' } },
+    { field: 'tax', header: 'Tax', display: { groupShow: 'expanded' } },
+  ],
+}
+```
+
+`display.groupShow` decides which children survive the fold:
+
+| `groupShow` | Visible when |
+| --- | --- |
+| `'always'` *(default)* | Expanded and collapsed alike |
+| `'expanded'` | Only while the group is expanded |
+| `'collapsed'` | Only while the group is collapsed — the summary column |
+
+If no child survives the fold, the **first child is promoted** to `'always'` and the grid warns. A group that collapses to nothing has no UI route back.
+
+> Two keys rather than one, because "can it fold" and "does it start folded" are independent facts. And `groupShow` names the *column's* visibility rather than the group's state, so `'collapsed'` reads as "visible while collapsed" and means exactly that.
+
+Band height is `appearance.groupHeaderHeight` (default 36) per level. `appearance.stickyGroupLabels` (default `true`) keeps a band label on screen while its columns scroll under it.
+
+> **`display.groupShow` is COLUMN grouping — the banded headers. `ColumnDef.group` is ROW grouping.** The two words collide and nothing else in the API does; see [Row Grouping](/docs/vue/grouping).
+
+---
+
+## Column virtualization
+
+Only the columns near the viewport are in the DOM, which is what keeps an 80-column grid fast. On by default.
+
+```ts
+scroll: {
+  bufferSize: 10,        // extra ROWS either side — default 10
+  columnBufferSize: 1,   // extra COLUMNS either side — default 1
+  virtualizeColumns: true, // default
+}
+```
+
+`columnBufferSize` is deliberately far smaller than `bufferSize`: a column is much wider than a row is tall, so one per side is a comparable pixel cushion.
+
+Turn `virtualizeColumns` off when an off-screen cell must still exist in the DOM — a test that queries every cell, a print stylesheet, or a CSS selector that spans the whole row.
+
+> Named positively on purpose: `virtualizeColumns: true` means columns *are* virtualized, so turning it off reads as what it does. And `columnBufferSize` means a grid that flickers on fast horizontal scroll can widen the cushion instead of giving up virtualization entirely.
+
+---
+
 ## Changing columns at runtime
 
 You don't pass new columns to re-configure the grid. Instead, use the [Grid API](/docs/vue/grid-api):
@@ -173,6 +401,7 @@ api.applyColumnState(layout)          // restore later
 
 ```ts
 const grid = createGrid<Employee>({
+  modules: [AllModules],
   columns: [
     {
       field: 'id',

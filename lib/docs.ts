@@ -22,12 +22,21 @@ export function getChapter(
   return getManual(framework)?.chapters.find((c) => c.slug === slug)
 }
 
-/** Previous/next chapters within a framework, for footer navigation. */
+/**
+ * Previous/next chapters within a framework, for footer navigation.
+ *
+ * Ordered by `CHAPTER_GROUPS` — the same order the sidebar shows — not by the
+ * generated `chapters` array, which follows the source filenames. The two used
+ * to be the same sequence; they stopped being so once a chapter needed to sit
+ * somewhere other than where its file number put it, and footer links that
+ * disagree with the sidebar are worse than either order on its own.
+ */
 export function getChapterNeighbors(
   framework: string,
   slug: string
 ): { prev: DocPage | null; next: DocPage | null } {
-  const chapters = getManual(framework)?.chapters ?? []
+  const manual = getManual(framework)
+  const chapters = manual ? getGroupedChapters(manual).flatMap((g) => g.chapters) : []
   const i = chapters.findIndex((c) => c.slug === slug)
   if (i === -1) return { prev: null, next: null }
   return {
@@ -42,13 +51,30 @@ export function getChapterNeighbors(
  * Chapter slugs are shared across every framework manual.
  */
 export const CHAPTER_GROUPS: { label: string; slugs: string[] }[] = [
-  { label: 'Getting Started', slugs: ['getting-started', 'columns'] },
+  // `modules` sits second deliberately: nothing else in the manual works as
+  // written until the reader knows which features are opt-in. Its source file
+  // is numbered last (17-modules.md) so that adding it did not renumber the
+  // other sixteen chapters and the ~145 "Chapter NN" cross-references in them.
+  { label: 'Getting Started', slugs: ['getting-started', 'modules', 'columns'] },
   {
     label: 'Core Features',
     slugs: ['sorting', 'filtering', 'pagination', 'selection', 'editing', 'formatting-values'],
   },
-  { label: 'Appearance & Data', slugs: ['appearance', 'export'] },
-  { label: 'Advanced', slugs: ['events', 'grid-api', 'accessibility', 'performance'] },
+  { label: 'Rows & Grouping', slugs: ['grouping', 'row-features'] },
+  {
+    label: 'Appearance & Data',
+    slugs: ['appearance', 'export', 'menus-and-clipboard', 'live-data'],
+  },
+  {
+    label: 'Advanced',
+    slugs: [
+      'events',
+      'grid-api',
+      'localization-and-state',
+      'accessibility',
+      'performance',
+    ],
+  },
   { label: 'Reference', slugs: ['full-example', 'glossary'] },
 ]
 

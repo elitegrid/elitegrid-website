@@ -2,7 +2,9 @@
 
 > A friendly, step-by-step guide to using **`@elitegrid/vue`**. Written so a junior developer can read it top-to-bottom and ship a working data grid — no prior experience with the library required.
 
-EliteGrid is a fast, fully-typed data table for Vue. You describe your columns and data once, drop in a `<Grid>`, and you get sorting, filtering, pagination, row selection, inline editing, CSV export, keyboard navigation, and screen-reader support — all out of the box.
+EliteGrid is a fast, fully-typed data table for Vue. You describe your columns and data once, drop in a `<Grid>`, and you get sorting, filtering, pagination, row selection, inline editing and CSV export.
+
+Each of those six is a **module** you register — a feature you never name never reaches your bundle. Keyboard navigation, focus management and screen-reader announcements are not modules: they are mandatory, so every grid has them whether it asks or not. [Chapter 02 · Modules](/docs/vue/modules) explains the trade.
 
 ---
 
@@ -13,6 +15,7 @@ Each chapter is self-contained and builds on the previous one. If you are brand 
 | # | Chapter | What you'll learn |
 | --- | --- | --- |
 | 01 | [Getting Started](./01-getting-started.md) | Install, render your first grid, the 3 core concepts |
+| — | [Modules](./17-modules.md) | Which features are opt-in, and what reaches your bundle |
 | 02 | [Columns](./02-columns.md) | Defining columns, width, pinning, visibility |
 | 03 | [Sorting](./03-sorting.md) | Single & multi-column sort, custom comparators |
 | 04 | [Filtering](./04-filtering.md) | Text/number/date/boolean filters, custom filters |
@@ -20,6 +23,11 @@ Each chapter is self-contained and builds on the previous one. If you are brand 
 | 06 | [Row Selection](./06-selection.md) | Single/multiple selection, checkboxes |
 | 07 | [Inline Editing](./07-editing.md) | Editable cells, validation, editor types |
 | 08 | [Formatting Cell Values](./08-formatting-values.md) | Formatters, getters/setters, computed columns |
+| — | [Row Grouping & Aggregation](./18-grouping.md) | Sections, aggregates, grand totals, sticky headings |
+| — | [Row Features](./19-row-features.md) | Pinned rows, row numbers, auto-height, detail rows, drag to reorder |
+| — | [Menus & Clipboard](./20-menus-and-clipboard.md) | The column menu, right-click menu, and copy to clipboard |
+| — | [Live & Streaming Data](./21-live-data.md) | Transactions, infinite scroll, cell flash |
+| — | [Localization & State](./22-localization-and-state.md) | Translating every string; saving and restoring a view |
 | 09 | [Appearance & Theming](./09-appearance.md) | Theme, density, row height, empty/loading states |
 | 10 | [Exporting to CSV](./10-export.md) | Download data as a CSV file |
 | 11 | [Events](./11-events.md) | Reacting to clicks, edits, sorts, selection… |
@@ -39,7 +47,7 @@ There is also an [`examples/`](/docs/vue/getting-started) folder with a complete
 
 ```vue
 <script setup lang="ts">
-import { createGrid, Grid } from '@elitegrid/vue'
+import { createGrid, AllModules, Grid } from '@elitegrid/vue'
 import '@elitegrid/vue/styles.css'
 
 // 1. Define your data shape
@@ -57,6 +65,7 @@ const users: User[] = [
 
 // 2. Create the grid — safe to do right here, `<script setup>` only runs once
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Name' },
     { field: 'email', header: 'Email' },
@@ -89,7 +98,7 @@ These three ideas explain almost everything in this library.
 ```vue
 <script setup lang="ts">
 // ✅ Fine — `<script setup>` runs once when the component is created
-const grid = createGrid<User>({ columns, data })
+const grid = createGrid<User>({ columns, data, modules: [AllModules] })
 </script>
 
 <template>
@@ -118,6 +127,7 @@ When you need to do something programmatically — select a row, change the page
 ```vue
 <script setup lang="ts">
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   events: {

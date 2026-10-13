@@ -93,9 +93,10 @@ const products: Product[] = [
 Call `createGrid()`. Pass it two things to start: `columns` (how to display each field) and `data` (your rows).
 
 ```ts
-import { createGrid } from '@elitegrid/vanilla'
+import { createGrid, AllModules } from '@elitegrid/vanilla'
 
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Product' },
     { field: 'price', header: 'Price' },
@@ -132,7 +133,7 @@ mount(grid, container)
 ## The complete first example
 
 ```ts
-import { createGrid, mount } from '@elitegrid/vanilla'
+import { createGrid, AllModules, mount } from '@elitegrid/vanilla'
 import '@elitegrid/vanilla/styles.css'
 
 interface Product {
@@ -149,6 +150,7 @@ const products: Product[] = [
 ]
 
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [
     { field: 'name', header: 'Product' },
     { field: 'price', header: 'Price' },
@@ -179,7 +181,7 @@ The one thing worth being deliberate about is *scope*: declare `grid` (and the `
 
 ```ts
 // ✅ Module-level — reachable from anywhere else in this file
-const grid = createGrid<Product>({ columns, data })
+const grid = createGrid<Product>({ columns, data, modules: [AllModules] })
 const dispose = mount(grid, document.getElementById('grid-container'))
 
 // Later, elsewhere in the same module:
@@ -198,6 +200,7 @@ If your unique field is named something else, tell the grid:
 
 ```ts
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [...],
   data: products,
   rowId: 'sku',          // a different field name
@@ -208,6 +211,7 @@ You can also pass a function if the ID is computed:
 
 ```ts
 const grid = createGrid<Product>({
+  modules: [AllModules],
   columns: [...],
   data: products,
   rowId: (row) => `${row.category}-${row.name}`,
@@ -230,4 +234,4 @@ const grid = createGrid<Product>({
 
 ---
 
-Next: [02 · Columns](/docs/vanilla/columns)
+Next: [Modules](/docs/vanilla/modules)

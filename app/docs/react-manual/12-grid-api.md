@@ -19,10 +19,11 @@ You receive it in the `onReady` event. The common pattern is to stash it in a re
 
 ```tsx
 import { useState } from 'react'
-import { createGrid, Grid } from '@elitegrid/react'
+import { createGrid, AllModules, Grid } from '@elitegrid/react'
 import type { GridAPI } from '@elitegrid/react'
 
 const grid = createGrid<User>({
+  modules: [AllModules],
   columns,
   data,
   events: {
@@ -200,4 +201,4 @@ useEffect(() => {
 
 ---
 
-Next: [13 · Accessibility](/docs/react/accessibility)
+Next: [Localization & State](/docs/react/localization-and-state)
