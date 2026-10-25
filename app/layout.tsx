@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Bricolage_Grotesque, DM_Sans, JetBrains_Mono } from 
 import "./globals.css";
 import JsonLd from '@/components/JsonLd'
 import FeedbackButton from '@/components/FeedbackButton'
+import PostHogProvider from '@/components/PostHogProvider'
 import KeepAlivePlayground from './playground/KeepAlive'
 
 const geistSans = Geist({
@@ -80,6 +81,7 @@ export default function RootLayout({
         {children}
         <JsonLd />
         <FeedbackButton />
+        <PostHogProvider />
         <KeepAlivePlayground />
       </body>
     </html>
