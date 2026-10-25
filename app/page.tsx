@@ -820,12 +820,17 @@ export default function Home() {
               { label: 'Twitter', href: 'https://x.com/elitegridhq' },
               { label: 'npm', href: 'https://npmjs.com/package/@elitegrid/react' },
               { label: 'Contact', href: 'mailto:hello@elitegrid.dev' },
+              { label: 'Privacy', href: '/privacy' },
+              // Reopens the consent banner. Withdrawing has to be as easy as
+              // consenting was, so this link is a requirement rather than a
+              // convenience — PostHogProvider listens for the hash.
+              { label: 'Cookies', href: '#cookies' },
             ].map(l => (
               <a
                 key={l.label}
                 href={l.href}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={l.href.startsWith('http') ? '_blank' : undefined}
+                rel={l.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                 className="text-[13px] text-[#a3a3a3] dark:text-[#374151] hover:text-[#525252] dark:hover:text-[#7a8399] transition-colors"
               >
                 {l.label}
